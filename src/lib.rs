@@ -1,4 +1,9 @@
-use axum::{routing::get, Router};
+pub mod tmpl;
+
+use axum::{
+    routing::{get, get_service},
+    Extension, Router,
+};
 use color_eyre::eyre::Result;
 use dotenv::dotenv;
 use log::info;
@@ -6,7 +11,13 @@ use std::{
     env,
     net::{IpAddr, SocketAddr},
     str::FromStr,
+    sync::Arc,
 };
+use tower_http::services::ServeFile;
+
+pub mod app;
+pub mod handlers;
+pub mod post;
 
 async fn healthcheck() -> &'static str {
     "OK"
@@ -17,7 +28,25 @@ pub async fn run_server() -> Result<()> {
     color_eyre::install()?;
     info!("starting the application");
 
-    let app = Router::new().route("/health", get(healthcheck));
+    let state = Arc::new(
+        app::init(
+            env::var("CONFIG_FNAME")
+                .unwrap_or("./config.dhall".into())
+                .as_str()
+                .into(),
+        )
+        .await?,
+    );
+
+    let middleware = tower::ServiceBuilder::new().layer(Extension(state.clone()));
+
+    let app = Router::new()
+        .route("/health", get(healthcheck))
+        .route(
+            "/robots.txt",
+            get_service(ServeFile::new("./static/robots.txt")),
+        )
+        .route("/", get(handlers::index));
 
     let addr: SocketAddr = (
         IpAddr::from_str(&env::var("HOST").unwrap_or("::".into()))?,

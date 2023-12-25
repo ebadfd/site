@@ -1,0 +1,3 @@
+User-Agent: *
+Disallow: /metrics
+Disallow: /health
