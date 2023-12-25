@@ -48,7 +48,11 @@ pub async fn index(Extension(state): Extension<Arc<State>>) -> Result<Markup> {
     let state = state.clone();
     let cfg = state.cfg.clone();
 
-    Ok(tmpl::index(&cfg.default_author, &cfg.notable_projects))
+    Ok(tmpl::index(
+        &cfg.default_author,
+        &cfg.notable_projects,
+        &state.blog,
+    ))
 }
 
 #[instrument(skip(state))]

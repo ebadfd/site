@@ -24,6 +24,8 @@ axum-macros = "0.3"
 
 # workspace dependencies
 site_types = { path = "./lib/site_types" }
+markdown_render = { path = "./lib/markdown_render" }
+
 thiserror = "1.0.51"
 tracing = "0.1.40"
 http = "1.0.0"

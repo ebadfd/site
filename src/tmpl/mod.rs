@@ -1,6 +1,10 @@
+use chrono::prelude::*;
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 
-use crate::app::{Author, Link};
+use crate::{
+    app::{Author, Link},
+    post::Post,
+};
 use lazy_static::lazy_static;
 
 pub mod blog;
@@ -31,7 +35,8 @@ pub fn error(why: impl Render) -> Markup {
     )
 }
 
-pub fn index(author: &Author, projects: &Vec<Link>) -> Markup {
+pub fn index(author: &Author, projects: &Vec<Link>, posts: &Vec<Post>) -> Markup {
+    let today = Utc::now().date_naive();
     base(
         None,
         None,
@@ -50,15 +55,12 @@ pub fn index(author: &Author, projects: &Vec<Link>) -> Markup {
             meta name="author" content=(author.name);
 
             .grid {
-                .cell."-3of12".content {
-                    img src="/static/img/avatar.png" alt="My Avatar";
-                    br;
-                    a href="/contact" class="justify-content-center" { "Contact me" }
-                }
                 .cell."-9of12".content {
                     h1 {(author.name)}
-                    h4 {(author.job_title)}
-                    h5 { "Skills" }
+
+                    p { "I'm Devin Schulz, front-end developer with a decade's worth of pixels and code under my belt, now crafting digital experiences at Cape Privacy. Remote work veteran since 2014, minimalist in progress, dad of two, and fuelled by a never-ending stream of coffee—because what's code without a little caffeine humour "}
+
+                    h4 { "Skills" }
                     ul {
                         li { "Go, Lua, Haskell, C, Rust and other languages" }
                         li { "Docker (deployment, development & more)" }
@@ -66,25 +68,24 @@ pub fn index(author: &Author, projects: &Vec<Link>) -> Markup {
                         li { "kastermakfa" }
                     }
 
-                    h5 { "Highlighted Projects" }
+                    h4 { "Recent Articles" }
+
                     ul {
-                        @for project in projects {
-                            li {(project)}
-                        }
+                        @for post in posts.iter().filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
+                            li {
+                                (post.detri())
+                                    " - "
+                                    a href={ @if post.front_matter.redirect_to.as_ref().is_some() {(post.front_matter.redirect_to.as_ref().unwrap())} @else {"/" (post.link)}} { (post.front_matter.title) }
+                                }
+                            }
                     }
 
-                    h5 { "Quick Links" }
+                    h4 { "Quick Links" }
                     ul {
                         li {a href="https://github.com/Xe" rel="me" {"GitHub"}}
                         li {a href="https://twitter.com/theprincessxena" rel="me" {"Twitter"}}
                         li {a href="https://pony.social/@cadey" rel="me" {"Fediverse"}}
                         li {a href="https://www.patreon.com/cadey" rel="me" {"Patreon"}}
-                    }
-
-                    p {
-                        "Looking for someone for your team? Check "
-                        a href="/signalboost" { "here" }
-                        "."
                     }
                 }
             }
@@ -93,6 +94,8 @@ pub fn index(author: &Author, projects: &Vec<Link>) -> Markup {
 }
 
 pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Markup {
+    let now = Utc::now();
+
     html! {
         (DOCTYPE)
         html lang="en" {
@@ -107,6 +110,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 }
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
+                link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
 
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 link rel="manifest" href="/static/manifest.json";
@@ -118,8 +122,24 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
             }
             body.snow.hack.dark-grey {
                 .container {
+                    br;
+                    br;
+
                     header {
                         span.logo {}
+                        nav {
+                            a href="/" { "Xe" }
+                        }
+                    }
+
+                    br;
+                    br;
+
+                    .snowframe {
+                        (content)
+                    }
+                    hr;
+                    footer {
                         nav {
                             a href="/" { "z9fr" }
                             " - "
@@ -133,35 +153,9 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                             " - "
                             a href="/signalboost" { "Signal Boost" }
                         }
-                    }
 
-                    br;
-                    br;
-
-                    .snowframe {
-                        (content)
-                    }
-                    hr;
-                    footer {
                         blockquote {
-                            "copy right 2023"
-                        }
-                        p {
-                            "Like what you see? Donate on "
-                            a href="https://www.patreon.com/cadey" { "Patreon" }
-                            " like "
-                            a href="/patrons" { "these awesome people" }
-                            "!"
-                        }
-                        p {
-                            "Looking for someone for your team? Take a look "
-                            a href="/signalboost" { "here" }
-                            "."
-                        }
-                        p {
-                            "See my salary transparency data "
-                            a href="/salary-transparency" {"here"}
-                            "."
+                            "copy right " (now.year())
                         }
                     }
                 }

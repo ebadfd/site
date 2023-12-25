@@ -63,9 +63,10 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 link rel="icon" type="image/png" sizes="96x96" href="/static/favicon/favicon-96x96.png";
                 link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png";
 
-
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
+                link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
+
                 @match now.month() {
                     //12|1|2 => {
                     //    link rel="stylesheet" href={"/static/css/snow.css?bustCache=" (*CACHEBUSTER)};

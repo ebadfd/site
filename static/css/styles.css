@@ -1,0 +1,15 @@
+html {
+  font-size: 14px;
+}
+
+.dark-grey {
+  background-color: #181818;
+  color: #fff;
+}
+
+.hack h1 {
+  font-size: 1.5rem;
+  font-style: normal;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace, serif;
+}

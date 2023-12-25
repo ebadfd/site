@@ -60,10 +60,8 @@ async fn read_post(dir: &str, fname: PathBuf) -> Result<Post> {
 
     let link = format!("{}/{}", dir, fname.file_stem().unwrap().to_str().unwrap());
 
-    let body_html: String = String::from("<h1> this will be body html </h1>"); // TODO: call the markdown parser here
-
-    //let body_html = xesite_markdown::render(body)
-    //    .wrap_err_with(|| format!("can't parse markdown for {:?}", fname))?;
+    let body_html = markdown_render::render(body)
+        .wrap_err_with(|| format!("can't parse markdown for {:?}", fname))?;
 
     let date: DateTime<FixedOffset> = DateTime::<Utc>::from_utc(
         NaiveDateTime::new(date, NaiveTime::from_hms_opt(0, 0, 0).unwrap()),
