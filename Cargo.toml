@@ -24,6 +24,8 @@ sitemap = "0.4"
 # workspace dependencies
 site_types = { path = "./lib/site_types" }
 thiserror = "1.0.51"
+tracing = "0.1.40"
+http = "1.0.0"
 
 [dependencies.tower]
 version = "0.4"

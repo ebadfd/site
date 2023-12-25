@@ -1,9 +1,4 @@
-pub mod tmpl;
-
-use axum::{
-    routing::{get, get_service},
-    Extension, Router,
-};
+use axum::{extract::Extension, http::header, response::Response, routing::get, Router};
 use color_eyre::eyre::Result;
 use dotenv::dotenv;
 use log::info;
@@ -13,14 +8,21 @@ use std::{
     str::FromStr,
     sync::Arc,
 };
-use tower_http::services::ServeFile;
+use tower_http::{cors::CorsLayer, set_header::SetResponseHeaderLayer};
 
 pub mod app;
 pub mod handlers;
 pub mod post;
+pub mod tmpl;
 
 async fn healthcheck() -> &'static str {
     "OK"
+}
+
+fn cache_header(_: &Response) -> Option<header::HeaderValue> {
+    Some(header::HeaderValue::from_static(
+        "public, max-age=3600, stale-if-error=60",
+    ))
 }
 
 pub async fn run_server() -> Result<()> {
@@ -38,15 +40,18 @@ pub async fn run_server() -> Result<()> {
         .await?,
     );
 
-    let middleware = tower::ServiceBuilder::new().layer(Extension(state.clone()));
+    let middleware = tower::ServiceBuilder::new()
+        .layer(Extension(state.clone()))
+        .layer(SetResponseHeaderLayer::overriding(
+            header::CACHE_CONTROL,
+            cache_header,
+        ))
+        .layer(CorsLayer::permissive());
 
     let app = Router::new()
-        .route("/health", get(healthcheck))
-        .route(
-            "/robots.txt",
-            get_service(ServeFile::new("./static/robots.txt")),
-        )
-        .route("/", get(handlers::index));
+        .route("/.within/health", get(healthcheck))
+        .route("/", get(handlers::index))
+        .layer(middleware);
 
     let addr: SocketAddr = (
         IpAddr::from_str(&env::var("HOST").unwrap_or("::".into()))?,

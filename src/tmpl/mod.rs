@@ -1,8 +1,30 @@
-use maud::{html, Markup, PreEscaped, DOCTYPE};
+use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 
 use crate::app::{Author, Link};
 
 pub mod blog;
+
+pub fn error(why: impl Render) -> Markup {
+    base(
+        Some("Error"),
+        None,
+        html! {
+            h1 {"Error"}
+
+            pre {
+                (why)
+            }
+
+            p {
+                "You could try to "
+                a href="/" {"go home"}
+                " or "
+                a href="https://github.com/Xe/site/issues/new" {"report this issue"}
+                " so it can be fixed."
+            }
+        },
+    )
+}
 
 pub fn index(author: &Author, projects: &Vec<Link>) -> Markup {
     base(
