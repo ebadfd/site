@@ -33,7 +33,7 @@ pub async fn run_server() -> Result<()> {
     let state = Arc::new(
         app::init(
             env::var("CONFIG_FNAME")
-                .unwrap_or("./config.dhall".into())
+                .unwrap_or("./Config.toml".into())
                 .as_str()
                 .into(),
         )

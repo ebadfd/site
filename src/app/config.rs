@@ -1,7 +1,7 @@
 use maud::{html, Markup, Render};
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Deserialize, Default)]
+#[derive(Clone, Deserialize, Default, Debug)]
 pub struct Config {
     #[serde(rename = "defaultAuthor")]
     pub default_author: Author,
@@ -14,7 +14,7 @@ pub struct Config {
     pub site_title: String,
 }
 
-#[derive(Clone, Deserialize, Serialize, Default)]
+#[derive(Clone, Deserialize, Serialize, Default, Debug)]
 pub struct Link {
     pub url: String,
     pub title: String,
@@ -43,7 +43,7 @@ fn schema_person_type() -> String {
     "Person".to_string()
 }
 
-#[derive(Clone, Deserialize, Serialize, Default)]
+#[derive(Clone, Deserialize, Serialize, Default, Debug)]
 pub struct Author {
     #[serde(rename = "@context", default = "schema_context")]
     pub context: String,

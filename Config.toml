@@ -1,0 +1,24 @@
+port = 3030
+siteTitle = "Dasith blog"
+
+[defaultAuthor]
+name = "Dasith Vidanage"
+handle = "z9fr"
+jobTitle = "software eng"
+inSystem = true
+sameAs = ["https://example.com/social1", "https://example.com/social2"]
+
+[[notableProjects]]
+url = "https://github.com/PonyvilleFM/aura"
+title = "Aura"
+description = "PonyvilleFM live DJ recording bot"
+
+[[contactLinks]]
+url = "https://example1.com"
+title = "Example 1"
+description = "Description for Example 1"
+
+[[contactLinks]]
+url = "https://github.com/Xe"
+title = "GitHub"
+description = "Description for Example 2"

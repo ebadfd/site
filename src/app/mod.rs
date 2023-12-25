@@ -1,6 +1,6 @@
 use chrono::prelude::*;
 use color_eyre::eyre::Result;
-use std::{path::PathBuf, sync::Arc};
+use std::{fs, path::PathBuf, sync::Arc};
 
 pub mod config;
 pub use config::*;
@@ -15,8 +15,11 @@ pub struct State {
 }
 
 pub async fn init(cfg: PathBuf) -> Result<State> {
-    let cfg: Arc<Config> = Arc::new(serde_dhall::from_file(cfg).parse()?);
+    let toml_str = fs::read_to_string(cfg).unwrap();
+    let res_cfg: Config = toml::from_str(&toml_str).unwrap();
+    let cfg: Arc<Config> = Arc::new(res_cfg);
     let blog = crate::post::load("blog").await?;
+
     let mut everything: Vec<Post> = vec![];
 
     {

@@ -1,4 +1,4 @@
-use maud::{html, Markup, PreEscaped};
+use maud::{html, Markup};
 
 fn post_metadata() -> Markup {
     html! {}
