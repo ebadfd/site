@@ -20,6 +20,7 @@ glob = "0.3.1"
 estimated_read_time = "1.0.0"
 futures = "0.3"
 sitemap = "0.4"
+axum-macros = "0.3"
 
 # workspace dependencies
 site_types = { path = "./lib/site_types" }
@@ -27,6 +28,8 @@ thiserror = "1.0.51"
 tracing = "0.1.40"
 http = "1.0.0"
 toml = "0.8.8"
+lazy_static = "1.4.0"
+uuid = "1.6.1"
 
 [dependencies.tower]
 version = "0.4"

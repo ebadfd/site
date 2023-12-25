@@ -8,7 +8,7 @@ use std::{
     str::FromStr,
     sync::Arc,
 };
-use tower_http::{cors::CorsLayer, set_header::SetResponseHeaderLayer};
+use tower_http::{cors::CorsLayer, services::ServeDir, set_header::SetResponseHeaderLayer};
 
 pub mod app;
 pub mod handlers;
@@ -40,6 +40,8 @@ pub async fn run_server() -> Result<()> {
         .await?,
     );
 
+    let files = ServeDir::new("static");
+
     let middleware = tower::ServiceBuilder::new()
         .layer(Extension(state.clone()))
         .layer(SetResponseHeaderLayer::overriding(
@@ -49,8 +51,14 @@ pub async fn run_server() -> Result<()> {
         .layer(CorsLayer::permissive());
 
     let app = Router::new()
-        .route("/.within/health", get(healthcheck))
+        .route("/health", get(healthcheck))
         .route("/", get(handlers::index))
+        // blog
+        .route("/blog", get(handlers::blog::index))
+        .route("/blog/:name", get(handlers::blog::post_view))
+        // static files
+        .nest_service("/static", files)
+        .fallback(handlers::not_found)
         .layer(middleware);
 
     let addr: SocketAddr = (

@@ -1,22 +1,75 @@
+use crate::{app::State, tmpl};
 use axum::{
     body,
     extract::Extension,
     http::StatusCode,
     response::{Html, IntoResponse, Response},
 };
+use chrono::{Datelike, Timelike, Utc, Weekday};
 use maud::Markup;
 use std::sync::Arc;
 use tracing::instrument;
 
-use crate::{app::State, tmpl};
+pub mod blog;
+
+fn weekday_to_name(w: Weekday) -> &'static str {
+    use Weekday::*;
+    match w {
+        Sun => "Sun",
+        Mon => "Mon",
+        Tue => "Tue",
+        Wed => "Wed",
+        Thu => "Thu",
+        Fri => "Fri",
+        Sat => "Sat",
+    }
+}
+
+fn month_to_name(m: u32) -> &'static str {
+    match m {
+        1 => "Jan",
+        2 => "Feb",
+        3 => "Mar",
+        4 => "Apr",
+        5 => "May",
+        6 => "Jun",
+        7 => "Jul",
+        8 => "Aug",
+        9 => "Sep",
+        10 => "Oct",
+        11 => "Nov",
+        12 => "Dec",
+        _ => "Unk",
+    }
+}
 
 #[instrument(skip(state))]
 pub async fn index(Extension(state): Extension<Arc<State>>) -> Result<Markup> {
-    //HIT_COUNTER.with_label_values(&["index"]).inc();
     let state = state.clone();
     let cfg = state.cfg.clone();
 
     Ok(tmpl::index(&cfg.default_author, &cfg.notable_projects))
+}
+
+#[instrument(skip(state))]
+pub async fn contact(Extension(state): Extension<Arc<State>>) -> Markup {
+    let state = state.clone();
+    let cfg = state.cfg.clone();
+
+    todo!()
+
+    //crate::tmpl::contact(&cfg.contact_links)
+}
+
+#[axum_macros::debug_handler]
+pub async fn resume() -> Markup {
+    //tmpl::resume()
+    todo!()
+}
+
+#[instrument]
+pub async fn not_found(uri: axum::http::Uri) -> (StatusCode, Markup) {
+    (StatusCode::NOT_FOUND, tmpl::not_found(uri.path()))
 }
 
 #[derive(Debug, thiserror::Error)]

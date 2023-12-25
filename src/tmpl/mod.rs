@@ -1,8 +1,13 @@
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 
 use crate::app::{Author, Link};
+use lazy_static::lazy_static;
 
 pub mod blog;
+
+lazy_static! {
+    static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
+}
 
 pub fn error(why: impl Render) -> Markup {
     base(
@@ -33,7 +38,6 @@ pub fn index(author: &Author, projects: &Vec<Link>) -> Markup {
         html! {
             link rel="authorization_endpoint" href="https://idp.christine.website/auth";
             link rel="canonical" href="https://xeiaso.net/";
-            meta name="google-site-verification" content="rzs9eBEquMYr9Phrg0Xm0mIwFjDBcbdgJ3jF6Disy-k";
 
             meta name="twitter:card" content="summary";
             meta name="twitter:site" content="@theprincessxena";
@@ -101,6 +105,9 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                         "Xe Iaso"
                     }
                 }
+                link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
+                link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
+
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 link rel="manifest" href="/static/manifest.json";
                 @if let Some(styles) = styles {
@@ -109,7 +116,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     }
                 }
             }
-            body.snow.hack.gruvbox-dark {
+            body.snow.hack.dark-grey {
                 .container {
                     header {
                         span.logo {}
@@ -161,4 +168,21 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
             }
         }
     }
+}
+
+pub fn not_found(path: impl Render) -> Markup {
+    base(
+        Some("Not found"),
+        None,
+        html! {
+            h1 {"Not found"}
+            p {
+                "The path at "
+                code {(path)}
+                " could not be found. If you expected this path to exist, please "
+                a href="https://github.com/Xe/site/issues/new" {"report this issue"}
+                " so it can be fixed."
+            }
+        },
+    )
 }
