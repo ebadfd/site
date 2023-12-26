@@ -11,6 +11,7 @@ COPY --from=planner /app/recipe.json .
 COPY --from=planner /app/lib lib
 COPY --from=planner /app/Config.toml Config.toml
 COPY --from=planner /app/blog blog
+COPY --from=planner /app/static static
 
 RUN cargo chef cook --release
 COPY . .
@@ -24,5 +25,6 @@ WORKDIR /app
 COPY --from=builder /app/app /usr/local/bin/
 COPY --from=builder /app/Config.toml /app/Config.toml
 COPY --from=builder /app/blog /app/blog
+COPY --from=builder /app/static static
 
 ENTRYPOINT ["/usr/local/bin/app"]
