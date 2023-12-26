@@ -1,5 +1,6 @@
 port = 3030
 siteTitle = "Dasith blog"
+domain = "z9fr.xyz"
 
 [defaultAuthor]
 name = "Dasith Vidanage"

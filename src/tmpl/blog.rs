@@ -2,7 +2,10 @@ use chrono::prelude::*;
 use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped};
 
-use crate::post::Post;
+use crate::{
+    app::Author,
+    post::{schemaorg::Article, Post},
+};
 
 use super::base;
 
@@ -10,25 +13,28 @@ lazy_static! {
     static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
 }
 
-fn post_metadata(post: &Post) -> Markup {
+fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
+    let art: Article = post.into();
+    let json = PreEscaped(serde_json::to_string(&art).unwrap());
+
     html! {
         meta name="twitter:card" content="summary";
-        meta name="twitter:site" content="@theprincessxena";
+        meta name="twitter:site" content={(author.twitter)};
         meta name="twitter:title" content={(post.front_matter.title)};
         meta property="og:type" content="website";
         meta property="og:title" content={(post.front_matter.title)};
-        meta property="og:site_name" content="Xe's Blog";
-        meta name="description" content={(post.front_matter.title) " - Xe's Blog"};
-        meta name="author" content="Xe Iaso";
+        meta property="og:site_name" content="z9fr blog";
+        meta name="description" content={(post.front_matter.title) " - z9fr blog"};
+        meta name="author" content={(author.name)};
 
         @if let Some(redirect_to) = &post.front_matter.redirect_to {
             link rel="canonical" href=(redirect_to);
             meta http-equiv="refresh" content=(format!("0;URL='{redirect_to}'"));
         } @else {
-            link rel="canonical" href={"https://xeiaso.net/" (post.link)};
+            link rel="canonical" href={(format!("https://{}/{}", domain, post.link))};
         }
 
-        //script type="application/ld+json" {(json)}
+        script type="application/ld+json" {(json)}
     }
 }
 
@@ -68,12 +74,12 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool) -> Markup {
     )
 }
 
-pub fn post(post: &Post, body: PreEscaped<&String>) -> Markup {
+pub fn post(post: &Post, body: PreEscaped<&String>, author: &Author, domain: &str) -> Markup {
     base(
         Some(&post.front_matter.title),
         None,
         html! {
-            (post_metadata(post))
+            (post_metadata(post, author, domain))
             article {
                 h1 {(post.front_matter.title)}
 

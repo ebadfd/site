@@ -6,11 +6,14 @@ use axum::{
     response::{Html, IntoResponse, Response},
 };
 use chrono::{Datelike, Timelike, Utc, Weekday};
+use lazy_static::lazy_static;
 use maud::Markup;
+use prometheus::{opts, register_int_counter_vec, IntCounterVec};
 use std::sync::Arc;
 use tracing::instrument;
 
 pub mod blog;
+pub mod feed;
 
 fn weekday_to_name(w: Weekday) -> &'static str {
     use Weekday::*;
@@ -43,20 +46,37 @@ fn month_to_name(m: u32) -> &'static str {
     }
 }
 
+lazy_static! {
+    pub static ref HIT_COUNTER: IntCounterVec =
+        register_int_counter_vec!(opts!("hits", "Number of hits to various pages"), &["page"])
+            .unwrap();
+    pub static ref LAST_MODIFIED: String = {
+        let now = Utc::now();
+        format!(
+            "{dayname}, {day} {month} {year} {hour}:{minute}:{second} GMT",
+            dayname = weekday_to_name(now.weekday()),
+            day = now.day(),
+            month = month_to_name(now.month()),
+            year = now.year(),
+            hour = now.hour(),
+            minute = now.minute(),
+            second = now.second()
+        )
+    };
+}
+
 #[instrument(skip(state))]
 pub async fn index(Extension(state): Extension<Arc<State>>) -> Result<Markup> {
+    HIT_COUNTER.with_label_values(&["index"]).inc();
     let state = state.clone();
     let cfg = state.cfg.clone();
 
-    Ok(tmpl::index(
-        &cfg.default_author,
-        &cfg.notable_projects,
-        &state.blog,
-    ))
+    Ok(tmpl::index(&cfg.default_author, &state.blog, &cfg.domain))
 }
 
 #[instrument(skip(state))]
 pub async fn contact(Extension(state): Extension<Arc<State>>) -> Markup {
+    HIT_COUNTER.with_label_values(&["contact"]).inc();
     let state = state.clone();
     let cfg = state.cfg.clone();
 
@@ -71,19 +91,14 @@ pub async fn resume() -> Markup {
 
 #[instrument]
 pub async fn not_found(uri: axum::http::Uri) -> (StatusCode, Markup) {
+    HIT_COUNTER.with_label_values(&["not_found"]).inc();
     (StatusCode::NOT_FOUND, tmpl::not_found(uri.path()))
 }
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
-    #[error("series not found: {0}")]
-    SeriesNotFound(String),
-
     #[error("post not found: {0}")]
     PostNotFound(String),
-
-    #[error("patreon key not working, poke me to get this fixed")]
-    NoPatrons,
 
     #[error("io error: {0}")]
     IO(#[from] std::io::Error),
@@ -106,7 +121,7 @@ impl IntoResponse for Error {
 
         Response::builder()
             .status(match self {
-                Error::SeriesNotFound(_) | Error::PostNotFound(_) => StatusCode::NOT_FOUND,
+                Error::PostNotFound(_) => StatusCode::NOT_FOUND,
                 _ => StatusCode::INTERNAL_SERVER_ERROR,
             })
             .body(body)

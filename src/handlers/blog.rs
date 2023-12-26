@@ -4,9 +4,19 @@ use axum::{
     extract::{Extension, Path},
     http::StatusCode,
 };
+use lazy_static::lazy_static;
 use maud::Markup;
+use prometheus::{opts, register_int_counter_vec, IntCounterVec};
 use std::sync::Arc;
 use tracing::instrument;
+
+lazy_static! {
+    static ref HIT_COUNTER: IntCounterVec = register_int_counter_vec!(
+        opts!("blogpost_hits", "Number of hits to blogposts"),
+        &["name"]
+    )
+    .unwrap();
+}
 
 #[instrument(skip(state))]
 pub async fn index(Extension(state): Extension<Arc<State>>) -> Result<Markup> {
@@ -32,11 +42,14 @@ pub async fn post_view(
     match want {
         None => Ok((StatusCode::NOT_FOUND, tmpl::not_found(want_link))),
         Some(post) => {
-            //HIT_COUNTER
-            //   .with_label_values(&[name.clone().as_str()])
-            //  .inc();
+            HIT_COUNTER
+                .with_label_values(&[name.clone().as_str()])
+                .inc();
             let body = maud::PreEscaped(&post.body_html);
-            Ok((StatusCode::OK, tmpl::blog::post(post, body)))
+            Ok((
+                StatusCode::OK,
+                tmpl::blog::post(post, body, &state.cfg.default_author, &state.cfg.domain),
+            ))
         }
     }
 }

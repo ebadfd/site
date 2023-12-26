@@ -1,7 +1,15 @@
-use axum::{extract::Extension, http::header, response::Response, routing::get, Router};
+use axum::{
+    body,
+    extract::Extension,
+    http::header::{self, CONTENT_TYPE},
+    response::Response,
+    routing::get,
+    Router,
+};
 use color_eyre::eyre::Result;
 use dotenv::dotenv;
 use log::info;
+use prometheus::{Encoder, TextEncoder};
 use std::{
     env,
     net::{IpAddr, SocketAddr},
@@ -14,6 +22,8 @@ pub mod app;
 pub mod handlers;
 pub mod post;
 pub mod tmpl;
+
+const APPLICATION_NAME: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
 
 async fn healthcheck() -> &'static str {
     "OK"
@@ -52,11 +62,15 @@ pub async fn run_server() -> Result<()> {
 
     let app = Router::new()
         .route("/health", get(healthcheck))
+        .route("/metrics", get(metrics))
         .route("/", get(handlers::index))
         .route("/contact", get(handlers::contact))
         // blog
         .route("/blog", get(handlers::blog::index))
         .route("/blog/:name", get(handlers::blog::post_view))
+        // feeds
+        .route("/blog.rss", get(handlers::feed::rss))
+        .route("/blog.atom", get(handlers::feed::atom))
         // static files
         .nest_service("/static", files)
         .fallback(handlers::not_found)
@@ -75,3 +89,18 @@ pub async fn run_server() -> Result<()> {
 
     Ok(())
 }
+
+async fn metrics() -> Response {
+    let encoder = TextEncoder::new();
+    let metric_families = prometheus::gather();
+    let mut buffer = vec![];
+    encoder.encode(&metric_families, &mut buffer).unwrap();
+    Response::builder()
+        .status(200)
+        .header(CONTENT_TYPE, "text/plain; charset=us-ascii")
+        .body(body::boxed(body::Full::from(buffer)))
+        .unwrap()
+}
+
+// And finally, include the generated code for templates and static files.
+include!(concat!(env!("OUT_DIR"), "/templates.rs"));

@@ -1,6 +1,5 @@
 use chrono::prelude::*;
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
-use serde_json::to_vec;
 
 use crate::{
     app::{Author, Link},
@@ -36,14 +35,13 @@ pub fn error(why: impl Render) -> Markup {
     )
 }
 
-pub fn index(author: &Author, projects: &Vec<Link>, posts: &Vec<Post>) -> Markup {
+pub fn index(author: &Author, posts: &Vec<Post>, domain: &str) -> Markup {
     let today = Utc::now().date_naive();
     base(
         None,
         None,
         html! {
-            link rel="authorization_endpoint" href="https://idp.christine.website/auth";
-            link rel="canonical" href="https://xeiaso.net/";
+            link rel="canonical" href={"https://"(domain)"/"};
 
             meta name="twitter:card" content="summary";
             meta name="twitter:site" content=(author.twitter);
@@ -111,8 +109,8 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 meta name="theme-color" content="#ffffff";
 
                 link rel="manifest" href="/static/manifest.json";
-                link rel="alternate" title="Xe's Blog" type="application/rss+xml" href="https://xeiaso.net/blog.rss";
-                link rel="alternate" title="Xe's Blog" type="application/json" href="https://xeiaso.net/blog.json";
+                link rel="alternate" title="z9fr blog" type="application/rss+xml" href={"https://z9fr.xyz/blog.rss"};
+                link rel="alternate" title="z9fr blog" type="application/json" href={"https://z9fr.xyz/blog.json"};
 
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";

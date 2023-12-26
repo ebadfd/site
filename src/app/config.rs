@@ -12,6 +12,7 @@ pub struct Config {
     pub contact_links: Vec<Link>,
     #[serde(rename = "siteTitle")]
     pub site_title: String,
+    pub domain: String,
 }
 
 #[derive(Clone, Deserialize, Serialize, Default, Debug)]

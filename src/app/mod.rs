@@ -18,7 +18,7 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     let toml_str = fs::read_to_string(cfg).unwrap();
     let res_cfg: Config = toml::from_str(&toml_str).unwrap();
     let cfg: Arc<Config> = Arc::new(res_cfg);
-    let blog = crate::post::load("blog").await?;
+    let blog = crate::post::load("blog", &cfg.domain).await?;
 
     let mut everything: Vec<Post> = vec![];
 
@@ -40,18 +40,17 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     let mut sm: Vec<u8> = vec![];
     let smw = sitemap::writer::SiteMapWriter::new(&mut sm);
     let mut urlwriter = smw.start_urlset()?;
-    for url in &[
-        "https://xeiaso.net/resume",
-        "https://xeiaso.net/contact",
-        "https://xeiaso.net/",
-        "https://xeiaso.net/blog",
-        "https://xeiaso.net/signalboost",
+    for url in [
+        format!("https://{}/resume", cfg.domain),
+        format!("https://{}/contact", cfg.domain),
+        format!("https://{}/blog", cfg.domain),
+        format!("https://{}/", cfg.domain),
     ] {
-        urlwriter.url(*url)?;
+        urlwriter.url(url)?;
     }
 
     for post in &blog {
-        urlwriter.url(format!("https://xeiaso.net/{}", post.link))?;
+        urlwriter.url(format!("https://{}/{}", cfg.domain, post.link))?;
     }
 
     urlwriter.end()?;

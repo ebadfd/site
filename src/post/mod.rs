@@ -1,4 +1,3 @@
-pub mod frontmatter;
 use chrono::prelude::*;
 use color_eyre::eyre::{eyre, Result, WrapErr};
 use glob::glob;
@@ -6,6 +5,9 @@ use log::info;
 use serde::{Deserialize, Serialize};
 use std::{cmp::Ordering, path::PathBuf};
 use tokio::fs;
+
+pub mod frontmatter;
+pub mod schemaorg;
 
 #[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct Post {
@@ -39,6 +41,19 @@ impl Post {
     }
 }
 
+impl Into<schemaorg::Article> for &Post {
+    fn into(self) -> schemaorg::Article {
+        schemaorg::Article {
+            context: "https://schema.org".to_string(),
+            r#type: "Article".to_string(),
+            headline: self.front_matter.title.clone(),
+            image: format!("https://z9fr.xyz/static/img/avatar.png"),
+            url: format!("https://z9fr.xyz/{}", self.link),
+            date_published: self.date.format("%Y-%m-%d").to_string(),
+        }
+    }
+}
+
 #[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
 pub struct PostSummery {
     pub title: String,
@@ -46,7 +61,7 @@ pub struct PostSummery {
     pub link: String,
 }
 
-async fn read_post(dir: &str, fname: PathBuf) -> Result<Post> {
+async fn read_post(dir: &str, fname: PathBuf, domain: &str) -> Result<Post> {
     let file_name_as_str = fname.clone().into_os_string().into_string().unwrap();
     info!("Loading file {}", file_name_as_str);
 
@@ -67,7 +82,7 @@ async fn read_post(dir: &str, fname: PathBuf) -> Result<Post> {
     let body_html = markdown_render::render(body)
         .wrap_err_with(|| format!("can't parse markdown for {:?}", fname))?;
 
-    let date: DateTime<FixedOffset> = DateTime::<Utc>::from_utc(
+    let date: DateTime<FixedOffset> = DateTime::<Utc>::from_naive_utc_and_offset(
         NaiveDateTime::new(date, NaiveTime::from_hms_opt(0, 0, 0).unwrap()),
         Utc,
     )
@@ -87,7 +102,7 @@ async fn read_post(dir: &str, fname: PathBuf) -> Result<Post> {
     let summery = PostSummery {
         title: front_matter.title.clone(),
         summary: format!("{} minute read", read_time_estimate_minutes),
-        link: format!("https://xeiaso.net/{}", link),
+        link: format!("https://{}/{}", domain, link),
     };
 
     Ok(Post {
@@ -100,10 +115,10 @@ async fn read_post(dir: &str, fname: PathBuf) -> Result<Post> {
     })
 }
 
-pub async fn load(dir: &str) -> Result<Vec<Post>> {
+pub async fn load(dir: &str, domain: &str) -> Result<Vec<Post>> {
     let result_futs = glob(&format!("{}/*.markdown", dir))?
         .filter_map(Result::ok)
-        .map(|fname| read_post(dir, fname));
+        .map(|fname| read_post(dir, fname, domain));
 
     let mut result: Vec<Post> = futures::future::join_all(result_futs)
         .await

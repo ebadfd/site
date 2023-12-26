@@ -27,7 +27,7 @@ pub struct Frontmatter {
 }
 
 fn frontmatter_about() -> String {
-    "https://xeiaso.net/blog/api-jsonfeed-extensions#_xesite_frontmatter".to_string()
+    "https://z9fr.xyz/blog/api-jsonfeed-extensions#_z9frsite_frontmatter".to_string()
 }
 
 #[derive(Eq, PartialEq, Deserialize, Default, Debug, Serialize, Clone)]
