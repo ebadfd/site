@@ -28,3 +28,28 @@ html {
 .container {
   max-width: 50rem;
 }
+
+.yt-video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  max-width: 100%;
+  border: 1px solid #363638 !important;
+}
+
+.yt-video-container iframe,
+.yt-video-container object,
+.yt-video-container embed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+article img {
+  max-inline-size: 100%;
+  block-size: auto;
+  border: 1px solid #363638 !important;
+}

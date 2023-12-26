@@ -16,3 +16,5 @@ thiserror = "1"
 tracing = "0.1"
 url = "2"
 syntect = "5.1.0"
+
+site_templates = { path = "../site_templates" }

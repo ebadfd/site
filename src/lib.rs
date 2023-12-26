@@ -64,6 +64,7 @@ pub async fn run_server() -> Result<()> {
         .route("/health", get(healthcheck))
         .route("/metrics", get(metrics))
         .route("/", get(handlers::index))
+        .route("/stack", get(handlers::stack))
         .route("/contact", get(handlers::contact))
         // blog
         .route("/blog", get(handlers::blog::index))

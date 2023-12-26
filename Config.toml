@@ -3,7 +3,7 @@ siteTitle = "Dasith blog"
 domain = "z9fr.xyz"
 
 [defaultAuthor]
-name = "Dasith Vidanage"
+name = "z9fr"
 handle = "z9fr"
 jobTitle = "software eng"
 inSystem = true

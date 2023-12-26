@@ -56,7 +56,9 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str) -> Markup {
             .content {
                 h1 {(author.name)}
 
-                p { "I'm Devin Schulz, front-end developer with a decade's worth of pixels and code under my belt, now crafting digital experiences at Cape Privacy. Remote work veteran since 2014, minimalist in progress, dad of two, and fuelled by a never-ending stream of coffee—because what's code without a little caffeine humour "}
+                p {"I'm Dasith, Security Researcher and Hobbyist Programmer"}
+
+                p {"Software enginer at Surge.global. My main interests revolve around Computers, History, Philosophy and Anime."}
 
                 h4 { "Skills" }
                 ul {
@@ -161,7 +163,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                             " - "
                             a href="/contact" preload{ "Contact" }
                             " - "
-                            a href="/resume" preload{ "Resume" }
+                            a href="/stack" preload{ "Uses" }
                         }
 
                         blockquote {
@@ -210,6 +212,42 @@ pub fn contact(links: &Vec<Link>) -> Markup {
                         code {"Cadey~#1337"}
                         " Please note that Discord will automatically reject friend requests if you are not in a mutual server with me. I don't have control over this behavior."
                     }
+                }
+            }
+        },
+    )
+}
+
+pub fn stack() -> Markup {
+    base(
+        Some("Uses"),
+        None,
+        html! {
+            h1 {"Uses"}
+
+            ul {
+                li {
+                    "Built on " a href={"https://github.com/tokio-rs/axum"} {"axum"}
+                }
+
+                li {
+                    a href={"https://tokio.rs/"} {"tokio.rs"} " as the asynchronous runtime."
+                }
+
+                li {
+                    a href="https://hackcss.egoist.dev" {"hackcss"}; " as the css framework"
+                }
+
+                li {
+                    "Markdown rendering with " a href="https://docs.rs/comrak" {"cmark"};"."
+                }
+
+                li {
+                    a href="https://docs.rs/syntect" {"Syntect"}; " for Syntax Highlighting."
+                }
+
+                li {
+                    "Inspired by " a href="https://github.com/Xe/site" {"Xe/site"}; "."
                 }
             }
         },

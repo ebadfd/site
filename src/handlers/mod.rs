@@ -83,6 +83,12 @@ pub async fn contact(Extension(state): Extension<Arc<State>>) -> Markup {
     crate::tmpl::contact(&cfg.contact_links)
 }
 
+#[instrument]
+pub async fn stack() -> Markup {
+    HIT_COUNTER.with_label_values(&["stack"]).inc();
+    crate::tmpl::stack()
+}
+
 #[axum_macros::debug_handler]
 pub async fn resume() -> Markup {
     //tmpl::resume()

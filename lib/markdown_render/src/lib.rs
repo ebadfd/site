@@ -1,6 +1,7 @@
 use color_eyre::eyre::{Result, WrapErr};
 use comrak::{format_html_with_plugins, parse_document, Arena, ComrakOptions, ComrakPlugins};
 use lazy_static::lazy_static;
+use lol_html::{element, html_content::ContentType};
 use lol_html::{rewrite_str, RewriteStrSettings};
 use syntax_highlighter::SyntectAdapter;
 
@@ -43,7 +44,13 @@ pub fn render(input: &str) -> Result<String> {
     let html = rewrite_str(
         &html,
         RewriteStrSettings {
-            element_content_handlers: vec![],
+            element_content_handlers: vec![element!("yt-video", |el| {
+                let video_id = el
+                    .get_attribute("id")
+                    .ok_or(Error::MissingElementAttribute("id".to_string()))?;
+                el.replace(&site_templates::yt_video(video_id).0, ContentType::Html);
+                Ok(())
+            })],
             ..RewriteStrSettings::default()
         },
     )?;
