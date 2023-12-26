@@ -1,10 +1,14 @@
 use color_eyre::eyre::{Result, WrapErr};
-use comrak::plugins::syntect::SyntectAdapter;
 use comrak::{format_html_with_plugins, parse_document, Arena, ComrakOptions, ComrakPlugins};
 use lazy_static::lazy_static;
+use lol_html::{rewrite_str, RewriteStrSettings};
+use syntax_highlighter::SyntectAdapter;
+
+mod syntax_highlighter;
 
 lazy_static! {
-    static ref SYNTECT_ADAPTER: SyntectAdapter = SyntectAdapter::new("base16-mocha.dark");
+    static ref SYNTECT_ADAPTER: SyntectAdapter =
+        SyntectAdapter::new("base16-mocha.dark", "code-highlight", true);
 }
 
 #[derive(thiserror::Error, Debug, Clone)]
@@ -35,5 +39,14 @@ pub fn render(input: &str) -> Result<String> {
     format_html_with_plugins(root, &options, &mut html, &plugins).unwrap();
 
     let html = String::from_utf8(html).wrap_err("invalid UTF-8")?;
+
+    let html = rewrite_str(
+        &html,
+        RewriteStrSettings {
+            element_content_handlers: vec![],
+            ..RewriteStrSettings::default()
+        },
+    )?;
+
     Ok(html)
 }

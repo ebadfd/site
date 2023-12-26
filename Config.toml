@@ -7,6 +7,8 @@ handle = "z9fr"
 jobTitle = "software eng"
 inSystem = true
 sameAs = ["https://example.com/social1", "https://example.com/social2"]
+twitter = "sigsegvme"
+github = "z9fr"
 
 [[notableProjects]]
 url = "https://github.com/PonyvilleFM/aura"

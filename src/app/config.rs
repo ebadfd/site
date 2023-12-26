@@ -58,6 +58,8 @@ pub struct Author {
     pub in_system: bool,
     #[serde(rename = "jobTitle")]
     pub job_title: String,
+    pub twitter: String,
+    pub github: String,
     #[serde(rename = "sameAs")]
     pub same_as: Vec<String>,
     #[serde(skip_serializing_if = "Option::is_none")]

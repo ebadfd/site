@@ -639,6 +639,7 @@ dependencies = [
  "lol_html",
  "serde_json",
  "sha2",
+ "syntect",
  "thiserror",
  "tracing",
  "url",

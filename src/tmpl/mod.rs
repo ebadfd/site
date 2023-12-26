@@ -28,7 +28,7 @@ pub fn error(why: impl Render) -> Markup {
                 "You could try to "
                 a href="/" {"go home"}
                 " or "
-                a href="https://github.com/Xe/site/issues/new" {"report this issue"}
+                a href="https://github.com/z9fr/site/issues/new" {"report this issue"}
                 " so it can be fixed."
             }
         },
@@ -45,7 +45,7 @@ pub fn index(author: &Author, projects: &Vec<Link>, posts: &Vec<Post>) -> Markup
             link rel="canonical" href="https://xeiaso.net/";
 
             meta name="twitter:card" content="summary";
-            meta name="twitter:site" content="@theprincessxena";
+            meta name="twitter:site" content=(author.twitter);
             meta name="twitter:title" content=(author.name);
             meta name="twitter:description" content=(author.job_title);
             meta property="og:type" content="website";
@@ -54,39 +54,35 @@ pub fn index(author: &Author, projects: &Vec<Link>, posts: &Vec<Post>) -> Markup
             meta name="description" content=(author.job_title);
             meta name="author" content=(author.name);
 
-            .grid {
-                .cell."-9of12".content {
-                    h1 {(author.name)}
+            .content {
+                h1 {(author.name)}
 
-                    p { "I'm Devin Schulz, front-end developer with a decade's worth of pixels and code under my belt, now crafting digital experiences at Cape Privacy. Remote work veteran since 2014, minimalist in progress, dad of two, and fuelled by a never-ending stream of coffee—because what's code without a little caffeine humour "}
+                p { "I'm Devin Schulz, front-end developer with a decade's worth of pixels and code under my belt, now crafting digital experiences at Cape Privacy. Remote work veteran since 2014, minimalist in progress, dad of two, and fuelled by a never-ending stream of coffee—because what's code without a little caffeine humour "}
 
-                    h4 { "Skills" }
-                    ul {
-                        li { "Go, Lua, Haskell, C, Rust and other languages" }
-                        li { "Docker (deployment, development & more)" }
-                        li { "Mashups of data" }
-                        li { "kastermakfa" }
-                    }
+                h4 { "Skills" }
+                ul {
+                    li { "Go, Lua, Haskell, C, Rust and other languages" }
+                    li { "Docker (deployment, development & more)" }
+                    li { "Mashups of data" }
+                    li { "kastermakfa" }
+                }
 
-                    h4 { "Recent Articles" }
+                h4 { "Recent Articles" }
 
-                    ul {
-                        @for post in posts.iter().filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
-                            li {
-                                (post.detri())
-                                    " - "
-                                    a href={ @if post.front_matter.redirect_to.as_ref().is_some() {(post.front_matter.redirect_to.as_ref().unwrap())} @else {"/" (post.link)}} { (post.front_matter.title) }
-                                }
+                ul preload{
+                    @for post in posts.iter().filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
+                        li {
+                            (post.detri())
+                                " - "
+                                a href={ @if post.front_matter.redirect_to.as_ref().is_some() {(post.front_matter.redirect_to.as_ref().unwrap())} @else {"/" (post.link)}} { (post.front_matter.title) }
                             }
-                    }
+                        }
+                }
 
-                    h4 { "Quick Links" }
-                    ul {
-                        li {a href="https://github.com/Xe" rel="me" {"GitHub"}}
-                        li {a href="https://twitter.com/theprincessxena" rel="me" {"Twitter"}}
-                        li {a href="https://pony.social/@cadey" rel="me" {"Fediverse"}}
-                        li {a href="https://www.patreon.com/cadey" rel="me" {"Patreon"}}
-                    }
+                h4 { "Quick Links" }
+                ul {
+                    li {a href={"https://github.com/" (author.github)} rel="me" {"GitHub"}}
+                    li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"Twitter"}}
                 }
             }
         },
@@ -103,32 +99,51 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 title {
                     @if let Some(title) = title {
                         (title)
-                        " - Xe Iaso"
+                        " - z9fr blog"
                     } @else {
-                        "Xe Iaso"
+                        "z9fr blog"
                     }
                 }
+                meta name="viewport" content="width=device-width, initial-scale=1.0";
+                meta name="msapplication-TileColor" content="#ffffff";
+                meta name="msapplication-TileImage" content="/static/favicon/ms-icon-144x144.png";
+                meta name="theme-color" content="#ffffff";
+
+                link rel="manifest" href="/static/manifest.json";
+                link rel="alternate" title="Xe's Blog" type="application/rss+xml" href="https://xeiaso.net/blog.rss";
+                link rel="alternate" title="Xe's Blog" type="application/json" href="https://xeiaso.net/blog.json";
+
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
                 link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
 
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 link rel="manifest" href="/static/manifest.json";
+
+                script src="https://unpkg.com/htmx.org@1.9.10" integrity={"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"} crossorigin={"anonymous"} {}
+                script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
+
+                @match now.month() {
+                   //12|1|2 => {
+                   //    link rel="stylesheet" href={"/static/css/snow.css?bustCache=" (*CACHEBUSTER)};
+                  // }
+                   _ => {},
+                }
+
                 @if let Some(styles) = styles {
                     style {
                         (PreEscaped(styles))
                     }
                 }
             }
-            body.snow.hack.dark-grey {
+            body.snow.hack.dark-grey hx-ext="preload" {
                 .container {
-                    br;
                     br;
 
                     header {
                         span.logo {}
                         nav {
-                            a href="/" { "Xe" }
+                            a.logo href="/" { "z9fr." }
                         }
                     }
 
@@ -141,21 +156,19 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     hr;
                     footer {
                         nav {
-                            a href="/" { "z9fr" }
+                            a href="/" preload{ "Home" }
                             " - "
-                            a href="/blog" { "Blog" }
+                            a href="/blog" preload{ "Blog" }
                             " - "
-                            a href="/contact" { "Contact" }
+                            a href="/contact" preload{ "Contact" }
                             " - "
-                            a href="/resume" { "Resume" }
-                            " - "
-                            a href="/talks" { "Talks" }
-                            " - "
-                            a href="/signalboost" { "Signal Boost" }
+                            a href="/resume" preload{ "Resume" }
                         }
 
                         blockquote {
-                            "copy right " (now.year())
+                            small {
+                                "copy right " (now.year())
+                            }
                         }
                     }
                 }
@@ -174,7 +187,7 @@ pub fn not_found(path: impl Render) -> Markup {
                 "The path at "
                 code {(path)}
                 " could not be found. If you expected this path to exist, please "
-                a href="https://github.com/Xe/site/issues/new" {"report this issue"}
+                a href="https://github.com/z9fr/site/issues/new" {"report this issue"}
                 " so it can be fixed."
             }
         },

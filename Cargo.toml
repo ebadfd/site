@@ -32,6 +32,7 @@ http = "1.0.0"
 toml = "0.8.8"
 lazy_static = "1.4.0"
 uuid = "1.6.1"
+syntect = "5.1.0"
 
 [dependencies.tower]
 version = "0.4"

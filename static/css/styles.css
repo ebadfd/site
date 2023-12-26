@@ -13,3 +13,18 @@ html {
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace, serif;
 }
+
+.code-highlight {
+  border: 1px solid #363638 !important;
+  padding: 1em !important;
+}
+
+.logo {
+  color: white;
+  border: none;
+  font-size: 1.2em;
+}
+
+.container {
+  max-width: 50rem;
+}
