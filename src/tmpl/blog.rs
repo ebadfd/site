@@ -93,13 +93,7 @@ pub fn post(post: &Post, body: PreEscaped<&String>) -> Markup {
             //(share_button(post))
             //(twitch_vod(post))
 
-            p {
-                "This article was posted on "
-                (post.detri())
-                ". Facts and circumstances may have changed since publication. Please "
-                a href="/contact" {"contact me"}
-                " before jumping to conclusions if something seems wrong or unclear."
-            }
+            p { (post.detri_withmonth()) }
 
             @if let Some(tags) = &post.front_matter.tags {
                p {

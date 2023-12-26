@@ -33,6 +33,10 @@ impl Post {
     pub fn detri(&self) -> String {
         self.date.format("%Y-%m-%d").to_string()
     }
+
+    pub fn detri_withmonth(&self) -> String {
+        self.date.format("%B %e, %Y").to_string()
+    }
 }
 
 #[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]

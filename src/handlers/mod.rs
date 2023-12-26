@@ -60,9 +60,7 @@ pub async fn contact(Extension(state): Extension<Arc<State>>) -> Markup {
     let state = state.clone();
     let cfg = state.cfg.clone();
 
-    todo!()
-
-    //crate::tmpl::contact(&cfg.contact_links)
+    crate::tmpl::contact(&cfg.contact_links)
 }
 
 #[axum_macros::debug_handler]

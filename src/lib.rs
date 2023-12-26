@@ -53,6 +53,7 @@ pub async fn run_server() -> Result<()> {
     let app = Router::new()
         .route("/health", get(healthcheck))
         .route("/", get(handlers::index))
+        .route("/contact", get(handlers::contact))
         // blog
         .route("/blog", get(handlers::blog::index))
         .route("/blog/:name", get(handlers::blog::post_view))

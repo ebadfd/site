@@ -1,5 +1,6 @@
 use chrono::prelude::*;
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
+use serde_json::to_vec;
 
 use crate::{
     app::{Author, Link},
@@ -70,7 +71,7 @@ pub fn index(author: &Author, projects: &Vec<Link>, posts: &Vec<Post>) -> Markup
                 h4 { "Recent Articles" }
 
                 ul preload{
-                    @for post in posts.iter().filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
+                    @for post in posts.iter().take(5).filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
                         li {
                             (post.detri())
                                 " - "
@@ -175,6 +176,46 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
             }
         }
     }
+}
+
+pub fn contact(links: &Vec<Link>) -> Markup {
+    base(
+        Some("Contact Information"),
+        None,
+        html! {
+            h1 {"Contact Information"}
+
+            br;
+            br;
+
+            .grid {
+                .cell."-6of12" {
+                    h3 {"Email"}
+                    a href={"mailto:z9fr@protonmail.com"} {"z9fr@protonmail.com"}
+                    br;
+                    br;
+
+                    h3 {"Other useful links:"}
+                    ul {
+                        @for link in links {
+                            li {
+                                a target="_blank" href=(link.url) {
+                                    (link.title)
+                                }
+                            }
+                        }
+                    }
+                }
+                .cell."-6of12" {
+                    h3 {"Discord"}
+                    p {
+                        code {"Cadey~#1337"}
+                        " Please note that Discord will automatically reject friend requests if you are not in a mutual server with me. I don't have control over this behavior."
+                    }
+                }
+            }
+        },
+    )
 }
 
 pub fn not_found(path: impl Render) -> Markup {
