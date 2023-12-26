@@ -47,15 +47,11 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool) -> Markup {
             h1 { (title) }
             @if show_extra {
                 p {
-                    "If you have a compatible reader, be sure to check out my "
+                    "If you have a compatible reader, be sure to check out the "
                     a href="/blog.rss" { "RSS feed" }
-                    " for automatic updates. Also check out the "
+                    " for automatic updates.
+                        Also check out the "
                     a href="/blog.json" { "JSONFeed" }
-                    "."
-                }
-                p {
-                    "For a breakdown by post series, see "
-                    a href="/blog/series" { "here" }
                     "."
                 }
             }

@@ -54,19 +54,9 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str) -> Markup {
             meta name="author" content=(author.name);
 
             .content {
-                h1 {(author.name)}
-
                 p {"I'm Dasith, Security Researcher and Hobbyist Programmer"}
 
                 p {"Software enginer at Surge.global. My main interests revolve around Computers, History, Philosophy and Anime."}
-
-                h4 { "Skills" }
-                ul {
-                    li { "Go, Lua, Haskell, C, Rust and other languages" }
-                    li { "Docker (deployment, development & more)" }
-                    li { "Mashups of data" }
-                    li { "kastermakfa" }
-                }
 
                 h4 { "Recent Articles" }
 
@@ -142,9 +132,8 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     br;
 
                     header {
-                        span.logo {}
                         nav {
-                            a.logo href="/" { "z9fr." }
+                            a.logo href="/" { "> z9fr@blog:~$" }
                         }
                     }
 

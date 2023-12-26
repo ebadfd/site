@@ -27,7 +27,7 @@ I cant honestly tell if the INE training is good because I didn't cover the whol
 
 for the most part, I used try hack me. thm is like my go-to platform to learn cybersecurity-related things. so if you haven't heard about or used try hack me before I would highly recommend that. also, I have a blog post about tryhackme you can even read about that to get more ideas about the platform
 
-[secret-to-hack](/post/secret-to-hack/)
+[secret-to-hack](/blog/secret-to-hack/)
 
 ## What was my exam experience
 
@@ -86,9 +86,6 @@ overall I would say the exam is fine; its, not the most fun exam out there but y
 and if you are a beginner I would definitely recommend this certification mainly because its easy and the exam will train you for that penetration tester mindset. and also it doesn't have much stress.
 
 ![](https://elearnsecurity.com/wp-content/uploads/ejptnew2.jpg)
-![](https://www.w3schools.com/howto/img_nature_wide.jpg)
-![](https://s2.bunnycdn.ru/assets/t1/s1/imagesv3/bg-index-top1.png)
-![](https://s2.bunnycdn.ru/assets/t1/s1/imagesv3/bg-index2.jpg)
 
 ## Final words
 

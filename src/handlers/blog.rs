@@ -21,7 +21,7 @@ lazy_static! {
 #[instrument(skip(state))]
 pub async fn index(Extension(state): Extension<Arc<State>>) -> Result<Markup> {
     let state = state.clone();
-    let result = tmpl::blog::post_index(&state.blog, "Blogposts", true);
+    let result = tmpl::blog::post_index(&state.blog, "Blog Posts", true);
     Ok(result)
 }
 

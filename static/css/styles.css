@@ -25,6 +25,40 @@ html {
   font-size: 1.2em;
 }
 
+.logo::after {
+  content: "|";
+  -webkit-animation: cursor 1s infinite;
+  animation: cursor 1s infinite;
+}
+
+@-webkit-keyframes cursor {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes cursor {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
 .container {
   max-width: 50rem;
 }
