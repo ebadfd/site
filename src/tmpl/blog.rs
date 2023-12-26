@@ -38,13 +38,6 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
     }
 }
 
-/*
-*
-                           div  {
-                               a.logo href="/" hx-push-url="/" { "> z9fr@blog:~$" }
-                           }
-                           */
-
 pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: bool) -> Markup {
     let today = Utc::now().date_naive();
 
