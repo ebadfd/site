@@ -109,6 +109,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
                 link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
+                link rel="stylesheet" href={"/static/css/progress-bar.css?bustCache=" (*CACHEBUSTER)};
 
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 link rel="manifest" href="/static/manifest.json";
@@ -129,13 +130,20 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     }
                 }
             }
-            body.snow.hack.dark-grey hx-ext="preload" {
+
+            div.progress style="height: 2px;"{
+                div.indeterminate style="background-color: #ff2e88;"{}
+            }
+
+            body.snow.hack.dark-grey hx-ext="preload" hx-indicator=".progress" {
                 .container {
                     br;
 
                     header {
                         nav {
-                            a.logo href="/" { "> z9fr@blog:~$" }
+                            div hx-boost="true"  hx-push-url="true"  hx-swap="innerHTML" hx-target=".snowframe" {
+                                a.logo href="/" { "> z9fr@blog:~$" }
+                            }
                         }
                     }
 
@@ -147,13 +155,13 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     }
                     hr;
                     footer {
-                        div hx-boost="true"  hx-push-url="true"  hx-swap="innerHTML" hx-target=".content" {
+                        div hx-boost="true"  hx-push-url="true"  hx-swap="innerHTML" hx-target=".snowframe" {
                             nav {
                                 a href="/" preload{ "Home" }
                                 " - "
                                 a href="/blog" preload{ "Blog" }
                                 " - "
-                                a  href="/contact"  preload  hx-get="/contact"  { "Contact" }
+                                a  href="/contact"  preload { "Contact" }
                                 " - "
                                 a href="/stack" preload{ "Uses" }
                             }
@@ -215,33 +223,31 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
 
 pub fn stack(is_partial: bool) -> Markup {
     let markup = html! {
-        .content {
-            h1 {"Uses"}
-            ul {
-                li {
-                    "Built on " a href={"https://github.com/tokio-rs/axum"} {"axum"}
-                }
+         h1 {"Uses"}
+         ul {
+             li {
+                 "Built on " a href={"https://github.com/tokio-rs/axum"} {"axum"}
+             }
 
-                li {
-                    a href={"https://tokio.rs/"} {"tokio.rs"} " as the asynchronous runtime."
-                }
+             li {
+                 a href={"https://tokio.rs/"} {"tokio.rs"} " as the asynchronous runtime."
+             }
 
-                li {
-                    a href="https://hackcss.egoist.dev" {"hackcss"}; " as the css framework"
-                }
+             li {
+                 a href="https://hackcss.egoist.dev" {"hackcss"}; " as the css framework"
+             }
 
-                li {
-                    "Markdown rendering with " a href="https://docs.rs/comrak" {"cmark"};"."
-                }
+             li {
+                 "Markdown rendering with " a href="https://docs.rs/comrak" {"cmark"};"."
+             }
 
-                li {
-                    a href="https://docs.rs/syntect" {"Syntect"}; " for Syntax Highlighting."
-                }
+             li {
+                 a href="https://docs.rs/syntect" {"Syntect"}; " for Syntax Highlighting."
+             }
 
-                li {
-                    "Inspired by " a href="https://github.com/Xe/site" {"Xe/site"}; "."
-                }
-            }
+             li {
+                 "Inspired by " a href="https://github.com/Xe/site" {"Xe/site"}; "."
+             }
         }
     };
 

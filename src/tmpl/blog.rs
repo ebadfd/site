@@ -82,35 +82,35 @@ pub fn post(
 ) -> Markup {
     let markup = html! {
         (post_metadata(post, author, domain))
-        article {
-            h1 {(post.front_matter.title)}
+         article {
+             h1 {(post.front_matter.title)}
 
-            // (nag::prerelease(post))
+             // (nag::prerelease(post))
 
-            small {
-                "Published on " (post.detri()) ", " (post.read_time_estimate_minutes) " minutes to read"
+             small {
+                 "Published on " (post.detri()) ", " (post.read_time_estimate_minutes) " minutes to read"
+             }
+
+             div {
+                 (body)
+             }
+         }
+
+         hr;
+
+         //(share_button(post))
+         //(twitch_vod(post))
+
+         p { (post.detri_withmonth()) }
+
+         @if let Some(tags) = &post.front_matter.tags {
+            p {
+                "Tags: "
+                    @for tag in tags {
+                        code {(tag)}
+                        " "
+                    }
             }
-
-            div {
-                (body)
-            }
-        }
-
-        hr;
-
-        //(share_button(post))
-        //(twitch_vod(post))
-
-        p { (post.detri_withmonth()) }
-
-        @if let Some(tags) = &post.front_matter.tags {
-           p {
-               "Tags: "
-                @for tag in tags {
-                    code {(tag)}
-                    " "
-                }
-           }
         }
     };
     return if is_partial {
