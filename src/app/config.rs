@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 pub struct Config {
     #[serde(rename = "defaultAuthor")]
     pub default_author: Author,
-    pub port: u16,
     #[serde(rename = "notableProjects")]
     pub notable_projects: Vec<Link>,
     #[serde(rename = "contactLinks")]
