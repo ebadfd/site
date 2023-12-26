@@ -4,6 +4,7 @@ use axum::{
     http::header::{self, CONTENT_TYPE},
     response::Response,
     routing::get,
+    routing::get_service,
     Router,
 };
 use color_eyre::eyre::Result;
@@ -16,7 +17,11 @@ use std::{
     str::FromStr,
     sync::Arc,
 };
-use tower_http::{cors::CorsLayer, services::ServeDir, set_header::SetResponseHeaderLayer};
+use tower_http::{
+    cors::CorsLayer,
+    services::{ServeDir, ServeFile},
+    set_header::SetResponseHeaderLayer,
+};
 
 pub mod app;
 pub mod handlers;
@@ -61,9 +66,9 @@ pub async fn run_server() -> Result<()> {
         .layer(CorsLayer::permissive());
 
     let app = Router::new()
+        .route("/", get(handlers::index))
         .route("/health", get(healthcheck))
         .route("/metrics", get(metrics))
-        .route("/", get(handlers::index))
         .route("/stack", get(handlers::stack))
         .route("/contact", get(handlers::contact))
         // blog
@@ -73,6 +78,10 @@ pub async fn run_server() -> Result<()> {
         .route("/blog.rss", get(handlers::feed::rss))
         .route("/blog.atom", get(handlers::feed::atom))
         // static files
+        .route(
+            "/robots.txt",
+            get_service(ServeFile::new("./static/robots.txt")),
+        )
         .nest_service("/static", files)
         .fallback(handlers::not_found)
         .layer(middleware);

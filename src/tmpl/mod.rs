@@ -198,7 +198,7 @@ pub fn contact(links: &Vec<Link>) -> Markup {
                 .cell."-6of12" {
                     h3 {"Discord"}
                     p {
-                        code {"Cadey~#1337"}
+                        code {"z9fr"}
                         " Please note that Discord will automatically reject friend requests if you are not in a mutual server with me. I don't have control over this behavior."
                     }
                 }

@@ -1,26 +1,26 @@
-siteTitle = "Dasith blog"
+siteTitle = "z9fr blog"
 domain = "z9fr.xyz"
 
 [defaultAuthor]
 name = "z9fr"
 handle = "z9fr"
-jobTitle = "software eng"
+jobTitle = "Software Engineer"
 inSystem = true
-sameAs = ["https://example.com/social1", "https://example.com/social2"]
+sameAs = ["https://twitter.com/sigsegvme", "https://github.com/z9fr"]
 twitter = "sigsegvme"
 github = "z9fr"
 
 [[notableProjects]]
-url = "https://github.com/PonyvilleFM/aura"
-title = "Aura"
-description = "PonyvilleFM live DJ recording bot"
+url = "https://github.com/z9fr/site"
+title = "site"
+description = "Personal blog"
 
 [[contactLinks]]
-url = "https://example1.com"
-title = "Example 1"
-description = "Description for Example 1"
+url = "https://twitter.com/sigsegvme"
+title = "Twitter"
+description = "Twitter profile"
 
 [[contactLinks]]
-url = "https://github.com/Xe"
+url = "https://github.com/z9fr"
 title = "GitHub"
-description = "Description for Example 2"
+description = "Github profile"
