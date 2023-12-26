@@ -38,12 +38,10 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
     }
 }
 
-pub fn post_index(posts: &[Post], title: &str, show_extra: bool) -> Markup {
+pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: bool) -> Markup {
     let today = Utc::now().date_naive();
-    base(
-        Some(title),
-        None,
-        html! {
+    let markup = html! {
+        .content {
             h1 { (title) }
             @if show_extra {
                 p {
@@ -66,46 +64,58 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool) -> Markup {
                     }
                 }
             }
-        },
-    )
+        }
+    };
+    return if is_partial {
+        markup
+    } else {
+        base(Some(title), None, markup)
+    };
 }
 
-pub fn post(post: &Post, body: PreEscaped<&String>, author: &Author, domain: &str) -> Markup {
-    base(
-        Some(&post.front_matter.title),
-        None,
-        html! {
-            (post_metadata(post, author, domain))
-            article {
-                h1 {(post.front_matter.title)}
+pub fn post(
+    post: &Post,
+    body: PreEscaped<&String>,
+    author: &Author,
+    domain: &str,
+    is_partial: bool,
+) -> Markup {
+    let markup = html! {
+        (post_metadata(post, author, domain))
+        article {
+            h1 {(post.front_matter.title)}
 
-                // (nag::prerelease(post))
+            // (nag::prerelease(post))
 
-                small {
-                    "Published on " (post.detri()) ", " (post.read_time_estimate_minutes) " minutes to read"
-                }
-
-                div {
-                    (body)
-                }
+            small {
+                "Published on " (post.detri()) ", " (post.read_time_estimate_minutes) " minutes to read"
             }
 
-            hr;
-
-            //(share_button(post))
-            //(twitch_vod(post))
-
-            p { (post.detri_withmonth()) }
-
-            @if let Some(tags) = &post.front_matter.tags {
-               p {
-                   "Tags: "
-                    @for tag in tags {
-                        code {(tag)}
-                        " "
-                    }
-               }
+            div {
+                (body)
             }
-        },
-    )
+        }
+
+        hr;
+
+        //(share_button(post))
+        //(twitch_vod(post))
+
+        p { (post.detri_withmonth()) }
+
+        @if let Some(tags) = &post.front_matter.tags {
+           p {
+               "Tags: "
+                @for tag in tags {
+                    code {(tag)}
+                    " "
+                }
+           }
+        }
+    };
+    return if is_partial {
+        markup
+    } else {
+        base(Some(&post.front_matter.title), None, markup)
+    };
 }

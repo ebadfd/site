@@ -1,8 +1,8 @@
-use super::Result;
+use super::{is_htmx_request, Result};
 use crate::{app::State, post::Post, tmpl};
 use axum::{
     extract::{Extension, Path},
-    http::StatusCode,
+    http::{HeaderMap, StatusCode},
 };
 use lazy_static::lazy_static;
 use maud::Markup;
@@ -18,17 +18,18 @@ lazy_static! {
     .unwrap();
 }
 
-#[instrument(skip(state))]
-pub async fn index(Extension(state): Extension<Arc<State>>) -> Result<Markup> {
+#[instrument(skip(state, headers))]
+pub async fn index(Extension(state): Extension<Arc<State>>, headers: HeaderMap) -> Result<Markup> {
     let state = state.clone();
-    let result = tmpl::blog::post_index(&state.blog, "Blog Posts", true);
+    let result = tmpl::blog::post_index(&state.blog, "Blog Posts", true, is_htmx_request(headers));
     Ok(result)
 }
 
-#[instrument(skip(state))]
+#[instrument(skip(state, headers))]
 pub async fn post_view(
     Path(name): Path<String>,
     Extension(state): Extension<Arc<State>>,
+    headers: HeaderMap,
 ) -> Result<(StatusCode, Markup)> {
     let mut want: Option<&Post> = None;
     let want_link = format!("blog/{}", name);
@@ -48,7 +49,13 @@ pub async fn post_view(
             let body = maud::PreEscaped(&post.body_html);
             Ok((
                 StatusCode::OK,
-                tmpl::blog::post(post, body, &state.cfg.default_author, &state.cfg.domain),
+                tmpl::blog::post(
+                    post,
+                    body,
+                    &state.cfg.default_author,
+                    &state.cfg.domain,
+                    is_htmx_request(headers),
+                ),
             ))
         }
     }
