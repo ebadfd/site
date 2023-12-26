@@ -135,14 +135,16 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 div.indeterminate style="background-color: #ff2e88;"{}
             }
 
+            input name="bustCache" value={(*CACHEBUSTER)} type="hidden" {}
+
             body.snow.hack.dark-grey hx-ext="preload" hx-indicator=".progress" {
                 .container {
                     br;
 
                     header {
                         nav {
-                            div hx-boost="true"  hx-push-url="true"  hx-swap="innerHTML" hx-target=".snowframe" {
-                                a.logo href="/" { "> z9fr@blog:~$" }
+                            div hx-boost="true" hx-swap="innerHTML" hx-target=".snowframe" hx-include="[name='bustCache']" {
+                                a.logo href="/" hx-push-url="/" { "> z9fr@blog:~$" }
                             }
                         }
                     }
@@ -155,15 +157,15 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     }
                     hr;
                     footer {
-                        div hx-boost="true"  hx-push-url="true"  hx-swap="innerHTML" hx-target=".snowframe" {
+                        div hx-boost="true" hx-include="[name='bustCache']" hx-swap="innerHTML" hx-target=".snowframe" {
                             nav {
-                                a href="/" preload{ "Home" }
+                                a href="/" hx-push-url="/" { "Home" }
                                 " - "
-                                a href="/blog" preload{ "Blog" }
+                                a href="/blog" hx-push-url="/blog" { "Blog" }
                                 " - "
-                                a  href="/contact"  preload { "Contact" }
+                                a  href="/contact" hx-push-url="/contact" { "Contact" }
                                 " - "
-                                a href="/stack" preload{ "Uses" }
+                                a href="/stack" hx-push-url="/stack" { "Uses" }
                             }
                         }
 
@@ -179,6 +181,12 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
     }
 }
 
+pub fn email_address() -> Markup {
+    return html!(
+        a href={"mailto:z9fr@protonmail.com"} {"z9fr@protonmail.com"}
+    );
+}
+
 pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
     let markup = html! {
         h1 {"Contact Information"}
@@ -189,7 +197,11 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
         .grid {
             .cell."-6of12" {
                 h3 {"Email"}
-                a href={"mailto:z9fr@protonmail.com"} {"z9fr@protonmail.com"}
+
+                button."btn btn-default btn-ghost" hx-indicator="#spinner" hx-post="/email" hx-swap="outerHTML" {
+                    "View email address"  span.loading id="spinner" style="display:none;"{}
+                };
+
                 br;
                 br;
 

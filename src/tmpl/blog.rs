@@ -40,6 +40,15 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
 
 pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: bool) -> Markup {
     let today = Utc::now().date_naive();
+
+    fn post_url(post: &Post) -> String {
+        if let Some(redirect_to) = &post.front_matter.redirect_to {
+            redirect_to.clone()
+        } else {
+            "/".to_string() + &post.link
+        }
+    }
+
     let markup = html! {
         .content {
             h1 { (title) }
@@ -54,12 +63,12 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: boo
                 }
             }
             p {
-                ul {
+                ul hx-boost="true" hx-swap="innerHTML" hx-target=".snowframe" hx-include="[name='bustCache']"{
                     @for post in posts.iter().filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
                         li {
                             (post.detri())
                             " - "
-                                a href={ @if post.front_matter.redirect_to.as_ref().is_some() {(post.front_matter.redirect_to.as_ref().unwrap())} @else {"/" (post.link)}} { (post.front_matter.title) }
+                                a href={(post_url(post))} hx-push-url={(post_url(post))} { (post.front_matter.title) }
                         }
                     }
                 }

@@ -3,8 +3,8 @@ use axum::{
     extract::Extension,
     http::header::{self, CONTENT_TYPE},
     response::Response,
-    routing::get,
     routing::get_service,
+    routing::{get, post},
     Router,
 };
 use color_eyre::eyre::Result;
@@ -71,6 +71,7 @@ pub async fn run_server() -> Result<()> {
         .route("/metrics", get(metrics))
         .route("/stack", get(handlers::stack))
         .route("/contact", get(handlers::contact))
+        .route("/email", post(handlers::email_address))
         // blog
         .route("/blog", get(handlers::blog::index))
         .route("/blog/:name", get(handlers::blog::post_view))
