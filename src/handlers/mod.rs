@@ -2,7 +2,7 @@ use crate::{app::State, tmpl};
 use axum::{
     body,
     extract::Extension,
-    http::StatusCode,
+    http::{HeaderMap, StatusCode},
     response::{Html, IntoResponse, Response},
 };
 use chrono::{Datelike, Timelike, Utc, Weekday};
@@ -46,6 +46,14 @@ fn month_to_name(m: u32) -> &'static str {
     }
 }
 
+fn is_htmx_request(headers: HeaderMap) -> bool {
+    if let Some(_hx_request) = headers.get("Hx-Request") {
+        true
+    } else {
+        false
+    }
+}
+
 lazy_static! {
     pub static ref HIT_COUNTER: IntCounterVec =
         register_int_counter_vec!(opts!("hits", "Number of hits to various pages"), &["page"])
@@ -65,28 +73,32 @@ lazy_static! {
     };
 }
 
-#[instrument(skip(state))]
-pub async fn index(Extension(state): Extension<Arc<State>>) -> Result<Markup> {
+#[instrument(skip(state, headers))]
+pub async fn index(Extension(state): Extension<Arc<State>>, headers: HeaderMap) -> Result<Markup> {
     HIT_COUNTER.with_label_values(&["index"]).inc();
     let state = state.clone();
     let cfg = state.cfg.clone();
 
-    Ok(tmpl::index(&cfg.default_author, &state.blog, &cfg.domain))
+    Ok(tmpl::index(
+        &cfg.default_author,
+        &state.blog,
+        &cfg.domain,
+        is_htmx_request(headers),
+    ))
 }
 
-#[instrument(skip(state))]
-pub async fn contact(Extension(state): Extension<Arc<State>>) -> Markup {
+#[instrument(skip(state, headers))]
+pub async fn contact(Extension(state): Extension<Arc<State>>, headers: HeaderMap) -> Markup {
     HIT_COUNTER.with_label_values(&["contact"]).inc();
     let state = state.clone();
     let cfg = state.cfg.clone();
-
-    crate::tmpl::contact(&cfg.contact_links)
+    crate::tmpl::contact(&cfg.contact_links, is_htmx_request(headers))
 }
 
-#[instrument]
-pub async fn stack() -> Markup {
+#[instrument(skip(headers))]
+pub async fn stack(headers: HeaderMap) -> Markup {
     HIT_COUNTER.with_label_values(&["stack"]).inc();
-    crate::tmpl::stack()
+    crate::tmpl::stack(is_htmx_request(headers))
 }
 
 #[axum_macros::debug_handler]

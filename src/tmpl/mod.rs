@@ -35,49 +35,51 @@ pub fn error(why: impl Render) -> Markup {
     )
 }
 
-pub fn index(author: &Author, posts: &Vec<Post>, domain: &str) -> Markup {
+pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool) -> Markup {
     let today = Utc::now().date_naive();
-    base(
-        None,
-        None,
-        html! {
-            link rel="canonical" href={"https://"(domain)"/"};
+    let markup = html! {
+        link rel="canonical" href={"https://"(domain)"/"};
 
-            meta name="twitter:card" content="summary";
-            meta name="twitter:site" content=(author.twitter);
-            meta name="twitter:title" content=(author.name);
-            meta name="twitter:description" content=(author.job_title);
-            meta property="og:type" content="website";
-            meta property="og:title" content=(author.name);
-            meta property="og:site_name" content=(author.job_title);
-            meta name="description" content=(author.job_title);
-            meta name="author" content=(author.name);
+        meta name="twitter:card" content="summary";
+        meta name="twitter:site" content=(author.twitter);
+        meta name="twitter:title" content=(author.name);
+        meta name="twitter:description" content=(author.job_title);
+        meta property="og:type" content="website";
+        meta property="og:title" content=(author.name);
+        meta property="og:site_name" content=(author.job_title);
+        meta name="description" content=(author.job_title);
+        meta name="author" content=(author.name);
 
-            .content {
-                p {"I'm Dasith, Security Researcher and Hobbyist Programmer"}
+        .content {
+            p {"I'm Dasith, Security Researcher and Hobbyist Programmer"}
 
-                p {"Software enginer at Surge.global. My main interests revolve around Computers, History, Philosophy and Anime."}
+            p {"Software enginer at Surge.global. My main interests revolve around Computers, History, Philosophy and Anime."}
 
-                h4 { "Recent Articles" }
+            h4 { "Recent Articles" }
 
-                ul preload{
-                    @for post in posts.iter().take(5).filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
-                        li {
-                            (post.detri())
-                                " - "
-                                a href={ @if post.front_matter.redirect_to.as_ref().is_some() {(post.front_matter.redirect_to.as_ref().unwrap())} @else {"/" (post.link)}} { (post.front_matter.title) }
-                            }
+            ul preload{
+                @for post in posts.iter().take(5).filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
+                    li {
+                        (post.detri())
+                            " - "
+                            a href={ @if post.front_matter.redirect_to.as_ref().is_some() {(post.front_matter.redirect_to.as_ref().unwrap())} @else {"/" (post.link)}} { (post.front_matter.title) }
                         }
-                }
-
-                h4 { "Quick Links" }
-                ul {
-                    li {a href={"https://github.com/" (author.github)} rel="me" {"GitHub"}}
-                    li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"Twitter"}}
-                }
+                    }
             }
-        },
-    )
+
+            h4 { "Quick Links" }
+            ul {
+                li {a href={"https://github.com/" (author.github)} rel="me" {"GitHub"}}
+                li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"Twitter"}}
+            }
+        }
+    };
+
+    return if is_partial {
+        markup
+    } else {
+        base(None, None, markup)
+    };
 }
 
 pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Markup {
@@ -107,6 +109,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
                 link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
+                link rel="stylesheet" href={"/static/css/progress-bar.css?bustCache=" (*CACHEBUSTER)};
 
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
                 link rel="manifest" href="/static/manifest.json";
@@ -127,13 +130,20 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     }
                 }
             }
-            body.snow.hack.dark-grey hx-ext="preload" {
+
+            div.progress style="height: 2px;"{
+                div.indeterminate style="background-color: #ff2e88;"{}
+            }
+
+            body.snow.hack.dark-grey hx-ext="preload" hx-indicator=".progress" {
                 .container {
                     br;
 
                     header {
                         nav {
-                            a.logo href="/" { "> z9fr@blog:~$" }
+                            div hx-boost="true"  hx-push-url="true"  hx-swap="innerHTML" hx-target=".snowframe" {
+                                a.logo href="/" { "> z9fr@blog:~$" }
+                            }
                         }
                     }
 
@@ -145,14 +155,16 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     }
                     hr;
                     footer {
-                        nav {
-                            a href="/" preload{ "Home" }
-                            " - "
-                            a href="/blog" preload{ "Blog" }
-                            " - "
-                            a href="/contact" preload{ "Contact" }
-                            " - "
-                            a href="/stack" preload{ "Uses" }
+                        div hx-boost="true"  hx-push-url="true"  hx-swap="innerHTML" hx-target=".snowframe" {
+                            nav {
+                                a href="/" preload{ "Home" }
+                                " - "
+                                a href="/blog" preload{ "Blog" }
+                                " - "
+                                a  href="/contact"  preload { "Contact" }
+                                " - "
+                                a href="/stack" preload{ "Uses" }
+                            }
                         }
 
                         blockquote {
@@ -167,80 +179,83 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
     }
 }
 
-pub fn contact(links: &Vec<Link>) -> Markup {
-    base(
-        Some("Contact Information"),
-        None,
-        html! {
-            h1 {"Contact Information"}
+pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
+    let markup = html! {
+        h1 {"Contact Information"}
 
-            br;
-            br;
+        br;
+        br;
 
-            .grid {
-                .cell."-6of12" {
-                    h3 {"Email"}
-                    a href={"mailto:z9fr@protonmail.com"} {"z9fr@protonmail.com"}
-                    br;
-                    br;
+        .grid {
+            .cell."-6of12" {
+                h3 {"Email"}
+                a href={"mailto:z9fr@protonmail.com"} {"z9fr@protonmail.com"}
+                br;
+                br;
 
-                    h3 {"Other useful links:"}
-                    ul {
-                        @for link in links {
-                            li {
-                                a target="_blank" href=(link.url) {
-                                    (link.title)
-                                }
+                h3 {"Other useful links:"}
+                ul {
+                    @for link in links {
+                        li {
+                            a target="_blank" href=(link.url) {
+                                (link.title)
                             }
                         }
                     }
                 }
-                .cell."-6of12" {
-                    h3 {"Discord"}
-                    p {
-                        code {"z9fr"}
-                        " Please note that Discord will automatically reject friend requests if you are not in a mutual server with me. I don't have control over this behavior."
-                    }
+            }
+            .cell."-6of12" {
+                h3 {"Discord"}
+                p {
+                    code {"z9fr"}
+                    " Please note that Discord will automatically reject friend requests if you are not in a mutual server with me. I don't have control over this behavior."
                 }
             }
-        },
-    )
+        }
+    };
+
+    return if is_partial {
+        markup
+    } else {
+        base(Some("Contact Information"), None, markup)
+    };
 }
 
-pub fn stack() -> Markup {
-    base(
-        Some("Uses"),
-        None,
-        html! {
-            h1 {"Uses"}
+pub fn stack(is_partial: bool) -> Markup {
+    let markup = html! {
+         h1 {"Uses"}
+         ul {
+             li {
+                 "Built on " a href={"https://github.com/tokio-rs/axum"} {"axum"}
+             }
 
-            ul {
-                li {
-                    "Built on " a href={"https://github.com/tokio-rs/axum"} {"axum"}
-                }
+             li {
+                 a href={"https://tokio.rs/"} {"tokio.rs"} " as the asynchronous runtime."
+             }
 
-                li {
-                    a href={"https://tokio.rs/"} {"tokio.rs"} " as the asynchronous runtime."
-                }
+             li {
+                 a href="https://hackcss.egoist.dev" {"hackcss"}; " as the css framework"
+             }
 
-                li {
-                    a href="https://hackcss.egoist.dev" {"hackcss"}; " as the css framework"
-                }
+             li {
+                 "Markdown rendering with " a href="https://docs.rs/comrak" {"cmark"};"."
+             }
 
-                li {
-                    "Markdown rendering with " a href="https://docs.rs/comrak" {"cmark"};"."
-                }
+             li {
+                 a href="https://docs.rs/syntect" {"Syntect"}; " for Syntax Highlighting."
+             }
 
-                li {
-                    a href="https://docs.rs/syntect" {"Syntect"}; " for Syntax Highlighting."
-                }
+             li {
+                 "Inspired by " a href="https://github.com/Xe/site" {"Xe/site"}; "."
+             }
+        }
+    };
 
-                li {
-                    "Inspired by " a href="https://github.com/Xe/site" {"Xe/site"}; "."
-                }
-            }
-        },
-    )
+    return if is_partial {
+        markup
+    } else {
+        base(Some("Uses"), None, markup)
+    };
 }
 
 pub fn not_found(path: impl Render) -> Markup {
