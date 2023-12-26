@@ -95,6 +95,12 @@ pub async fn contact(Extension(state): Extension<Arc<State>>, headers: HeaderMap
     crate::tmpl::contact(&cfg.contact_links, is_htmx_request(headers))
 }
 
+#[instrument]
+pub async fn email_address() -> Markup {
+    HIT_COUNTER.with_label_values(&["email_view"]).inc();
+    crate::tmpl::email_address()
+}
+
 #[instrument(skip(headers))]
 pub async fn stack(headers: HeaderMap) -> Markup {
     HIT_COUNTER.with_label_values(&["stack"]).inc();
