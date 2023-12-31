@@ -98,21 +98,31 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                     }
                 }
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
+
                 meta name="msapplication-TileColor" content="#ffffff";
-                meta name="msapplication-TileImage" content="/static/favicon/ms-icon-144x144.png";
-                meta name="theme-color" content="#ffffff";
+                meta name="msapplication-config" content="/static/favicon/browserconfig.xml";
+                meta name="theme-color" content="#181818";
+
+                meta name="apple-mobile-web-app-title" content="z9fr blog";
+                meta name="application-name" content="z9fr blog";
 
                 link rel="manifest" href="/static/manifest.json";
                 link rel="alternate" title="z9fr blog" type="application/rss+xml" href={"https://z9fr.xyz/blog.rss"};
                 link rel="alternate" title="z9fr blog" type="application/json" href={"https://z9fr.xyz/blog.json"};
 
+                link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png";
+                link rel="mask-icon" href="/static/favicon/safari-pinned-tab.svg" color="#181818";
+                link rel="shortcut icon" href="/static/favicon/favicon.ico";
+
+                link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png";
+                link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png";
+
+                // link rel="icon" href="/static/favicon/favicon.svg" type="image/svg+xml";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
+
                 link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
                 link rel="stylesheet" href={"/static/css/progress-bar.css?bustCache=" (*CACHEBUSTER)};
-
-                meta name="viewport" content="width=device-width, initial-scale=1.0";
-                link rel="manifest" href="/static/manifest.json";
 
                 script src="https://unpkg.com/htmx.org@1.9.10" integrity={"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"} crossorigin={"anonymous"} {}
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};

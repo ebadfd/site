@@ -18,6 +18,7 @@ use std::{
     sync::Arc,
 };
 use tower_http::{
+    compression::{CompressionLayer, DefaultPredicate},
     cors::CorsLayer,
     services::{ServeDir, ServeFile},
     set_header::SetResponseHeaderLayer,
@@ -40,6 +41,12 @@ fn cache_header(_: &Response) -> Option<header::HeaderValue> {
     ))
 }
 
+fn csp_header(_: &Response) -> Option<header::HeaderValue> {
+    Some(header::HeaderValue::from_static(
+        "base-uri 'self'; default-src 'self' https://cdnjs.cloudflare.com https://unpkg.com/; report-uri https://z9fr.report-uri.com/r/d/csp/wizard; object-src 'none'"
+    ))
+}
+
 pub async fn run_server() -> Result<()> {
     dotenv().ok();
     color_eyre::install()?;
@@ -55,6 +62,13 @@ pub async fn run_server() -> Result<()> {
         .await?,
     );
 
+    let comression_layer: CompressionLayer = CompressionLayer::new()
+        .br(true)
+        .deflate(true)
+        .gzip(true)
+        .zstd(true)
+        .compress_when(DefaultPredicate::new());
+
     let files = ServeDir::new("static");
 
     let middleware = tower::ServiceBuilder::new()
@@ -62,6 +76,10 @@ pub async fn run_server() -> Result<()> {
         .layer(SetResponseHeaderLayer::overriding(
             header::CACHE_CONTROL,
             cache_header,
+        ))
+        .layer(SetResponseHeaderLayer::overriding(
+            header::CONTENT_SECURITY_POLICY_REPORT_ONLY,
+            csp_header,
         ))
         .layer(CorsLayer::permissive());
 
@@ -85,6 +103,7 @@ pub async fn run_server() -> Result<()> {
         )
         .nest_service("/static", files)
         .fallback(handlers::not_found)
+        .layer(comression_layer)
         .layer(middleware);
 
     let addr: SocketAddr = (
