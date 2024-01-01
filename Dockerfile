@@ -22,7 +22,7 @@ RUN mv ./target/release/standalone ./app
 FROM debian:stable-slim AS runtime
 
 RUN apt-get update && apt install -y openssl ca-certificates
-RUN sudo update-ca-certificates
+RUN update-ca-certificates
 
 WORKDIR /app
 COPY --from=builder /app/app /usr/local/bin/
