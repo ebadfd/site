@@ -21,6 +21,8 @@ RUN mv ./target/release/standalone ./app
 
 FROM debian:stable-slim AS runtime
 
+RUN apt-get update && apt install -y openssl
+
 WORKDIR /app
 COPY --from=builder /app/app /usr/local/bin/
 COPY --from=builder /app/Config.toml /app/Config.toml
