@@ -4,7 +4,9 @@ use axum::{
     extract::Extension,
     http::{HeaderMap, StatusCode},
     response::{Html, IntoResponse, Response},
+    Form,
 };
+use cf_turnstile::{SiteVerifyRequest, TurnstileClient};
 use chrono::{Datelike, Timelike, Utc, Weekday};
 use lazy_static::lazy_static;
 use maud::Markup;
@@ -14,6 +16,12 @@ use tracing::instrument;
 
 pub mod blog;
 pub mod feed;
+
+#[derive(Debug, serde::Deserialize)]
+pub struct CFTurnstileParams {
+    #[serde(rename = "cf-turnstile-response")]
+    pub cf_turnstile_response: String,
+}
 
 fn weekday_to_name(w: Weekday) -> &'static str {
     use Weekday::*;
@@ -55,6 +63,12 @@ fn is_htmx_request(headers: HeaderMap) -> bool {
 }
 
 lazy_static! {
+    static ref TURNSTILE_SITE_KEY: String = String::from(
+        std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible")
+    );
+    static ref TURNSTILE_SITE_SECRET: String = String::from(
+        std::env::var("TURNSTILE_SITE_SECRET").expect("$TURNSTILE_SITE_SECRET is not avaible")
+    );
     pub static ref HIT_COUNTER: IntCounterVec =
         register_int_counter_vec!(opts!("hits", "Number of hits to various pages"), &["page"])
             .unwrap();
@@ -96,9 +110,19 @@ pub async fn contact(Extension(state): Extension<Arc<State>>, headers: HeaderMap
 }
 
 #[instrument]
-pub async fn email_address() -> Markup {
+pub async fn email_address(Form(params): Form<CFTurnstileParams>) -> Markup {
     HIT_COUNTER.with_label_values(&["email_view"]).inc();
-    crate::tmpl::email_address()
+
+    let client = TurnstileClient::new(TURNSTILE_SITE_SECRET.to_string().into());
+
+    let validated = client
+        .siteverify(SiteVerifyRequest {
+            response: params.cf_turnstile_response.into(),
+            ..Default::default()
+        })
+        .await;
+
+    crate::tmpl::email_address(validated.is_ok())
 }
 
 #[instrument(skip(headers))]

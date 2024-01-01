@@ -11,6 +11,9 @@ pub mod blog;
 
 lazy_static! {
     static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
+    static ref TURNSTILE_SITE_KEY: String = String::from(
+        std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible")
+    );
 }
 
 pub fn error(why: impl Render) -> Markup {
@@ -126,6 +129,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
 
                 script src="https://unpkg.com/htmx.org@1.9.10" integrity={"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"} crossorigin={"anonymous"} {}
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
+                script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer {};
 
                 @match now.month() {
                    //12|1|2 => {
@@ -191,9 +195,15 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
     }
 }
 
-pub fn email_address() -> Markup {
+pub fn email_address(validate: bool) -> Markup {
+    if validate {
+        return html!(
+            a href={"mailto:me@z9fr.xyz"} {"me@z9fr.xyz"}
+        );
+    }
+
     return html!(
-        a href={"mailto:me@z9fr.xyz"} {"me@z9fr.xyz"}
+        p {"validation failed"}
     );
 }
 
@@ -208,8 +218,11 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
             .cell."-6of12" {
                 h3 {"Email"}
 
-                button."btn btn-default btn-ghost" hx-indicator="#spinner" hx-post="/email" hx-swap="outerHTML" {
-                    "View email address"  span.loading id="spinner" style="display:none;"{}
+                form action="/email" hx-post="/email" hx-swap="outerHTML" {
+                    div class="cf-turnstile" data-sitekey={(*TURNSTILE_SITE_KEY)} {};
+                    button."btn btn-default btn-ghost"  type="submit" {
+                        "View email address"
+                    };
                 };
 
                 br;
