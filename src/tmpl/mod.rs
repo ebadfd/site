@@ -203,7 +203,7 @@ pub fn email_address(validate: bool) -> Markup {
     }
 
     return html!(
-        p {"validation failed"}
+        p {"CAPTCHA verification failed. please try again"}
     );
 }
 
