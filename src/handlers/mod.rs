@@ -9,6 +9,7 @@ use axum::{
 use cf_turnstile::{SiteVerifyRequest, TurnstileClient};
 use chrono::{Datelike, Timelike, Utc, Weekday};
 use lazy_static::lazy_static;
+use log::debug;
 use maud::Markup;
 use prometheus::{opts, register_int_counter_vec, IntCounterVec};
 use std::sync::Arc;
@@ -122,6 +123,7 @@ pub async fn email_address(Form(params): Form<CFTurnstileParams>) -> Markup {
         })
         .await;
 
+    debug!("{:?}", validated);
     crate::tmpl::email_address(validated.is_ok())
 }
 
