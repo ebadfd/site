@@ -21,6 +21,7 @@ estimated_read_time = "1.0.0"
 futures = "0.3"
 sitemap = "0.4"
 axum-macros = "0.3"
+cf-turnstile = { default-features = false, features = ["native"], version = "0.1" }
 
 # workspace dependencies
 site_types = { path = "./lib/site_types" }
