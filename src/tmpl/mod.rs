@@ -193,7 +193,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
 
 pub fn email_address() -> Markup {
     return html!(
-        a href={"mailto:z9fr@protonmail.com"} {"z9fr@protonmail.com"}
+        a href={"mailto:me@z9fr.xyz"} {"me@z9fr.xyz"}
     );
 }
 
