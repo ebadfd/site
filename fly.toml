@@ -10,6 +10,7 @@ primary_region = "sin"
 
 [env]
   PORT = "8080"
+  RUST_LOG= "site=trace"
 
 [metrics]
 port = 8080
