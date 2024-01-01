@@ -49,6 +49,7 @@ fn csp_header(_: &Response) -> Option<header::HeaderValue> {
 
 pub async fn run_server() -> Result<()> {
     dotenv().ok();
+    env_logger::try_init().ok();
     color_eyre::install()?;
     info!("starting the application");
 
