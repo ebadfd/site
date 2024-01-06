@@ -43,7 +43,7 @@ fn cache_header(_: &Response) -> Option<header::HeaderValue> {
 
 fn csp_header(_: &Response) -> Option<header::HeaderValue> {
     Some(header::HeaderValue::from_static(
-        "base-uri 'self'; default-src 'self' https://cdnjs.cloudflare.com https://unpkg.com/; report-uri https://z9fr.report-uri.com/r/d/csp/wizard; object-src 'none'"
+        "base-uri 'self'; default-src 'self' https://cdnjs.cloudflare.com https://unpkg.com/ https://js.sentry-cdn.com; report-uri https://z9fr.report-uri.com/r/d/csp/wizard; object-src 'none'"
     ))
 }
 
