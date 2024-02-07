@@ -58,7 +58,7 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
 
             p {"Software enginer at Surge.global. My main interests revolve around Computers, History, Philosophy and Anime."}
 
-            h4 { "Recent Articles" }
+            h2 class="baffle" { "Recent Articles" }
 
             ul preload{
                 @for post in posts.iter().take(5).filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
@@ -70,7 +70,7 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
                     }
             }
 
-            h4 { "Quick Links" }
+            h2 class="baffle" { "Quick Links" }
             ul {
                 li {a href={"https://github.com/" (author.github)} rel="me" {"GitHub"}}
                 li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"Twitter"}}
@@ -131,6 +131,7 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
                 script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer {};
                 script  src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
+                script async src="/static/baffle.min.js" defer {}
 
                 @match now.month() {
                    //12|1|2 => {

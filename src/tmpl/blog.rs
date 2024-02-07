@@ -92,12 +92,12 @@ pub fn post(
     let markup = html! {
         (post_metadata(post, author, domain))
          article {
-             h1 {(post.front_matter.title)}
+             h1 class="baffle" {(post.front_matter.title)}
 
              // (nag::prerelease(post))
 
              small {
-                 "Published on " (post.detri()) ", " (post.read_time_estimate_minutes) " minutes to read"
+                 (post.read_time_estimate_minutes) " minute read,  Published: " (post.detri_withmonth())
              }
 
              div {
