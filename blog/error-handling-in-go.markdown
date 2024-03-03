@@ -1,6 +1,6 @@
 ---
 title: "Error Handling in Go: Not ACTUALLY Bad"
-date: "2024-03-02"
+date: "2024-03-03"
 tags:
   - "golang"
   - "errors"
