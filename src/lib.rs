@@ -78,10 +78,10 @@ pub async fn run_server() -> Result<()> {
             header::CACHE_CONTROL,
             cache_header,
         ))
-        .layer(SetResponseHeaderLayer::overriding(
-            header::CONTENT_SECURITY_POLICY_REPORT_ONLY,
-            csp_header,
-        ))
+        //.layer(SetResponseHeaderLayer::overriding(
+        //    header::CONTENT_SECURITY_POLICY_REPORT_ONLY,
+        //    csp_header,
+        //))
         .layer(CorsLayer::permissive());
 
     let app = Router::new()

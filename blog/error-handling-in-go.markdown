@@ -1,6 +1,8 @@
 ---
 title: "Error Handling in Go: Not ACTUALLY Bad"
-date: "2025-03-03"
+date: "2024-03-03"
+image: "https://z9fr.xyz/static/images/error-handling-in-go.png"
+about: "If you value simplicity and straightforwardness, then you'll appreciate Go. One of its best features is its error handling, which is designed to be easy to comprehend and use. This aligns well with the concept of Go being a simple dumb language."
 tags:
   - "golang"
   - "errors"

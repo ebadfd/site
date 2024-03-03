@@ -18,13 +18,21 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
     let json = PreEscaped(serde_json::to_string(&art).unwrap());
 
     html! {
-        meta name="twitter:card" content="summary";
+        meta name="twitter:card" content="summary_large_image";
         meta name="twitter:site" content={(author.twitter)};
         meta name="twitter:title" content={(post.front_matter.title)};
+        meta name="twitter:description" content={(post.front_matter.about)};
+        meta name="twitter:image" content={(post.image_url(domain))};
+        meta property="twitter:domain" content={(domain)};
+        meta property="twitter:url" content={(format!("https://{}/{}", domain, post.link))};
+
         meta property="og:type" content="website";
         meta property="og:title" content={(post.front_matter.title)};
+        meta property="og:description" content={(post.front_matter.about)};
+        meta property="og:image" content={(post.image_url(domain))};
         meta property="og:site_name" content="z9fr blog";
-        meta name="description" content={(post.front_matter.title) " - z9fr blog"};
+
+        meta name="description" content={(post.front_matter.about)};
         meta name="author" content={(author.name)};
 
         @if let Some(redirect_to) = &post.front_matter.redirect_to {
@@ -92,7 +100,9 @@ pub fn post(
     let markup = html! {
         (post_metadata(post, author, domain))
          article {
-             h1 class="baffle" {(post.front_matter.title)}
+            h1 class="baffle" {(post.front_matter.title)}
+
+            img src={(post.image_url(domain))} alt={(post.front_matter.title)} {}
 
              // (nag::prerelease(post))
 

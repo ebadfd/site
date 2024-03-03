@@ -1,6 +1,8 @@
 ---
 title: "Hello World"
 date: "2023-12-26"
+image: "https://z9fr.xyz/static/images/hello-world.png"
+about: "Hello, welcome to my blog"
 tags:
   - "misc"
 ---
