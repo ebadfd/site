@@ -45,7 +45,7 @@ impl Post {
             .front_matter
             .image
             .clone()
-            .unwrap_or_else(|| format!("https://{}/static/image/avatar.jpeg", domain));
+            .unwrap_or_else(|| format!("https://{}/static/img/avatar.jpeg", domain));
     }
 }
 
