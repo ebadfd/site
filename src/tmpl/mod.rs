@@ -228,6 +228,12 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
                 };
 
                 br;
+
+                small {
+                    "If the captcha is not working, please refresh the page."
+                }
+
+                br;
                 br;
 
                 h3 {"Other useful links:"}
