@@ -45,8 +45,7 @@ impl Post {
             .front_matter
             .image
             .clone()
-            .unwrap_or_else(|| format!("https://{}/static/image/avatar.jpeg", domain))
-            .replace("https://z9fr.xyz", "http://localhost:3030");
+            .unwrap_or_else(|| format!("https://{}/static/image/avatar.jpeg", domain));
     }
 }
 
