@@ -39,6 +39,15 @@ impl Post {
     pub fn detri_withmonth(&self) -> String {
         self.date.format("%B %e, %Y").to_string()
     }
+
+    pub fn image_url(&self, domain: &str) -> String {
+        return self
+            .front_matter
+            .image
+            .clone()
+            .unwrap_or_else(|| format!("https://{}/static/image/avatar.jpeg", domain))
+            .replace("https://z9fr.xyz", "http://localhost:3030");
+    }
 }
 
 impl Into<schemaorg::Article> for &Post {
@@ -47,7 +56,11 @@ impl Into<schemaorg::Article> for &Post {
             context: "https://schema.org".to_string(),
             r#type: "Article".to_string(),
             headline: self.front_matter.title.clone(),
-            image: format!("https://z9fr.xyz/static/img/avatar.png"),
+            image: self
+                .front_matter
+                .clone()
+                .image
+                .unwrap_or_else(|| format!("https://z9fr.xyz/static/image/avatar.jpeg")),
             url: format!("https://z9fr.xyz/{}", self.link),
             date_published: self.date.format("%Y-%m-%d").to_string(),
         }
