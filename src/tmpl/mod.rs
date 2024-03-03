@@ -20,6 +20,7 @@ pub fn error(why: impl Render) -> Markup {
     base(
         Some("Error"),
         None,
+        None,
         html! {
             h1 {"Error"}
 
@@ -40,7 +41,7 @@ pub fn error(why: impl Render) -> Markup {
 
 pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool) -> Markup {
     let today = Utc::now().date_naive();
-    let markup = html! {
+    let og_tags = html! {
         link rel="canonical" href={"https://"(domain)"/"};
 
         meta name="twitter:card" content="summary";
@@ -52,7 +53,9 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
         meta property="og:site_name" content=(author.job_title);
         meta name="description" content=(author.job_title);
         meta name="author" content=(author.name);
+    };
 
+    let markup = html! {
         .content {
             p {"I'm Dasith, Security Researcher and Hobbyist Programmer"}
 
@@ -81,11 +84,16 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
     return if is_partial {
         markup
     } else {
-        base(None, None, markup)
+        base(None, None, Some(og_tags), markup)
     };
 }
 
-pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Markup {
+pub fn base(
+    title: Option<&str>,
+    styles: Option<&str>,
+    og_tags: Option<Markup>,
+    content: Markup,
+) -> Markup {
     let now = Utc::now();
 
     html! {
@@ -105,6 +113,10 @@ pub fn base(title: Option<&str>, styles: Option<&str>, content: Markup) -> Marku
                 meta name="msapplication-TileColor" content="#ffffff";
                 meta name="msapplication-config" content="/static/favicon/browserconfig.xml";
                 meta name="theme-color" content="#181818";
+
+                @if let Some(og_tags) = og_tags {
+                    (og_tags)
+                }
 
                 meta name="apple-mobile-web-app-title" content="z9fr blog";
                 meta name="application-name" content="z9fr blog";
@@ -260,7 +272,7 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
     return if is_partial {
         markup
     } else {
-        base(Some("Contact Information"), None, markup)
+        base(Some("Contact Information"), None, None, markup)
     };
 }
 
@@ -297,13 +309,14 @@ pub fn stack(is_partial: bool) -> Markup {
     return if is_partial {
         markup
     } else {
-        base(Some("Uses"), None, markup)
+        base(Some("Uses"), None, None, markup)
     };
 }
 
 pub fn not_found(path: impl Render) -> Markup {
     base(
         Some("Not found"),
+        None,
         None,
         html! {
             h1 {"Not found"}

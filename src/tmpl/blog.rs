@@ -86,7 +86,7 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: boo
     return if is_partial {
         markup
     } else {
-        base(Some(title), None, markup)
+        base(Some(title), None, None, markup)
     };
 }
 
@@ -98,7 +98,6 @@ pub fn post(
     is_partial: bool,
 ) -> Markup {
     let markup = html! {
-        (post_metadata(post, author, domain))
          article {
             h1 class="baffle" {(post.front_matter.title)}
 
@@ -135,6 +134,11 @@ pub fn post(
     return if is_partial {
         markup
     } else {
-        base(Some(&post.front_matter.title), None, markup)
+        base(
+            Some(&post.front_matter.title),
+            None,
+            Some(post_metadata(post, author, domain)),
+            markup,
+        )
     };
 }
