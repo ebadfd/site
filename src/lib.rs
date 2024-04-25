@@ -102,6 +102,7 @@ pub async fn run_server() -> Result<()> {
             "/robots.txt",
             get_service(ServeFile::new("./static/robots.txt")),
         )
+        .route("/rr", get(handlers::rr_handler))
         .nest_service("/static", files)
         .fallback(handlers::not_found)
         .layer(comression_layer)
