@@ -39,6 +39,71 @@ pub fn error(why: impl Render) -> Markup {
     )
 }
 
+pub fn full_screen_player(video_url: String) -> Markup {
+    base(
+        Some("Dash"),
+        None,
+        None,
+        html!(
+            link rel="stylesheet" href={"/static/css/controlbar.css?bustCache=" (*CACHEBUSTER)};
+
+            script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/4.7.4/dash.all.debug.min.js" {}
+            script async src="/static/rr.js" defer {}
+
+            data #"video-url" value=(video_url)  {};
+
+            div."fs-player" {
+                video preload="auto" autoplay="" {};
+
+                div #videoController .video-controller.unselectable {
+
+                    div."btn-play-pause" #playPauseBtn title="Play/Pause" {
+                        i."fa-solid"."fa-play" #iconPlayPause {};
+                    }
+
+                    span."time-display" #videoTime {"00:00:00"};
+
+                    div."btn-fullscreen"."control-icon-layout" #fullscreenBtn title="Fullscreen" {
+                        i."fullscreen-actions"."fa-solid"."fa-expand" {};
+                    }
+
+                    div."control-icon-layout" #bitrateListBtn title="Bitrate List" {
+                        i."fa-solid"."fa-signal" {};
+                    }
+
+                    input.volumebar #volumebar type="range" value="1" min="0" max="1" step=".01" {};
+
+                    div."btn-mute"."control-icon-layout" #muteBtn  title="Mute" {
+                        i."fa-solid"."fa-volume-high" #iconMute {};
+                    }
+
+                    div."control-icon-layout" #trackSwitchBtn title="A/V Tracks"{
+                        i."fa-solid"."fa-shuffle" {};
+                    }
+
+                    div."btn-caption"."control-icon-layout" #captionBtn title="Closed Caption" {
+                        i."fa-solid"."fa-closed-captioning" {};
+                    }
+
+                    span."duration-display" #videoDuration {"00:00:00"};
+
+                    div.seekContainer {
+                        div.seekbar."seekbar-complete" #seekbar {
+                            div.seekbar."seekbar-buffer"  #seekbar-buffer;
+                            div.seekbar."seekbar-play" #seekbar-play ;
+                        }
+                    }
+
+                    div #"thumbnail-container"."thumbnail-container" {
+                        div #"thumbnail-elem" ."thumbnail-elem" {};
+                        div #"thumbnail-time-label" ."thumbnail-time-label" {};
+                    }
+                }
+            }
+        ),
+    )
+}
+
 pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool) -> Markup {
     let today = Utc::now().date_naive();
     let og_tags = html! {
@@ -142,8 +207,10 @@ pub fn base(
                 script src="https://unpkg.com/htmx.org@1.9.10" integrity={"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"} crossorigin={"anonymous"} {}
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
                 script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer {};
-                script  src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
+                script src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
                 script async src="/static/baffle.min.js" defer {}
+
+                script src="https://kit.fontawesome.com/eabf947950.js" crossorigin="anonymous" {};
 
                 @match now.month() {
                    //12|1|2 => {

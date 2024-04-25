@@ -73,6 +73,11 @@ lazy_static! {
     pub static ref HIT_COUNTER: IntCounterVec =
         register_int_counter_vec!(opts!("hits", "Number of hits to various pages"), &["page"])
             .unwrap();
+    pub static ref RICK_ROLL_COUNTER: IntCounterVec = register_int_counter_vec!(
+        opts!("rickroll", "Number people got rick rolled"),
+        &["page"]
+    )
+    .unwrap();
     pub static ref LAST_MODIFIED: String = {
         let now = Utc::now();
         format!(
@@ -99,6 +104,14 @@ pub async fn index(Extension(state): Extension<Arc<State>>, headers: HeaderMap) 
         &state.blog,
         &cfg.domain,
         is_htmx_request(headers),
+    ))
+}
+
+#[instrument(skip())]
+pub async fn rr_handler() -> Result<Markup> {
+    RICK_ROLL_COUNTER.with_label_values(&["rr"]).inc();
+    Ok(tmpl::full_screen_player(
+        "https://cdn.z9fr.xyz/videos/rr/manifest.mpd".to_string(),
     ))
 }
 
