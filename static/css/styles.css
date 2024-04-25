@@ -87,3 +87,30 @@ article img {
   block-size: auto;
   border: 1px solid #363638 !important;
 }
+
+#wcb.carbonbadge {
+  font-size: 11px !important;
+  text-align: left !important;
+  color: black !important;
+}
+
+#wcb_g {
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace, serif !important;
+  color: black !important;
+}
+
+#wcb_a {
+  color: black !important;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace, serif !important;
+}
+
+#wcb.wcb-d #wcb_a {
+  background: #ff2e88 !important;
+  border-color: #ff2e88 !important;
+}
+
+#wcb_g {
+  border: .13em solid #ff2e88 !important;
+}
