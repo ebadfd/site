@@ -206,7 +206,6 @@ pub fn base(
 
                 script src="https://unpkg.com/htmx.org@1.9.10" integrity={"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"} crossorigin={"anonymous"} {}
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
-                script src="https://unpkg.com/website-carbon-badges@1.1.3/b.min.js" defer {}
                 script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer {};
                 script src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
                 script async src="/static/baffle.min.js" defer {}
@@ -270,8 +269,6 @@ pub fn base(
                                 "copy right " (now.year())
                             }
                         }
-
-                        div #"wcb" ."carbonbadge wcb-d" {};
                     }
                 }
             }
@@ -348,6 +345,8 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
 
 pub fn stack(is_partial: bool) -> Markup {
     let markup = html! {
+         script src="https://unpkg.com/website-carbon-badges@1.1.3/b.min.js" defer {}
+
          h1 {"Uses"}
          ul {
              li {
@@ -374,6 +373,8 @@ pub fn stack(is_partial: bool) -> Markup {
                  "Inspired by " a href="https://github.com/Xe/site" {"Xe/site"}; "."
              }
         }
+
+        div #"wcb" ."carbonbadge wcb-d" {};
     };
 
     return if is_partial {
