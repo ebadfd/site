@@ -240,6 +240,7 @@ pub fn base(
                         nav {
                             div hx-boost="true" hx-swap="innerHTML" hx-target=".snowframe" hx-include="[name='bustCache']" {
                                 a.logo href="/" hx-push-url="/" { "> z9fr@blog:~$" }
+                                input."hidden-input".hack hx-get="/example" hx-trigger="keyup[keyCode==13]" {}
                             }
                         }
                     }
