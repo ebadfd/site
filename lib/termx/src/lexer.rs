@@ -23,6 +23,9 @@ pub static LITERAL_TOKENS: &[(&str, TokenEnum)] = &[
     ("{", TokenEnum::OCurly),
     ("}", TokenEnum::CCurly),
     (";", TokenEnum::SemiColon),
+    ("-", TokenEnum::Dash),
+    ("/", TokenEnum::ForwardSlash),
+    ("\\", TokenEnum::BackSlash),
 ];
 
 #[derive(Debug)]
@@ -49,6 +52,9 @@ pub enum TokenEnum {
     SemiColon,
     Number,
     String,
+    Dash,
+    ForwardSlash,
+    BackSlash,
 }
 
 #[derive(Debug)]
