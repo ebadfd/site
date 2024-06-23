@@ -27,6 +27,7 @@ use tower_http::{
 pub mod app;
 pub mod handlers;
 pub mod post;
+pub mod termx_registry;
 pub mod tmpl;
 
 const APPLICATION_NAME: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
@@ -94,6 +95,9 @@ pub async fn run_server() -> Result<()> {
         // blog
         .route("/blog", get(handlers::blog::index))
         .route("/blog/:name", get(handlers::blog::post_view))
+        // termx
+        .route("/termx", post(handlers::termx_results))
+        .route("/termx", get(handlers::termx))
         // feeds
         .route("/blog.rss", get(handlers::feed::rss))
         .route("/blog.atom", get(handlers::feed::atom))

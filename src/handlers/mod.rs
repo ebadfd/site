@@ -1,4 +1,4 @@
-use crate::{app::State, tmpl};
+use crate::{app::State, termx_registry::web::WebCommandRegistry, tmpl};
 use axum::{
     body,
     extract::Extension,
@@ -10,9 +10,10 @@ use cf_turnstile::{SiteVerifyRequest, TurnstileClient};
 use chrono::{Datelike, Timelike, Utc, Weekday};
 use lazy_static::lazy_static;
 use log::debug;
-use maud::Markup;
+use maud::{html, Markup};
 use prometheus::{opts, register_int_counter_vec, IntCounterVec};
 use std::sync::Arc;
+use termx::{evaluator::WebEvaluatorResult, registries::CommandRegistry};
 use tracing::instrument;
 
 pub mod blog;
@@ -22,6 +23,11 @@ pub mod feed;
 pub struct CFTurnstileParams {
     #[serde(rename = "cf-turnstile-response")]
     pub cf_turnstile_response: String,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct TermxCmd {
+    pub cmd: String,
 }
 
 fn weekday_to_name(w: Weekday) -> &'static str {
@@ -121,6 +127,45 @@ pub async fn contact(Extension(state): Extension<Arc<State>>, headers: HeaderMap
     let state = state.clone();
     let cfg = state.cfg.clone();
     crate::tmpl::contact(&cfg.contact_links, is_htmx_request(headers))
+}
+
+#[instrument(skip(state))]
+pub async fn termx_results(
+    Extension(state): Extension<Arc<State>>,
+    Form(params): Form<TermxCmd>,
+) -> Markup {
+    HIT_COUNTER.with_label_values(&["cmd"]).inc();
+    let state = state.clone();
+    let _cfg = state.cfg.clone();
+
+    let registry = WebCommandRegistry::new();
+    let results = termx::run(params.cmd.clone(), registry);
+
+    let mut display_content = String::new();
+
+    results.iter().for_each(|f| match f {
+        WebEvaluatorResult::Display(x) => {
+            display_content.push_str(x);
+        }
+        _ => display_content.push_str("not implemented"),
+    });
+
+    return html!(
+       div."exec" {
+           span."user"{ (format!("{}@{}", WebCommandRegistry::get_user_name(), WebCommandRegistry::get_hostname()))} {}
+           span."path"{"$"}
+           span."command" { (params.cmd)}
+           div."result" { span {(display_content)}}
+       }
+    );
+}
+
+#[instrument(skip(state, headers))]
+pub async fn termx(Extension(state): Extension<Arc<State>>, headers: HeaderMap) -> Markup {
+    HIT_COUNTER.with_label_values(&["cmd"]).inc();
+    let state = state.clone();
+    let cfg = state.cfg.clone();
+    crate::tmpl::termx_default()
 }
 
 #[instrument]

@@ -1,9 +1,11 @@
 use chrono::prelude::*;
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
+use termx::{default_help_short, registries::CommandRegistry};
 
 use crate::{
     app::{Author, Link},
     post::Post,
+    termx_registry::web::WebCommandRegistry,
 };
 use lazy_static::lazy_static;
 
@@ -209,6 +211,7 @@ pub fn base(
                 script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer {};
                 script src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
                 script async src="/static/baffle.min.js" defer {}
+                script async src="/static/script.js" defer {}
 
                 script src="https://kit.fontawesome.com/eabf947950.js" crossorigin="anonymous" {};
 
@@ -238,9 +241,9 @@ pub fn base(
 
                     header {
                         nav {
-                            div hx-boost="true" hx-swap="innerHTML" hx-target=".snowframe" hx-include="[name='bustCache']" {
+                            div hx-boost="true" hx-swap="innerHTML" hx-target=".snowframe" {
                                 a.logo href="/" hx-push-url="/" { "> z9fr@blog:~$" }
-                                input."hidden-input".hack hx-get="/example" hx-trigger="keyup[keyCode==13]" {}
+                                input."hidden-input".hack hx-post="/termx" hx-trigger="keyup[keyCode==13]" name="cmd" {}
                             }
                         }
                     }
@@ -251,6 +254,8 @@ pub fn base(
                     .snowframe {
                         (content)
                     }
+
+
                     hr;
                     footer {
                         div hx-boost="true" hx-include="[name='bustCache']" hx-swap="innerHTML" hx-target=".snowframe" {
@@ -272,6 +277,12 @@ pub fn base(
                         }
                     }
                 }
+
+                button."termx-open btn btn-default btn-ghost" hx-get="/termx" hx-trigger="click" hx-swap="innerHTML" hx-target="#termx" {
+                    i."fa-solid"."fa-terminal" {};
+                }
+
+                div #"termx"."card" style="display: none" {}
             }
         }
     }
@@ -400,5 +411,37 @@ pub fn not_found(path: impl Render) -> Markup {
                 " so it can be fixed."
             }
         },
+    )
+}
+
+pub fn termx_default() -> Markup {
+    let default_help = default_help_short();
+    html!(
+            header."card-header" {
+                span."resize-notch" #"resizeHandle" {}
+                div."grid -stretch" {
+                    p."cloud-shell-title cell" { "cloud shell" }
+
+                    div."cell" {
+                        div."grid -right" {
+                            i."fa-solid"."fa-x" {};
+                        }
+                    }
+                }
+            }
+            div."card-content" {
+                div #"termx-results" {
+                    span."code" { (default_help)}
+                }
+
+                div style="display: flex;" {
+                    span."user"{ (format!("{}@{}", WebCommandRegistry::get_user_name(), WebCommandRegistry::get_hostname()))} {}
+                    span."path"{"$"}
+
+                    input id="terminal-input" autofocus hx-post="/termx" hx-trigger="keyup[keyCode==13]"
+                    name="cmd" hx-swap="beforeend scroll:bottom" hx-target="#termx-results"
+                    hx-on-htmx-after-request="this.value = ''" {}
+                }
+            }
     )
 }
