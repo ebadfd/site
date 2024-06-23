@@ -1,18 +1,3 @@
-/*
-* language semantics.
-*
-* only allow defined commands to run;
-* - whoami
-* - cd
-* - cat
-* - echo
-*
-* Optional commands;
-* - for loops
-*
-* Comment semantics are #
-*/
-
 use evaluator::WebEvaluator;
 use lexer::Lexer;
 use parser::Parser;
