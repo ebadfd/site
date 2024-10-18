@@ -28,6 +28,7 @@ cf-turnstile = { default-features = false, features = ["native"], version = "0.1
 site_types = { path = "./lib/site_types" }
 site_templates = { path = "./lib/site_templates" }
 markdown_render = { path = "./lib/markdown_render" }
+termx = { path ="./lib/termx" }
 
 thiserror = "1.0.51"
 tracing = "0.1.40"

@@ -17,11 +17,17 @@ use tracing::instrument;
 
 pub mod blog;
 pub mod feed;
+pub mod term;
 
 #[derive(Debug, serde::Deserialize)]
 pub struct CFTurnstileParams {
     #[serde(rename = "cf-turnstile-response")]
     pub cf_turnstile_response: String,
+}
+
+#[derive(Debug, serde::Deserialize)]
+pub struct TermxCmd {
+    pub cmd: String,
 }
 
 fn weekday_to_name(w: Weekday) -> &'static str {

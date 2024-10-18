@@ -1,17 +1,19 @@
 use chrono::prelude::*;
 use color_eyre::eyre::Result;
 use std::{fs, path::PathBuf, sync::Arc};
+use termx::registries::{CommandRegistry, FS};
 
 pub mod config;
 pub use config::*;
 
-use crate::post::Post;
+use crate::{post::Post, termx_registry::web::WebCommandRegistry};
 
 pub struct State {
     pub cfg: Arc<Config>,
     pub blog: Vec<Post>,
     pub everything: Vec<Post>,
     pub sitemap: Vec<u8>,
+    pub fs: Vec<FS>,
 }
 
 pub async fn init(cfg: PathBuf) -> Result<State> {
@@ -19,6 +21,7 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     let res_cfg: Config = toml::from_str(&toml_str).unwrap();
     let cfg: Arc<Config> = Arc::new(res_cfg);
     let blog = crate::post::load("blog", &cfg.domain).await?;
+    let mut fs = vec![];
 
     let mut everything: Vec<Post> = vec![];
 
@@ -48,8 +51,17 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     ] {
         urlwriter.url(url)?;
     }
+    let user = WebCommandRegistry::get_user_name();
 
     for post in &blog {
+        fs.push(FS {
+            name: post.link.clone(),
+            created_at: post.detri(),
+            owner: user.clone(),
+            group: user.clone(),
+            summary: post.body_html.clone(),
+            title: post.summery.title.clone(),
+        });
         urlwriter.url(format!("https://{}/{}", cfg.domain, post.link))?;
     }
 
@@ -60,5 +72,6 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
         blog,
         everything,
         sitemap: sm,
+        fs,
     })
 }

@@ -31,6 +31,19 @@ html {
   animation: cursor 1s infinite;
 }
 
+.hidden-input {
+  border: none;
+  background: transparent;
+  color: white;
+  caret-color: transparent;
+  font-size: 1em;
+  position: relative;
+}
+
+.hidden-input:focus {
+  outline: none;
+}
+
 @-webkit-keyframes cursor {
   0% {
     opacity: 0;
@@ -113,4 +126,91 @@ article img {
 
 #wcb_g {
   border: .13em solid #ff2e88 !important;
+}
+
+.termx-open {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+#termx {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100%;
+  z-index: 1000;
+  height: 350px;
+  background: rgb(34, 34, 34)
+}
+
+.resize-notch {
+  width: 70px;
+  height: 2px;
+  background-color: #b5b5b5;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: ns-resize;
+  border-radius: 20px;
+  margin: 6px;
+}
+
+.cloud-shell-title {
+  margin: 0 !important;
+  text-align: left;
+}
+
+#termx .card-header {
+  padding-left:30px;
+  padding-right:30px;
+}
+
+#termx .card-content {
+  padding-left:30px;
+  padding-right:30px;
+}
+
+#termx-results {
+  white-space: pre-wrap;
+  margin-top:10px
+}
+
+#termx .user {
+  color:#6fc736;
+  font-weight: bold;
+}
+
+#termx .path {
+  margin-right: 5px;
+  margin-left: 5px;
+  color:#729fcf;
+}
+
+#terminal-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: #eee; /* Text color */
+    font-family: inherit;
+    font-size: inherit;
+    margin-right: 5px;
+}
+
+.exec {
+  flex-wrap: wrap;
+  display:flex;
+  margin-bottom: 10px;
+}
+
+.exec .cmd {
+  white-space: pre-wrap;
+  flex-basis: 100%;
+}
+
+.exec .result {
+  flex-basis: 100%;
 }

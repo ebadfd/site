@@ -27,6 +27,7 @@ use tower_http::{
 pub mod app;
 pub mod handlers;
 pub mod post;
+pub mod termx_registry;
 pub mod tmpl;
 
 const APPLICATION_NAME: &str = concat!(env!("CARGO_PKG_NAME"), "/", env!("CARGO_PKG_VERSION"));
@@ -41,7 +42,7 @@ fn cache_header(_: &Response) -> Option<header::HeaderValue> {
     ))
 }
 
-fn csp_header(_: &Response) -> Option<header::HeaderValue> {
+fn _csp_header(_: &Response) -> Option<header::HeaderValue> {
     Some(header::HeaderValue::from_static(
         "base-uri 'self'; default-src 'self' https://cdnjs.cloudflare.com https://unpkg.com/ https://js.sentry-cdn.com; report-uri https://z9fr.report-uri.com/r/d/csp/wizard; object-src 'none'"
     ))
@@ -94,6 +95,9 @@ pub async fn run_server() -> Result<()> {
         // blog
         .route("/blog", get(handlers::blog::index))
         .route("/blog/:name", get(handlers::blog::post_view))
+        // termx
+        .route("/termx", post(handlers::term::termx_results))
+        .route("/termx", get(handlers::term::termx))
         // feeds
         .route("/blog.rss", get(handlers::feed::rss))
         .route("/blog.atom", get(handlers::feed::atom))
