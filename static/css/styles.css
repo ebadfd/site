@@ -142,11 +142,12 @@ article img {
   max-width: 100%;
   z-index: 1000;
   height: 350px;
-  background: rgb(34, 34, 34)
+  background: rgb(34, 34, 34);
+  overflow-y: auto;
 }
 
 .resize-notch {
-  width: 70px;
+  width: 100px;
   height: 2px;
   background-color: #b5b5b5;
   position: absolute;
@@ -166,11 +167,15 @@ article img {
 #termx .card-header {
   padding-left:30px;
   padding-right:30px;
+  position: fixed;
+  width: 100%;
+  background: rgb(34, 34, 34);
 }
 
 #termx .card-content {
   padding-left:30px;
   padding-right:30px;
+  margin-top: 40px;
 }
 
 #termx-results {
