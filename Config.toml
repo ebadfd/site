@@ -6,21 +6,21 @@ name = "z9fr"
 handle = "z9fr"
 jobTitle = "Software Engineer"
 inSystem = true
-sameAs = ["https://twitter.com/sigsegvme", "https://github.com/z9fr"]
-twitter = "sigsegvme"
-github = "z9fr"
+sameAs = ["https://x.com/3badfd", "https://github.com/ebadfd"]
+twitter = "3badfd"
+github = "ebadfd"
 
 [[notableProjects]]
-url = "https://github.com/z9fr/site"
+url = "https://github.com/ebadfd/site"
 title = "site"
 description = "Personal blog"
 
 [[contactLinks]]
-url = "https://twitter.com/sigsegvme"
-title = "Twitter"
-description = "Twitter profile"
+url = "https://x.com/3badfd"
+title = "X formerly twitter"
+description = "X profile"
 
 [[contactLinks]]
-url = "https://github.com/z9fr"
+url = "https://github.com/ebadfd"
 title = "GitHub"
 description = "Github profile"

@@ -143,7 +143,7 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
             h2 class="baffle" { "Quick Links" }
             ul {
                 li {a href={"https://github.com/" (author.github)} rel="me" {"GitHub"}}
-                li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"Twitter"}}
+                li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"X formerly twitter"}}
             }
         }
     };
