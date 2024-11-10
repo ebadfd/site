@@ -1,4 +1,5 @@
 use chrono::prelude::*;
+use logo::logo;
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 use termx::{default_help_short, registries::CommandRegistry};
 
@@ -10,6 +11,7 @@ use crate::{
 use lazy_static::lazy_static;
 
 pub mod blog;
+mod logo;
 
 lazy_static! {
     static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
@@ -241,15 +243,15 @@ pub fn base(
 
                     header {
                         nav {
-                            div hx-boost="true" hx-swap="innerHTML" hx-target=".snowframe" {
-                                a.logo href="/" hx-push-url="/" { "> z9fr@blog:~$" }
-                                input."hidden-input".hack hx-post="/termx" hx-trigger="keyup[keyCode==13]" name="cmd" {}
+                            div hx-boost="true" hx-include="[name='bustCache']" hx-swap="innerHTML" hx-target=".snowframe" {
+                                a hx-push-url="/" href="/" style="all: unset; display: inline-block; cursor: pointer;" {
+                                    img src={"/static/logo-main.svg?bustCache=" (*CACHEBUSTER)} style="max-width: 60%; height: auto;" {};
+                                }
                             }
                         }
                     }
 
-                    br;
-                    br;
+                    hr style="margin: 0px";
 
                     .snowframe {
                         (content)
