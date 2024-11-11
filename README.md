@@ -1,3 +1,3 @@
 # site
 
-personal website
+personal website and the blog site
