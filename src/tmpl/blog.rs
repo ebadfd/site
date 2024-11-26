@@ -30,7 +30,7 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
         meta property="og:title" content={(post.front_matter.title)};
         meta property="og:description" content={(post.front_matter.about)};
         meta property="og:image" content={(post.image_url(domain))};
-        meta property="og:site_name" content="z9fr blog";
+        meta property="og:site_name" content="ebadfd explorations";
 
         meta name="description" content={(post.front_matter.about)};
         meta name="author" content={(author.name)};

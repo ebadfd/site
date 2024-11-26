@@ -1,28 +1,21 @@
 {
-  "name": "z9frblog",
-  "short_name": "z9fr",
-  "theme_color": "#ff2e88",
-  "background_color": "#181818",
-  "display": "standalone",
-  "scope": "/",
-  "start_url": "/",
-  "description": "Blog page for z9fr",
-  "orientation": "any",
+  "name": "badfd explorations",
+  "short_name": "badfd",
   "icons": [
     {
-      "src": "/static/favicon/android-chrome-192x192.png",
+      "src": "/static/favicon/web-app-manifest-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/static/favicon/android-chrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    },
-    {
-      "src": "/static/favicon/maskable_icon.png",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/favicon/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "theme_color": "#1E1E1E",
+  "background_color": "#1E1E1E",
+  "display": "standalone"
 }

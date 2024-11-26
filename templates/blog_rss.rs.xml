@@ -5,16 +5,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0">
     <channel>
-        <title>z9fr blog</title>
-        <link>https://z9fr.xyz/blog</link>
+        <title>ebadfd explorations</title>
+        <link>https://ebadfd.tech/blog</link>
         <description>Tech, philosophy and more</description>
-        <generator>@APP https://github.com/z9fr/site</generator>
+        <generator>@APP https://github.com/ebadfd/site</generator>
         <ttl>1440</ttl>
         @for post in posts {
             <item>
-                <guid>https://z9fr.xyz/@post.link</guid>
+                <guid>https://ebadfd.tech/@post.link</guid>
                 <title>@post.front_matter.title</title>
-                <link>https://z9fr.xyz/@post.link</link>
+                <link>https://ebadfd.tech/@post.link</link>
                 <description><![CDATA[@Html(post.body_html)]]></description>
                 <pubDate>@post.date.to_rfc2822()</pubDate>
             </item>
