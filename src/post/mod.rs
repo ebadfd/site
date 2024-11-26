@@ -59,8 +59,8 @@ impl Into<schemaorg::Article> for &Post {
                 .front_matter
                 .clone()
                 .image
-                .unwrap_or_else(|| format!("https://z9fr.xyz/static/image/avatar.jpeg")),
-            url: format!("https://z9fr.xyz/{}", self.link),
+                .unwrap_or_else(|| format!("https://ebadfd.tech/static/image/avatar.jpeg")),
+            url: format!("https://ebadfd.tech/{}", self.link),
             date_published: self.date.format("%Y-%m-%d").to_string(),
         }
     }

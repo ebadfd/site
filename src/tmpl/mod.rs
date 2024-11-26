@@ -36,7 +36,7 @@ pub fn error(why: impl Render) -> Markup {
                 "You could try to "
                 a href="/" {"go home"}
                 " or "
-                a href="https://github.com/z9fr/site/issues/new" {"report this issue"}
+                a href="https://github.com/ebadfd/site/issues/new" {"report this issue"}
                 " so it can be fixed."
             }
         },
@@ -172,36 +172,30 @@ pub fn base(
                 title {
                     @if let Some(title) = title {
                         (title)
-                        " - z9fr blog"
+                        " - ebadfd explorations"
                     } @else {
-                        "z9fr blog"
+                        "ebadfd explorations"
                     }
                 }
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
-
-                meta name="msapplication-TileColor" content="#ffffff";
-                meta name="msapplication-config" content="/static/favicon/browserconfig.xml";
-                meta name="theme-color" content="#181818";
 
                 @if let Some(og_tags) = og_tags {
                     (og_tags)
                 }
 
-                meta name="apple-mobile-web-app-title" content="z9fr blog";
-                meta name="application-name" content="z9fr blog";
+                meta name="apple-mobile-web-app-title" content="ebadfd explorations";
+                meta name="application-name" content="ebadfd";
 
                 link rel="manifest" href="/static/manifest.json";
-                link rel="alternate" title="z9fr blog" type="application/rss+xml" href={"https://z9fr.xyz/blog.rss"};
-                link rel="alternate" title="z9fr blog" type="application/json" href={"https://z9fr.xyz/blog.json"};
+                link rel="alternate" title="ebadfd explorations" type="application/rss+xml" href={"https://ebadfd.tech/blog.rss"};
+                link rel="alternate" title="ebadfd explorations" type="application/json" href={"https://ebadfd.tech/blog.json"};
 
                 link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png";
-                link rel="mask-icon" href="/static/favicon/safari-pinned-tab.svg" color="#181818";
                 link rel="shortcut icon" href="/static/favicon/favicon.ico";
 
-                link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png";
-                link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png";
+                link rel="icon" type="image/png" href="/static/favicon/favicon-96x96.png" sizes="96x96";
+                link rel="icon" type="image/svg+xml" href="/static/favicon/favicon.svg";
 
-                // link rel="icon" href="/static/favicon/favicon.svg" type="image/svg+xml";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
 
@@ -293,7 +287,7 @@ pub fn base(
 pub fn email_address(validate: bool) -> Markup {
     if validate {
         return html!(
-            a href={"mailto:me@z9fr.xyz"} {"me@z9fr.xyz"}
+            a href={"mailto:root@ebadfd.tech"} {"root@ebadfd.tech"}
         );
     }
 
@@ -409,7 +403,7 @@ pub fn not_found(path: impl Render) -> Markup {
                 "The path at "
                 code {(path)}
                 " could not be found. If you expected this path to exist, please "
-                a href="https://github.com/z9fr/site/issues/new" {"report this issue"}
+                a href="https://github.com/ebadfd/site/issues/new" {"report this issue"}
                 " so it can be fixed."
             }
         },

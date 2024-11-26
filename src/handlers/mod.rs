@@ -117,7 +117,7 @@ pub async fn index(Extension(state): Extension<Arc<State>>, headers: HeaderMap) 
 pub async fn rr_handler() -> Result<Markup> {
     RICK_ROLL_COUNTER.with_label_values(&["rr"]).inc();
     Ok(tmpl::full_screen_player(
-        "https://cdn.z9fr.xyz/videos/rr/manifest.mpd".to_string(),
+        "https://cdn.ebadfd.tech/videos/rr/manifest.mpd".to_string(),
     ))
 }
 
