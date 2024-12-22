@@ -72,6 +72,7 @@ pub async fn run_server() -> Result<()> {
         .compress_when(DefaultPredicate::new());
 
     let files = ServeDir::new("static");
+    let well_known_files = ServeDir::new(".well-known");
 
     let middleware = tower::ServiceBuilder::new()
         .layer(Extension(state.clone()))
@@ -108,6 +109,7 @@ pub async fn run_server() -> Result<()> {
         )
         .route("/rr", get(handlers::rr_handler))
         .nest_service("/static", files)
+        .nest_service("/.well-known", well_known_files)
         .fallback(handlers::not_found)
         .layer(comression_layer)
         .layer(middleware);
