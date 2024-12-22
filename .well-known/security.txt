@@ -1,0 +1,4 @@
+Contact: mailto:security@ebadfd.tech
+Expires: 2026-12-12T06:42:00.000Z
+Preferred-Languages: en
+Canonical: https://ebadfd.tech/.well-known/security.txt
