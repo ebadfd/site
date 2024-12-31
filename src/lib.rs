@@ -72,7 +72,7 @@ pub async fn run_server() -> Result<()> {
         .compress_when(DefaultPredicate::new());
 
     let files = ServeDir::new("static");
-    let well_known_files = ServeDir::new(".well-known");
+    let well_known_files = ServeDir::new("well-known");
 
     let middleware = tower::ServiceBuilder::new()
         .layer(Extension(state.clone()))

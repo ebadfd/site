@@ -12,7 +12,7 @@ COPY --from=planner /app/lib lib
 COPY --from=planner /app/Config.toml Config.toml
 COPY --from=planner /app/blog blog
 COPY --from=planner /app/static static
-COPY --from=planner /app/.well-known .well-known
+COPY --from=planner /app/well-known well-known
 
 RUN cargo chef cook --release
 COPY . .
