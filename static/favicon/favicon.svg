@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="64" height="84"><svg width="64" height="84" viewBox="0 0 64 84" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g filter="url(#filter0_i_8_2)">
-<path d="M28 83C26.3431 83 25 81.6569 25 80V65C25 63.3431 26.3431 62 28 62H62.0934C62.8702 62 63.5 62.6298 63.5 63.4066C63.5 63.786 63.3467 64.1493 63.075 64.4141L44.8737 82.1487C44.3135 82.6945 43.5623 83 42.7801 83H28Z" fill="#C90B08"></path>
+<path d="M28 83C26.3431 83 25 81.6569 25 80V65C25 63.3431 26.3431 62 28 62H62.0934C62.8702 62 63.5 62.6298 63.5 63.4066V63.4066C63.5 63.786 63.3467 64.1493 63.075 64.4141L44.8737 82.1487C44.3135 82.6945 43.5623 83 42.7801 83H28Z" fill="#4D8DC4"></path>
 </g>
 <g filter="url(#filter1_i_8_2)">
-<path d="M0 36C0 37.6569 1.34315 39 3 39H18C19.6569 39 21 37.6569 21 36V1.90663C21 1.12977 20.3702 0.5 19.5934 0.5C19.214 0.5 18.8507 0.653259 18.5859 0.924992L0.851311 19.1263C0.30547 19.6865 0 20.4377 0 21.2199V36Z" fill="#C90B08"></path>
+<path d="M0 36C0 37.6569 1.34315 39 3 39H18C19.6569 39 21 37.6569 21 36V1.90663C21 1.12977 20.3702 0.5 19.5934 0.5V0.5C19.214 0.5 18.8507 0.653258 18.5859 0.924992L0.851311 19.1263C0.30547 19.6865 0 20.4377 0 21.2199V36Z" fill="#4D8DC4"></path>
 </g>
 <g filter="url(#filter2_i_8_2)">
-<path d="M28 0C26.3431 0 25 1.34315 25 3V18C25 19.6569 26.3431 21 28 21H61.5896C62.3685 21 63 20.3685 63 19.5896C63 19.2123 62.8489 18.8508 62.5804 18.5858L44.6295 0.865038C44.0681 0.31078 43.3109 0 42.5219 0H28Z" fill="#C90B08"></path>
+<path d="M28 0C26.3431 0 25 1.34315 25 3V18C25 19.6569 26.3431 21 28 21H61.5896C62.3685 21 63 20.3685 63 19.5896V19.5896C63 19.2123 62.8489 18.8508 62.5804 18.5858L44.6295 0.865038C44.0681 0.31078 43.3109 0 42.5219 0H28Z" fill="#4D8DC4"></path>
 </g>
 <g filter="url(#filter3_i_8_2)">
-<path d="M0 48C0 46.3431 1.34315 45 3 45H18C19.6569 45 21 46.3431 21 48V82.0934C21 82.8702 20.3702 83.5 19.5934 83.5C19.214 83.5 18.8507 83.3467 18.5859 83.075L0.851311 64.8737C0.30547 64.3135 0 63.5623 0 62.7801V48Z" fill="#C90B08"></path>
+<path d="M0 48C0 46.3431 1.34315 45 3 45H18C19.6569 45 21 46.3431 21 48V82.0934C21 82.8702 20.3702 83.5 19.5934 83.5V83.5C19.214 83.5 18.8507 83.3467 18.5859 83.075L0.851311 64.8737C0.30547 64.3135 0 63.5623 0 62.7801V48Z" fill="#4D8DC4"></path>
 </g>
 <g filter="url(#filter4_i_8_2)">
-<path d="M25 47V36C25 34.3431 26.3431 33 28 33H60C61.6569 33 63 34.3431 63 36V47C63 48.6569 61.6569 50 60 50H28C26.3431 50 25 48.6569 25 47Z" fill="#C90B08"></path>
+<path d="M25 47V36C25 34.3431 26.3431 33 28 33H60C61.6569 33 63 34.3431 63 36V47C63 48.6569 61.6569 50 60 50H28C26.3431 50 25 48.6569 25 47Z" fill="#4D8DC4"></path>
 </g>
 <defs>
-<filter id="SvgjsFilter1035" x="23" y="60" width="40.5" height="23" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="SvgjsFilter1080" x="23" y="60" width="40.5" height="23" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
@@ -25,7 +25,7 @@
 <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"></feColorMatrix>
 <feBlend mode="normal" in2="shape" result="effect1_innerShadow_8_2"></feBlend>
 </filter>
-<filter id="SvgjsFilter1034" x="-2" y="0.5" width="23" height="40.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="SvgjsFilter1079" x="-2" y="0.5" width="23" height="40.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
@@ -35,7 +35,7 @@
 <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"></feColorMatrix>
 <feBlend mode="normal" in2="shape" result="effect1_innerShadow_8_2"></feBlend>
 </filter>
-<filter id="SvgjsFilter1033" x="23" y="-2" width="40" height="23" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="SvgjsFilter1078" x="23" y="-2" width="40" height="23" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
@@ -45,7 +45,7 @@
 <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"></feColorMatrix>
 <feBlend mode="normal" in2="shape" result="effect1_innerShadow_8_2"></feBlend>
 </filter>
-<filter id="SvgjsFilter1032" x="-2" y="45" width="23" height="40.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="SvgjsFilter1077" x="-2" y="45" width="23" height="40.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
@@ -55,7 +55,7 @@
 <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.2 0"></feColorMatrix>
 <feBlend mode="normal" in2="shape" result="effect1_innerShadow_8_2"></feBlend>
 </filter>
-<filter id="SvgjsFilter1031" x="23" y="31" width="40" height="19" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<filter id="SvgjsFilter1076" x="23" y="31" width="40" height="19" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
 <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"></feBlend>
 <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>

@@ -1,6 +1,6 @@
 {
-  "name": "badfd explorations",
-  "short_name": "badfd",
+  "name": "ebadfd explorations",
+  "short_name": "ebadfd",
   "icons": [
     {
       "src": "/static/favicon/web-app-manifest-192x192.png",
@@ -15,7 +15,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#1E1E1E",
-  "background_color": "#1E1E1E",
+  "theme_color": "#181b23",
+  "background_color": "#181b23",
   "display": "standalone"
 }
