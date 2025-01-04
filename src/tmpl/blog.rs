@@ -99,7 +99,7 @@ pub fn post(
 ) -> Markup {
     let markup = html! {
          article {
-            h1 class="baffle" {(post.front_matter.title)}
+            h1 {(post.front_matter.title)}
 
             img src={(post.image_url(domain))} alt={(post.front_matter.title)} {}
 
