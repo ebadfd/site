@@ -24,7 +24,7 @@ function terminal_resize() {
 
   document.addEventListener('mousemove', (event) => {
     if (startY !== null) {
-      const deltaY = startY - event.clientY; 
+      const deltaY = startY - event.clientY;
       const newHeight = Math.max(0, initialHeight + deltaY); // Prevent negative heights
       termx.style.height = `${newHeight}px`;
     }

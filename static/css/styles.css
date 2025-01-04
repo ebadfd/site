@@ -1,10 +1,46 @@
+/* Cozy Bear Color Scheme */
+:root {
+  --foreground: #eae3d9;
+  --background: #181b23;
+  --cursor-color: #eae3d9;
+
+  --black: #181b23;
+  --dark-grey: #2a2f3a;
+
+  --red: #d36c6c;
+  --light-red: #e88383;
+
+  --green: #a8c074;
+  --light-green: #b8d084;
+
+  --yellow: #e7a953;
+  --light-yellow: #f6c982;
+
+  --blue: #4d8dc4;
+  --light-blue: #73a8e6;
+
+  --magenta: #b18bbb;
+  --light-magenta: #c6a2d6;
+
+  --cyan: #78b6bc;
+  --light-cyan: #8ccfd3;
+
+  --white: #f3eee5;
+  --light-white: #f3eee5;
+
+  --border: #2a2f3a;
+  --highlight-border: #d36c6c;
+}
+
 html {
   font-size: 14px;
+  color: var(--foreground);
+  background-color: var(--background);
 }
 
 .dark-grey {
-  background-color: #181818;
-  color: #fff;
+  background-color: var(--black);
+  color: var(--white);
 }
 
 .hack h1 {
@@ -14,13 +50,24 @@ html {
     Bitstream Vera Sans Mono, Courier New, monospace, serif;
 }
 
+a {
+  cursor:pointer;
+  color: var(--light-blue);
+  text-decoration:none;
+  border-bottom:1px solid var(--blue);
+}
+a:hover {
+  background-color: var(--blue);
+  color:#fff
+}
+
 .code-highlight {
-  border: 1px solid #363638 !important;
+  border: 1px solid var(--border) !important;
   padding: 1em !important;
 }
 
 .logo {
-  color: white;
+  color: var(--white);
   border: none;
   font-size: 1.2em;
 }
@@ -34,7 +81,7 @@ html {
 .hidden-input {
   border: none;
   background: transparent;
-  color: white;
+  color: var(--white);
   caret-color: transparent;
   font-size: 1em;
   position: relative;
@@ -82,7 +129,7 @@ html {
   height: 0;
   overflow: hidden;
   max-width: 100%;
-  border: 1px solid #363638 !important;
+  border: 1px solid var(--border) !important;
 }
 
 .yt-video-container iframe,
@@ -98,34 +145,34 @@ html {
 article img {
   max-inline-size: 100%;
   block-size: auto;
-  border: 1px solid #363638 !important;
+  border: 1px solid var(--border) !important;
 }
 
 #wcb.carbonbadge {
   font-size: 11px !important;
   text-align: left !important;
-  color: black !important;
+  color: var(--black) !important;
 }
 
 #wcb_g {
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace, serif !important;
-  color: black !important;
+  color: var(--black) !important;
 }
 
 #wcb_a {
-  color: black !important;
+  color: var(--black) !important;
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace, serif !important;
 }
 
 #wcb.wcb-d #wcb_a {
-  background: #ff2e88 !important;
-  border-color: #ff2e88 !important;
+  background: var(--highlight-border) !important;
+  border-color: var(--highlight-border) !important;
 }
 
 #wcb_g {
-  border: .13em solid #ff2e88 !important;
+  border: 0.13em solid var(--highlight-border) !important;
 }
 
 .termx-open {
@@ -142,14 +189,14 @@ article img {
   max-width: 100%;
   z-index: 1000;
   height: 350px;
-  background: rgb(34, 34, 34);
+  background: var(--black);
   overflow-y: auto;
 }
 
 .resize-notch {
   width: 100px;
   height: 2px;
-  background-color: #b5b5b5;
+  background-color: var(--dark-grey);
   position: absolute;
   top: 0;
   left: 50%;
@@ -165,49 +212,49 @@ article img {
 }
 
 #termx .card-header {
-  padding-left:30px;
-  padding-right:30px;
+  padding-left: 30px;
+  padding-right: 30px;
   position: fixed;
   width: 100%;
-  background: rgb(34, 34, 34);
+  background: var(--black);
 }
 
 #termx .card-content {
-  padding-left:30px;
-  padding-right:30px;
+  padding-left: 30px;
+  padding-right: 30px;
   margin-top: 40px;
 }
 
 #termx-results {
   white-space: pre-wrap;
-  margin-top:10px
+  margin-top: 10px;
 }
 
 #termx .user {
-  color:#6fc736;
+  color: var(--green);
   font-weight: bold;
 }
 
 #termx .path {
   margin-right: 5px;
   margin-left: 5px;
-  color:#729fcf;
+  color: var(--blue);
 }
 
 #terminal-input {
-    flex: 1;
-    background: none;
-    border: none;
-    outline: none;
-    color: #eee; /* Text color */
-    font-family: inherit;
-    font-size: inherit;
-    margin-right: 5px;
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--white); /* Text color */
+  font-family: inherit;
+  font-size: inherit;
+  margin-right: 5px;
 }
 
 .exec {
   flex-wrap: wrap;
-  display:flex;
+  display: flex;
   margin-bottom: 10px;
 }
 

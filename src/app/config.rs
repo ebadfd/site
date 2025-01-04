@@ -25,7 +25,7 @@ impl Render for Link {
     fn render(&self) -> Markup {
         html! {
             span {
-                a href=(self.url) {(self.title)}
+                a target="_blank" href=(self.url) {(self.title)}
                 @if !self.description.is_empty() {
                     ": "
                     (self.description)

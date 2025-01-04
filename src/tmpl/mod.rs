@@ -1,5 +1,4 @@
 use chrono::prelude::*;
-use logo::logo;
 use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 use termx::{default_help_short, registries::CommandRegistry};
 
@@ -130,7 +129,7 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
 
             p {"Software enginer at Surge.global. My main interests revolve around Computers, History, Philosophy and Anime."}
 
-            h2 class="baffle" { "Recent Articles" }
+            h2 { "Recent Articles" }
 
             ul preload{
                 @for post in posts.iter().take(5).filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
@@ -142,7 +141,7 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
                     }
             }
 
-            h2 class="baffle" { "Quick Links" }
+            h2 { "Quick Links" }
             ul {
                 li {a href={"https://github.com/" (author.github)} rel="me" {"GitHub"}}
                 li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"X formerly twitter"}}
@@ -190,11 +189,12 @@ pub fn base(
                 link rel="alternate" title="ebadfd explorations" type="application/rss+xml" href={"https://ebadfd.tech/blog.rss"};
                 link rel="alternate" title="ebadfd explorations" type="application/json" href={"https://ebadfd.tech/blog.json"};
 
-                link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png";
-                link rel="shortcut icon" href="/static/favicon/favicon.ico";
-
                 link rel="icon" type="image/png" href="/static/favicon/favicon-96x96.png" sizes="96x96";
                 link rel="icon" type="image/svg+xml" href="/static/favicon/favicon.svg";
+                link rel="shortcut icon" href="/static/favicon/favicon.ico";
+                link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png";
+
+                link rel="manifest" href="/static/favicon/site.webmanifest";
 
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
@@ -206,7 +206,6 @@ pub fn base(
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
                 script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer {};
                 script src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
-                script async src="/static/baffle.min.js" defer {}
                 script async src="/static/script.js" defer {}
 
                 script src="https://kit.fontawesome.com/eabf947950.js" crossorigin="anonymous" {};
@@ -226,7 +225,7 @@ pub fn base(
             }
 
             div.progress style="height: 2px;"{
-                div.indeterminate style="background-color: #ff2e88;"{}
+                div.indeterminate style="background-color: #d36c6c;"{}
             }
 
             input name="bustCache" value={(*CACHEBUSTER)} type="hidden" {}
@@ -239,13 +238,11 @@ pub fn base(
                         nav {
                             div hx-boost="true" hx-include="[name='bustCache']" hx-swap="innerHTML" hx-target=".snowframe" {
                                 a hx-push-url="/" href="/" style="all: unset; display: inline-block; cursor: pointer;" {
-                                    img src={"/static/logo-main.svg?bustCache=" (*CACHEBUSTER)} style="max-width: 60%; height: auto;" {};
+                                    img src={"/static/logo-main.svg?bustCache=" (*CACHEBUSTER)} style="max-width: 40%; height: auto;" {};
                                 }
                             }
                         }
                     }
-
-                    hr style="margin: 0px";
 
                     .snowframe {
                         (content)
@@ -263,12 +260,6 @@ pub fn base(
                                 a  href="/contact" hx-push-url="/contact" { "Contact" }
                                 " - "
                                 a href="/stack" hx-push-url="/stack" { "Uses" }
-                            }
-                        }
-
-                        blockquote {
-                            small {
-                                "copy right " (now.year())
                             }
                         }
                     }
@@ -358,27 +349,27 @@ pub fn stack(is_partial: bool) -> Markup {
          h1 {"Uses"}
          ul {
              li {
-                 "Built on " a href={"https://github.com/tokio-rs/axum"} {"axum"}
+                 "Built on " a target="_blank" href={"https://github.com/tokio-rs/axum"} {"axum"}
              }
 
              li {
-                 a href={"https://tokio.rs/"} {"tokio.rs"} " as the asynchronous runtime."
+                 a target="_blank" href={"https://tokio.rs/"} {"tokio.rs"} " as the asynchronous runtime."
              }
 
              li {
-                 a href="https://hackcss.egoist.dev" {"hackcss"}; " as the css framework"
+                 a target="_blank" href="https://hackcss.egoist.dev" {"hackcss"}; " as the css framework"
              }
 
              li {
-                 "Markdown rendering with " a href="https://docs.rs/comrak" {"cmark"};"."
+                 "Markdown rendering with " a target="_blank" href="https://docs.rs/comrak" {"cmark"};"."
              }
 
              li {
-                 a href="https://docs.rs/syntect" {"Syntect"}; " for Syntax Highlighting."
+                 a target="_blank" href="https://docs.rs/syntect" {"Syntect"}; " for Syntax Highlighting."
              }
 
              li {
-                 "Inspired by " a href="https://github.com/Xe/site" {"Xe/site"}; "."
+                 "Inspired by " a target="_blank" href="https://github.com/Xe/site" {"Xe/site"}; "."
              }
         }
 
@@ -403,7 +394,7 @@ pub fn not_found(path: impl Render) -> Markup {
                 "The path at "
                 code {(path)}
                 " could not be found. If you expected this path to exist, please "
-                a href="https://github.com/ebadfd/site/issues/new" {"report this issue"}
+                a target="_blank" href="https://github.com/ebadfd/site/issues/new" {"report this issue"}
                 " so it can be fixed."
             }
         },
