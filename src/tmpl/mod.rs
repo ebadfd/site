@@ -145,6 +145,7 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
             ul {
                 li {a href={"https://github.com/" (author.github)} rel="me" {"GitHub"}}
                 li {a href={"https://twitter.com/" (author.twitter)} rel="me" {"X formerly twitter"}}
+                li {a href={"https://helm.ebadfd.tech/"} rel="repository" {"ebadfd Helm Repository"}}
             }
         }
     };
