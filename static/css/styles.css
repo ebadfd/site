@@ -132,6 +132,14 @@ a:hover {
   border: 1px solid var(--border) !important;
 }
 
+
+.video-container {
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  border: 1px solid var(--border) !important;
+}
+
 .yt-video-container iframe,
 .yt-video-container object,
 .yt-video-container embed {
@@ -265,4 +273,10 @@ article img {
 
 .exec .result {
   flex-basis: 100%;
+}
+
+
+.flickity-enabled:focus .flickity-viewport {
+  outline: thin dotted;
+  outline: 5px auto -webkit-focus-ring-color;
 }

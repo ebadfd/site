@@ -203,6 +203,10 @@ pub fn base(
                 link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
                 link rel="stylesheet" href={"/static/css/progress-bar.css?bustCache=" (*CACHEBUSTER)};
 
+                // flickity 
+                link rel="stylesheet" href={"https://unpkg.com/flickity@2/dist/flickity.min.css"};
+                script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js" async defer {};
+
                 script src="https://unpkg.com/htmx.org@1.9.10" integrity={"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"} crossorigin={"anonymous"} {}
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
                 script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer {};

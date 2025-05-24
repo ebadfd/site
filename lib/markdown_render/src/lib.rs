@@ -44,13 +44,36 @@ pub fn render(input: &str) -> Result<String> {
     let html = rewrite_str(
         &html,
         RewriteStrSettings {
-            element_content_handlers: vec![element!("yt-video", |el| {
-                let video_id = el
-                    .get_attribute("id")
-                    .ok_or(Error::MissingElementAttribute("id".to_string()))?;
-                el.replace(&site_templates::yt_video(video_id).0, ContentType::Html);
-                Ok(())
-            })],
+            element_content_handlers: vec![
+                element!("yt-video", |el| {
+                    let video_id = el
+                        .get_attribute("id")
+                        .ok_or(Error::MissingElementAttribute("id".to_string()))?;
+                    el.replace(&site_templates::yt_video(video_id).0, ContentType::Html);
+                    Ok(())
+                }),
+                element!("video", |el| {
+                    let video_url = el
+                        .get_attribute("url")
+                        .ok_or(Error::MissingElementAttribute("url".to_string()))?;
+                    el.replace(&site_templates::video(video_url).0, ContentType::Html);
+                    Ok(())
+                }),
+                element!("carousel", |el| {
+                    let data = el
+                        .get_attribute("data-cell")
+                        .ok_or(Error::MissingElementAttribute("data-cell".to_string()))?;
+
+                    let image_list: Vec<String> = data
+                        .split(',')
+                        .map(|s| s.trim().to_string())
+                        .filter(|s| !s.is_empty())
+                        .collect();
+
+                    el.replace(&site_templates::carousel(image_list).0, ContentType::Html);
+                    Ok(())
+                }),
+            ],
             ..RewriteStrSettings::default()
         },
     )?;
