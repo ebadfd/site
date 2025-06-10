@@ -38,3 +38,15 @@ pub fn video(url: String) -> Markup {
         }
     }
 }
+
+pub fn details(summary: String, details: String) -> Markup {
+    html! {
+        div.card {
+        details {
+            summary style="cursor: pointer;"{ (summary) } 
+            p {
+                (details)
+            }
+        }}
+    }
+}
