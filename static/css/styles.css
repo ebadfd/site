@@ -280,3 +280,8 @@ article img {
   outline: thin dotted;
   outline: 5px auto -webkit-focus-ring-color;
 }
+
+.card {
+  margin-bottom: 20px;
+  padding: 0.4em;
+}

@@ -58,6 +58,18 @@ pub fn render(input: &str) -> Result<String> {
                         .ok_or(Error::MissingElementAttribute("url".to_string()))?;
                     el.replace(&site_templates::video(video_url).0, ContentType::Html);
                     Ok(())
+                }), 
+                element!("details", |el| {
+                    let summary = el
+                        .get_attribute("summary")
+                        .ok_or(Error::MissingElementAttribute("summary".to_string()))?;
+
+                    let details = el
+                        .get_attribute("details")
+                        .ok_or(Error::MissingElementAttribute("details".to_string()))?;
+
+                    el.replace(&site_templates::details(summary, details).0, ContentType::Html);
+                    Ok(())
                 }),
                 element!("carousel", |el| {
                     let data = el
