@@ -234,10 +234,40 @@ https://cdn.ebadfd.tech/ae86-restore/primer/primer6.jpeg,
 https://cdn.ebadfd.tech/ae86-restore/primer/primer7.jpeg,
 "></carousel>
 
+# Starting the Foundation: Filler Application and Body Alignment
+
+With the primer applied, we moved on to the next crucial step—applying the filler and aligning the body panels. This phase involved a significant amount of work to get everything properly straightened and adjusted.
+
+Despite the challenges, we made solid progress. The panels were carefully aligned to ensure tight, clean lines across the car, setting the foundation for the AE86’s sharp and refined look.
+
+<carousel data-cell="
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/right4.jpg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/right3.jpg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/fender-right.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/left1.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/rear-fender.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/rear1.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/rear2.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/right2.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/roof1.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/roof2.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/filler-apply/root2.jpeg
+"></carousel>
 
 ---
 
-## This post reflects the current progress as of May 24, 2025.
+## This post reflects the current progress as of June 18, 2025.
 
 We’ve made some solid headway, but there’s still a long road ahead. I’ll continue updating this blog as we tackle each stage of the build — stay tuned!
 
+---
+
+## Special Thanks
+
+This has been my very first car restoration project, and I couldn't have gotten this far without a few amazing friends and my incredible family who supported me throughout the journey. It hasn’t always been easy, but every step has been incredibly rewarding—and I’m genuinely grateful for the people who’ve stood by me.
+
+A special shout-out to [**@Januka**](https://www.instagram.com/jaaaanuka/) and [**@Shehan**](https://www.instagram.com/shehan.r.o_o/)—despite their busy schedules, they made time to help out in every way they could. From the initial inspection to dealing with the usual chaos that comes with working with mechanics, they were there through it all. Massive thanks to both of them for being part of the build and making this project that much more meaningful.
+
+And to my family—thank you for all the patience, encouragement, and support you've given me along the way. From late nights in the garage to the constant talk about parts and plans, your belief in me kept this dream moving forward. I couldn't have done this without you.
+
+This is just the beginning—there’s a lot more to come as the build continues. Stay tuned!
