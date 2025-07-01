@@ -254,9 +254,65 @@ https://cdn.ebadfd.tech/ae86-restore/filler-apply/roof2.jpeg,
 https://cdn.ebadfd.tech/ae86-restore/filler-apply/root2.jpeg
 "></carousel>
 
+Started on: 2025-06-28
+
+After completing the full application of primer and necessary bodywork, we moved on to wet sanding the entire shell.
+This process involved carefully cutting the surface while continuously adding water—an essential step to ensure all the body lines and contours aligned perfectly.
+Though it was a meticulous and time-consuming task, we managed to complete it within a day. This prep work was critical in getting the car ready for the first coat of paint, 
+and it made a noticeable difference in how well the body lines popped after sanding.
+
+<carousel data-cell="
+https://cdn.ebadfd.tech/ae86-restore/body-sanding/after-sanding-01.jpg,
+https://cdn.ebadfd.tech/ae86-restore/body-sanding/sanding-back-1.jpg,
+https://cdn.ebadfd.tech/ae86-restore/body-sanding/sanding-back-2.jpg,
+https://cdn.ebadfd.tech/ae86-restore/body-sanding/sanding-back-3.jpg,
+https://cdn.ebadfd.tech/ae86-restore/body-sanding/sanding-back-4.jpg,
+https://cdn.ebadfd.tech/ae86-restore/body-sanding/sanding-right-1.jpg
+"></carousel>
+
+After completing the wet sanding process, we moved on to applying the primer. For this stage, we chose to use a urethane primer—a high-build, 
+durable option that's ideal for surfacing and sealing the body before paint. Urethane primer is particularly effective in filling minor imperfections and providing a smooth, 
+even surface, which is crucial after the sanding stage.
+
+Started on: 2025-06-30
+
+Applying the primer after wet sanding ensures that the body is clean, smooth, and ready to accept the primer uniformly. 
+This step also helps highlight any final imperfections or inconsistencies in the body lines, which can be addressed before moving on to the base coat. 
+Overall, using urethane primer at this point sets a strong foundation for the first layer of paint to bond properly and ensures a high-quality, long-lasting finish.
+
+<carousel data-cell="
+https://cdn.ebadfd.tech/ae86-restore/wet-primer/wet-primer-01.jpeg, 
+https://cdn.ebadfd.tech/ae86-restore/wet-primer/wet-primer-apply-04.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/wet-primer/wet-primer-apply-05.jpeg
+"></carousel>
+
+<carousel data-cell="
+https://cdn.ebadfd.tech/ae86-restore/wet-primer/wet-primer-apply-01.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/wet-primer/wet-primer-apply-02.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/wet-primer/wet-primer-apply-03.jpeg,
+"></carousel>
+
+# Laying Down the Color: First Coat of Paint Applied
+
+Started on: 2025-07-01
+
+After all the prep work—including bodywork, wet sanding, and priming—we moved on to applying the first coat of paint to the exterior of the car. 
+It's important to note that this is not the final color—this initial layer is primarily a test coat, used to reveal any imperfections, misalignments, 
+or inconsistencies in the bodywork that might have been missed earlier.
+
+At this stage, we focused solely on the outer body, as the interior still requires cleaning and sanding before it can be addressed. 
+Even so, seeing the body in a uniform color—even if temporary—was a huge milestone. It gave us a clearer view of the car’s shape and progress, 
+and marked the transition from preparation to refinement.
+
+<carousel data-cell="
+https://cdn.ebadfd.tech/ae86-restore/first-paint/from-front-02.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/first-paint/from-side-01.jpeg,
+https://cdn.ebadfd.tech/ae86-restore/first-paint/from-side-02.jpeg
+"></carousel>
+
 ---
 
-## This post reflects the current progress as of June 18, 2025.
+## This post reflects the current progress as of July 1, 2025.
 
 We’ve made some solid headway, but there’s still a long road ahead. I’ll continue updating this blog as we tackle each stage of the build — stay tuned!
 
