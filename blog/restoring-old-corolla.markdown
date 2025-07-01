@@ -49,7 +49,6 @@ https://cdn.ebadfd.tech/ae86-restore/before-buying/shell-5.jpeg,
 After spending a few days inspecting the shell, sorting through the parts, and digging into the legal side of things, we made our initial payment on 2025-04-10. 
 A week later, on 2025-04-17, the deal was done — and the car was officially ours. We moved it to the tinkering spot, where the real journey begins.
 
-
 <carousel data-cell="
 https://cdn.ebadfd.tech/ae86-restore/moving/on-truck.jpeg,
 https://cdn.ebadfd.tech/ae86-restore/moving/on-truck-2.jpeg,
@@ -57,6 +56,8 @@ https://cdn.ebadfd.tech/ae86-restore/moving/on-truck-night-2.jpeg,
 "></carousel>
 
 Here are some photos from the day we moved the car — along with shots of the parts we collected, sorted, and organized before the big move.
+
+A big shout-out to [**RoadSquad**](https://www.instagram.com/roadsquad.lk) for making the move hassle-free. They handled the tow with total professionalism and care, which made a stressful day feel a lot smoother.
 
 <carousel data-cell="
 https://cdn.ebadfd.tech/ae86-restore/parts/parts-1.jpeg,
@@ -323,6 +324,8 @@ We’ve made some solid headway, but there’s still a long road ahead. I’ll c
 This has been my very first car restoration project, and I couldn't have gotten this far without a few amazing friends and my incredible family who supported me throughout the journey. It hasn’t always been easy, but every step has been incredibly rewarding—and I’m genuinely grateful for the people who’ve stood by me.
 
 A special shout-out to [**@Januka**](https://www.instagram.com/jaaaanuka/) and [**@Shehan**](https://www.instagram.com/shehan.r.o_o/)—despite their busy schedules, they made time to help out in every way they could. From the initial inspection to dealing with the usual chaos that comes with working with mechanics, they were there through it all. Massive thanks to both of them for being part of the build and making this project that much more meaningful.
+
+Big thanks also to [**RoadSquad**](https://www.instagram.com/roadsquad.lk), the tow service provider who helped me out when I needed it most. Getting the car where it needed to be, safely and on time, made a huge difference—appreciate the professionalism and reliability.
 
 And to my family—thank you for all the patience, encouragement, and support you've given me along the way. From late nights in the garage to the constant talk about parts and plans, your belief in me kept this dream moving forward. I couldn't have done this without you.
 
