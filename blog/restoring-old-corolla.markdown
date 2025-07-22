@@ -1,6 +1,6 @@
 ---
 title: "Restoring old 1985 Corolla For Fun and Profit"
-date: "2099-04-10"
+date: "2025-04-10"
 image: "https://wj6zzer4ts.ufs.sh/f/xAYSmYcg8VaGb4daWVhYPpkTDrVGJmXhu4bIiMO1BS5jEzso"
 about: "Restoring old Corolla For Fun and Profit is a chaotic chronicle of my journey rebuilding a Toyota Corolla Sprinter Trueno — because who needs financial stability when you can chase 80s JDM dreams?"
 tags:
