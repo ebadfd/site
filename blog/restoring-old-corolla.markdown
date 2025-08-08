@@ -104,7 +104,7 @@ with no major corrosion in sight. The firewall rust, while present, wasn’t any
 
 Here’s a quick video showing how it looked.
 
-<video url="https://cdn.ebadfd.tech/ae86-restore/rust/inner-shell.mp4"> </vide>
+<video url="https://cdn.ebadfd.tech/ae86-restore/rust/inner-shell.mp4"> </video>
 
 Unfortunately, the firewall didn’t fare as well — there was noticeable rust damage that will need some serious attention.
 
@@ -305,15 +305,178 @@ At this stage, we focused solely on the outer body, as the interior still requir
 Even so, seeing the body in a uniform color—even if temporary—was a huge milestone. It gave us a clearer view of the car’s shape and progress, 
 and marked the transition from preparation to refinement.
 
+
 <carousel data-cell="
 https://cdn.ebadfd.tech/ae86-restore/first-paint/from-front-02.jpeg,
 https://cdn.ebadfd.tech/ae86-restore/first-paint/from-side-01.jpeg,
 https://cdn.ebadfd.tech/ae86-restore/first-paint/from-side-02.jpeg
 "></carousel>
 
+# Precision Work: Fine-Tuning the Body Fit
+
+With the first coat of paint applied, every subtle imperfection became more visible. 
+This was our opportunity to get meticulous—checking panel gaps, body lines, and overall symmetry from every angle.
+
+We adjusted misaligned panels, refined edges, and smoothed out minor surface flaws to ensure everything lined up perfectly. 
+This careful fine-tuning will pay off in the final stages, giving the car that crisp, factory-fresh look once the full paint job is complete.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment/20250714_170959.jpg,
+https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250714_171021.jpg,
+https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250714_171052.jpg,
+https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250703_170813.jpg,
+https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250717_170648.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250707_165629.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250717_171459.jpg
+"></carousel>
+
+## More Alignment Work After Body Cutting
+
+After the initial alignment corrections, we decided to cut back into the body once more to ensure every panel and gap was spot-on.
+This deeper inspection revealed a few additional misalignments and surface imperfections that weren’t as visible before.
+
+During this stage, we also began working on the door fitment—adjusting hinges, refining latch alignment, and ensuring the doors sat flush with the surrounding panels. 
+These adjustments are crucial for achieving consistent panel gaps and that solid, factory-style closure.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250707_165617.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250709_170049.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-2/20250717_170628.jpg
+  "></carousel>
+
+## Fixing the Bonnet
+
+the  bonnet had quite lot of issues, it was not on the best condition so we had to sepnd some extra time to actually get the hood done properly. including the inside and both exterior
+The bonnet presented several challenges throughout the restoration process. 
+
+Its condition was not so ideal, requiring extra care and attention to bring it back to shape. We dedicated additional time to addressing both the exterior surface and 
+the inside structure, ensuring the hood not only looked great but also fit properly and operated smoothly.
+
+This included repairing dents, refining edges, and preparing the surfaces for painting, as well as ensuring the internal supports and mounting points were sound.
+The goal was to achieve a bonnet that matched the quality and alignment of the rest of the car.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250630_170104.jpg, 
+https://cdn.z9fr.xyz/ae86-restore/fixing-hood/20250702_170500.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250703_170858.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250714_170943.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250714_170950.jpg "></carousel>
+
+## Applying High Primer to the Inside
+
+After completing the body fine-tuning, we turned our attention to the car’s interior. The next step was applying a high-build primer to freshen up the inside,
+address any imperfections, and prepare it for the final finish.
+
+This stage also allowed us to do additional cleaning and minor repairs inside, ensuring the cabin is as refined as the exterior will be.
+
+<carousel data-cell=" https://cdn.ebadfd.tech/ae86-restore/high-primer/20250718_164045.jpg, https://cdn.ebadfd.tech/ae86-restore/high-primer/20250718_164101.jpg, https://cdn.ebadfd.tech/ae86-restore/high-primer/20250722_170733.jpg"></carousel>
+
+# Approaching Perfection: Second and Third Coats of Paint
+
+After addressing the imperfections highlighted by the first coat, we proceeded with applying the second and third coats of paint. 
+This layer closely matches the final color code, allowing us to better evaluate the car’s overall finish and spot any remaining misalignments or 
+surface issues before the final clear coat is applied.
+
+Applying these coats brought the car’s true color to life, giving us a much clearer sense of how the finished restoration will look. 
+It also provided a more accurate surface for the final inspection and any last adjustments needed to ensure a flawless finish.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/paint-2/20250724_165037.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/paint-2/20250724_165044.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/paint-2/20250725_142647.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/paint-2/20250725_142703.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/paint-2/20250725_142806.jpg
+  "></carousel>
+
+> Spoiler alert: Can you guess the color of the car?
+
+## Final Alignment Check After Second and Third Coats
+
+Once the second and third coats were applied, we carefully inspected the car for any remaining alignment issues before moving on to final paint prep.
+Most of the issues we found were minor and easily corrected. However, the bonnet presented a more challenging alignment problem that required extra time and attention to fix properly.
+
+Aside from the hood, everything else lined up smoothly, setting the stage for a clean and flawless final finish.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSCPDC_0000_BURST20250728173434985.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0160.JPG, 
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0159.JPG, 
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/20250728_174436.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0144.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0146.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0147.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0148.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0149.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0151.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0152.JPG,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0153.JPG, 
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0154.JPG, 
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0155.JPG, 
+  https://cdn.ebadfd.tech/ae86-restore/fixing-alignment-3/DSC_0156.JPG
+  "></carousel>
+
+## Applying Underseal for Long-Lasting Protection
+
+After completing the paintwork and final body alignment, we moved on to applying the underseal—a crucial step to ensure the car’s longevity.
+Underseal acts as a protective barrier on the underside of the vehicle, shielding it from moisture, road salt, debris, and corrosion. 
+This helps prevent rust and structural damage over time, especially important for preserving an older car through years of use.
+
+Applying the underseal carefully now means the car will have added durability and resistance against harsh elements, extending its life well beyond the restoration.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/underseal/20250808_115924.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/underseal/20250808_115932.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/underseal/20250730_165859.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/underseal/20250730_165910.jpg
+  "></carousel>
+
+## Prep for Final Paint
+
+After resolving all alignment issues, we began the critical preparation stage for the final paint.
+This prep work is essential to ensure the paint adheres perfectly and delivers a smooth, flawless finish.
+
+It involves thorough cleaning, sanding, and masking to create an optimal surface free from dust, oils, or imperfections that could affect the paint quality. 
+Proper prep sets the foundation for the final coat’s durability, shine, and overall appearance.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/final-prep/20250805_171341.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/final-prep/20250805_171333.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/final-prep/20250805_170849.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/final-prep/20250805_170908.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/final-prep/20250805_170835.jpg
+  "></carousel>
+
+# Applying the Final Coat: Medium Gray Metallic Unveiled
+
+Started on: 2025-08-07
+
+After countless hours and days of preparation, we finally applied the final coat of paint. For this special finish, we chose DeBeer’s renowned Medium Gray Metallic (color code 159) — a rare and distinctive shade offered for only one year.
+
+> *“Damn, don’t tell him Medium Gray Metallic is an ultra-rare color offered for only one year!”*
+
+Yes, we embraced this unique color to make the car truly stand out. After all the effort poured into the restoration, the final paint job exceeded our expectations. 
+The depth, shine, and flawless coverage made it clear the hard work was absolutely worth it. We couldn’t be happier with the outcome — the car finally looks exactly how we envisioned.
+
+<carousel data-cell="
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115749.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115831.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115743.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115525.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115849.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115705.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115719.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115739.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115502.jpg, 
+  https://cdn.ebadfd.tech/ae86-restore/final-paint/20250808_115903.jpg
+  "></carousel>
+
+Here’s a walkthrough video of the paint job — enjoy!
+
+<video url="https://cdn.ebadfd.tech/ae86-restore/final-paint/final-paint.mp4"> </video>
+
 ---
 
-## This post reflects the current progress as of July 1, 2025.
+## This post reflects the current progress as of August 8, 2025.
 
 We’ve made some solid headway, but there’s still a long road ahead. I’ll continue updating this blog as we tackle each stage of the build — stay tuned!
 
