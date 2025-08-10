@@ -283,6 +283,28 @@ pub fn base(
     }
 }
 
+pub fn support(is_partial: bool) -> Markup {
+    let markup = html! {
+        h1 { "Support" }
+
+        .grid {
+            .cell."-12of12" {
+                p {
+                    "For support, please contact "
+                    a href="mailto:help@ebadfd.tech" { "help@ebadfd.tech" }
+                    "."
+                }
+            }
+        }
+    };
+
+    return if is_partial {
+        markup
+    } else {
+        base(Some("Support"), None, None, markup)
+    };
+}
+
 pub fn email_address(validate: bool) -> Markup {
     if validate {
         return html!(
