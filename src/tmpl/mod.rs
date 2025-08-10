@@ -265,6 +265,9 @@ pub fn base(
                                 a  href="/contact" hx-push-url="/contact" { "Contact" }
                                 " - "
                                 a href="/stack" hx-push-url="/stack" { "Uses" }
+                                " - "
+                                a href="/privacy-policy" hx-push-url="/privacy-policy" { "Privacy Policy" } 
+
                             }
                         }
                     }
@@ -344,6 +347,72 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
         markup
     } else {
         base(Some("Contact Information"), None, None, markup)
+    };
+}
+
+pub fn privacy_policy(is_partial: bool) -> Markup {
+    let markup = html! {
+        h1 { "Privacy Policy" }
+
+        .grid {
+            .cell."-12of12" {
+                p {
+                    "Your privacy is very important to us. We want to be transparent about what information we collect and how we use it."
+                }
+
+                h3 { "Information We Collect" }
+                p {
+                    "We do not collect any personal information from visitors."
+                }
+                p {
+                    "However, we may collect anonymous data for metrics such as page visits and general geographic information like country location. This data is used solely to improve the website experience and is not linked to any individual."
+                }
+
+                h3 { "How We Use This Information" }
+                p {
+                    "The anonymous metrics we collect help us understand website usage patterns so we can improve performance and content."
+                }
+
+                h3 { "Cookies and Tracking" }
+                p {
+                    "Our website may use cookies or similar technologies only for anonymous analytics purposes. No personal data is stored or tracked."
+                }
+
+                h3 { "Third-Party Services" }
+                p {
+                    "We do not share any personal information with third parties. Any third-party services we use for analytics operate on anonymized data only."
+                }
+
+                h3 { "Your Rights" }
+                p {
+                    "Since we do not collect personal information, there are no personal data rights applicable. If you have questions, please contact us."
+                }
+
+                h3 { "Changes to This Policy" }
+                p {
+                    "We may update this privacy policy occasionally. Changes will be posted on this page with an updated effective date."
+                }
+
+                h3 { "Contact Us" }
+                p {
+                    "If you have any questions about this policy, please reach out to us via the contact page."
+                }
+
+                hr;
+
+                p {
+                    "This privacy policy is licensed under the "
+                    a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" { "Creative Commons Attribution 4.0 International License (CC BY 4.0)" }
+                    ". You are free to share and adapt it, provided you give appropriate credit."
+                }
+            }
+        }
+    };
+
+    return if is_partial {
+        markup
+    } else {
+        base(Some("Privacy Policy"), None, None, markup)
     };
 }
 

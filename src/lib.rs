@@ -92,6 +92,7 @@ pub async fn run_server() -> Result<()> {
         .route("/metrics", get(metrics))
         .route("/stack", get(handlers::stack))
         .route("/contact", get(handlers::contact))
+        .route("/privacy-policy", get(handlers::privacy_policy))
         .route("/email", post(handlers::email_address))
         // blog
         .route("/blog", get(handlers::blog::index))
