@@ -129,6 +129,13 @@ pub async fn contact(Extension(state): Extension<Arc<State>>, headers: HeaderMap
     crate::tmpl::contact(&cfg.contact_links, is_htmx_request(headers))
 }
 
+#[instrument(skip(state, headers))]
+pub async fn privacy_policy(Extension(state): Extension<Arc<State>>, headers: HeaderMap) -> Markup {
+    HIT_COUNTER.with_label_values(&["privacy_policy"]).inc();
+    let state = state.clone();
+    crate::tmpl::privacy_policy(is_htmx_request(headers))
+}
+
 #[instrument]
 pub async fn email_address(Form(params): Form<CFTurnstileParams>) -> Markup {
     HIT_COUNTER.with_label_values(&["email_view"]).inc();
