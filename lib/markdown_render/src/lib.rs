@@ -85,6 +85,21 @@ pub fn render(input: &str) -> Result<String> {
                     el.replace(&site_templates::carousel(image_list).0, ContentType::Html);
                     Ok(())
                 }),
+                element!("alert", |el| {
+                    let alert_type = el
+                        .get_attribute("type")
+                        .ok_or(Error::MissingElementAttribute("type".to_string()))?;
+
+                    let message = el
+                        .get_attribute("message")
+                        .ok_or(Error::MissingElementAttribute("message".to_string()))?;
+
+                    el.replace(
+                        &site_templates::alert(&alert_type, &message).0,
+                        ContentType::Html,
+                    );
+                    Ok(())
+                }),
             ],
             ..RewriteStrSettings::default()
         },

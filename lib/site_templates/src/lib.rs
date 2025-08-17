@@ -50,3 +50,19 @@ pub fn details(summary: String, details: String) -> Markup {
         }}
     }
 }
+
+pub fn alert(alert_type: &str, message: &str) -> Markup {
+    let class = match alert_type {
+        "success" => "alert alert-success",
+        "info"    => "alert alert-info",
+        "warning" => "alert alert-warning",
+        "error"   => "alert alert-error",
+        _         => "alert",
+    };
+
+    html! {
+        div class=(class) {
+            (message)
+        }
+    }
+}
