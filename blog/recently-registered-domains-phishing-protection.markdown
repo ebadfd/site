@@ -10,6 +10,10 @@ tags:
   - "domain reputation"
 ---
 
+<alert type="success" message="The RRD (Recently Registered Domains) extension is live now!" > </alert>
+
+Get the [RRD (Recently Registered Domains)](https://chromewebstore.google.com/detail/rrd-recently-registered-d/bbohfomhenmmbmjocbjeicahihfgmjla) extension now
+
 Most newly registered domains tend to be used for fraudulent purposes, including phishing scams and malware distribution campaigns. 
 Because attackers often register fresh domains to evade detection and blacklist lists, these domains serve as a key indicator of potential threats. 
 Blocking access to recently registered domains can significantly strengthen your security posture by reducing exposure to these attacks. 
