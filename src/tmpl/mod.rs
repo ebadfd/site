@@ -107,7 +107,7 @@ pub fn full_screen_player(video_url: String) -> Markup {
     )
 }
 
-pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool) -> Markup {
+pub fn index(author: &Author, posts: &Vec<Post>, products: &Vec<Post>, domain: &str, is_partial: bool) -> Markup {
     let today = Utc::now().date_naive();
     let og_tags = html! {
         link rel="canonical" href={"https://"(domain)"/"};
@@ -140,6 +140,19 @@ pub fn index(author: &Author, posts: &Vec<Post>, domain: &str, is_partial: bool)
                         }
                     }
             }
+
+            h2 { "Freeware" }
+
+            ul preload{
+                @for product in products.iter().take(5).filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
+                    li {
+                        (product.detri())
+                            " - "
+                            a href={ @if product.front_matter.redirect_to.as_ref().is_some() {(product.front_matter.redirect_to.as_ref().unwrap())} @else {"/" (product.link)}} { (product.front_matter.title) }
+                        }
+                    }
+            }
+
 
             h2 { "Quick Links" }
             ul {
@@ -265,6 +278,8 @@ pub fn base(
                                 a  href="/contact" hx-push-url="/contact" { "Contact" }
                                 " - "
                                 a href="/stack" hx-push-url="/stack" { "Uses" }
+                                " - "
+                                a href="/products" hx-push-url="/products" { "FreeWare" }
                                 " - "
                                 a href="/privacy-policy" hx-push-url="/privacy-policy" { "Privacy Policy" } 
 

@@ -18,6 +18,7 @@ use tracing::instrument;
 pub mod blog;
 pub mod feed;
 pub mod term;
+pub mod products;
 
 #[derive(Debug, serde::Deserialize)]
 pub struct CFTurnstileParams {
@@ -108,6 +109,7 @@ pub async fn index(Extension(state): Extension<Arc<State>>, headers: HeaderMap) 
     Ok(tmpl::index(
         &cfg.default_author,
         &state.blog,
+        &state.products,
         &cfg.domain,
         is_htmx_request(headers),
     ))
