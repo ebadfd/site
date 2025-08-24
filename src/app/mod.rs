@@ -11,6 +11,7 @@ use crate::{post::Post, termx_registry::web::WebCommandRegistry};
 pub struct State {
     pub cfg: Arc<Config>,
     pub blog: Vec<Post>,
+    pub products: Vec<Post>,
     pub everything: Vec<Post>,
     pub sitemap: Vec<u8>,
     pub fs: Vec<FS>,
@@ -20,14 +21,21 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     let toml_str = fs::read_to_string(cfg).unwrap();
     let res_cfg: Config = toml::from_str(&toml_str).unwrap();
     let cfg: Arc<Config> = Arc::new(res_cfg);
-    let blog = crate::post::load("blog", &cfg.domain).await?;
-    let mut fs = vec![];
 
+    // Load blog posts
+    let blog = crate::post::load("blog", &cfg.domain).await?;
+    
+    // Load products (similar to blog)
+    let products = crate::post::load("products", &cfg.domain).await?;
+
+    let mut fs = vec![];
     let mut everything: Vec<Post> = vec![];
 
     {
         let blog = blog.clone();
+        let products = products.clone();
         everything.extend(blog.iter().cloned());
+        everything.extend(products.iter().cloned());
     };
 
     everything.sort();
@@ -40,6 +48,7 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
         .take(5)
         .collect();
 
+    // Build sitemap
     let mut sm: Vec<u8> = vec![];
     let smw = sitemap::writer::SiteMapWriter::new(&mut sm);
     let mut urlwriter = smw.start_urlset()?;
@@ -47,12 +56,15 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
         format!("https://{}/resume", cfg.domain),
         format!("https://{}/contact", cfg.domain),
         format!("https://{}/blog", cfg.domain),
+        format!("https://{}/products", cfg.domain),
         format!("https://{}/", cfg.domain),
     ] {
         urlwriter.url(url)?;
     }
+
     let user = WebCommandRegistry::get_user_name();
 
+    // FS entries for blog
     for post in &blog {
         fs.push(FS {
             name: post.link.clone(),
@@ -65,11 +77,25 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
         urlwriter.url(format!("https://{}/{}", cfg.domain, post.link))?;
     }
 
+    // FS entries for products
+    for product in &products {
+        fs.push(FS {
+            name: product.link.clone(),
+            created_at: product.detri(),
+            owner: user.clone(),
+            group: user.clone(),
+            summary: product.body_html.clone(),
+            title: product.summery.title.clone(),
+        });
+        urlwriter.url(format!("https://{}/{}", cfg.domain, product.link))?;
+    }
+
     urlwriter.end()?;
 
     Ok(State {
         cfg,
         blog,
+        products,
         everything,
         sitemap: sm,
         fs,

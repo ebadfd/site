@@ -98,6 +98,9 @@ pub async fn run_server() -> Result<()> {
         // blog
         .route("/blog", get(handlers::blog::index))
         .route("/blog/:name", get(handlers::blog::post_view))
+        // products
+        .route("/products", get(handlers::products::index))
+        .route("/products/:name", get(handlers::products::product_view))
         // termx
         .route("/termx", post(handlers::term::termx_results))
         .route("/termx", get(handlers::term::termx))
