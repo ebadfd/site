@@ -29,6 +29,7 @@ WORKDIR /app
 COPY --from=builder /app/app /usr/local/bin/
 COPY --from=builder /app/Config.toml /app/Config.toml
 COPY --from=builder /app/blog /app/blog
+COPY --from=builder /app/products /app/products
 COPY --from=builder /app/static static
 
 ENTRYPOINT ["/usr/local/bin/app"]
