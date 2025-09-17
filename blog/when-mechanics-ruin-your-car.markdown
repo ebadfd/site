@@ -34,9 +34,9 @@ Let me break it down.
 - **Engine mounts** — “rebuilt” but later found broken again, leaving the engine insecure.  
 - **Oil changes** — the mechanic did two before handing over, because he *flooded the ignition chamber with fuel once*.  
 
-![Bill](http://cdn.ebadfd.tech/mechanics-mess/bill.jpeg)  
+![Bill](http://cdn.ebadfd.tech/mechanics-mess/part-invoice.png)  
 
-\*This is the invoice for parts 6 lakhs for work that didn't even get done properly.
+\*This is the invoice for just the parts ordered from overseas. Not including the money spent on parts such as spark plugs, workshop charges etc
 
 ---
 
