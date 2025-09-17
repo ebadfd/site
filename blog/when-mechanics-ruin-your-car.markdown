@@ -18,7 +18,7 @@ A friend of mine went through one of the worst experiences with a so-called **"p
 
 He gave his car in for what should've been a straightforward job — **engine rebuild, gearbox inspection, and shock rebuild.**
 
-What he got instead was three months of excuses, a heap of new problems, and a massive bill of **around 6 lakhs** for work that was half-done and badly executed.
+What he got instead was three months of excuses, a heap of new problems, and a massive bill of **around 7 lakhs** for work that was half-done and badly executed.
 
 Let me break it down.
 
