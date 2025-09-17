@@ -125,9 +125,9 @@ pub fn index(author: &Author, posts: &Vec<Post>, products: &Vec<Post>, domain: &
 
     let markup = html! {
         .content {
-            p {"I'm Dasith, Security Researcher and Hobbyist Programmer"}
+            p {"I'm a Security Researcher and Hobbyist Programmer"}
 
-            p {"Software enginer at Surge.global. My main interests revolve around Computers, History, Philosophy and Anime."}
+            p {"My main interests revolve around Computers, History, Philosophy, Anime, and Cars."}
 
             h2 { "Recent Articles" }
 
