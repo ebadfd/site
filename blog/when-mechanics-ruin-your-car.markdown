@@ -42,7 +42,7 @@ Let me break it down.
 
 ## The Spark Plug Scam
 
-Brand new spark plugs were installed. Yohan claimed they were genuine.  
+Brand-new spark plugs were installed, and the performance mechanic assured they were genuine.
 The seller later confirmed they were **duplicates**, but my friend was charged full OEM price anyway.  
 
 Even worse, the plugs were **ruined immediately** because the ignition timing was completely wrong. A performance engine needs precise timing — otherwise it loses power, misfires, and can damage the valves.
