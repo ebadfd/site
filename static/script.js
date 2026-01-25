@@ -1,3 +1,21 @@
+// Turnstile explicit rendering
+function renderTurnstile() {
+  const containers = document.querySelectorAll('.cf-turnstile');
+  containers.forEach((container) => {
+    // Only render if not already rendered
+    if (!container.hasChildNodes() && typeof turnstile !== 'undefined') {
+      turnstile.render(container, {
+        sitekey: container.getAttribute('data-sitekey'),
+      });
+    }
+  });
+}
+
+// Called when Turnstile script loads
+function onTurnstileLoad() {
+  renderTurnstile();
+}
+
 htmx.on("htmx:afterSwap", (e) => {
   if (e.detail.target.id == "termx") {
     e.detail.target.style.display = '';
@@ -7,6 +25,9 @@ htmx.on("htmx:afterSwap", (e) => {
 
     terminal_resize();
   }
+
+  // Re-render Turnstile after HTMX swap
+  renderTurnstile();
 })
 
 
