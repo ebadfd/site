@@ -20,10 +20,10 @@ pub fn yt_video(id: String) -> Markup {
 
 pub fn carousel(cells: Vec<String>) -> Markup {
     html! {
-        div class="main-carousel" data-flickity="{ \"cellAlign\": \"left\", \"contain\": true, \"lazyLoad\": true, \"freeScroll\": true, \"pageDots\": false }" {
+        div class="main-carousel" data-flickity="{ \"cellAlign\": \"center\", \"contain\": true, \"lazyLoad\": 2, \"wrapAround\": true, \"pageDots\": false }" {
             @for cell in cells {
                 div class="carousel-cell" {
-                    img src=(cell) {}
+                    img data-flickity-lazyload=(cell) alt="carousel image" {}
                 }
             }
         }

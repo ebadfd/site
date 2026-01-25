@@ -243,7 +243,7 @@ pub fn base(
             }
 
             div.progress style="height: 2px;"{
-                div.indeterminate style="background-color: #d36c6c;"{}
+                div.indeterminate style="background-color: #6aacac;"{}
             }
 
             input name="bustCache" value={(*CACHEBUSTER)} type="hidden" {}
