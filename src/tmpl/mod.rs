@@ -106,8 +106,8 @@ pub fn full_screen_player(video_url: String) -> Markup {
 
 pub fn index(
     author: &Author,
-    posts: &Vec<Post>,
-    products: &Vec<Post>,
+    posts: &[Post],
+    products: &[Post],
     domain: &str,
     is_partial: bool,
 ) -> Markup {
@@ -232,9 +232,10 @@ pub fn base(
                 script src="https://kit.fontawesome.com/eabf947950.js" crossorigin="anonymous" {};
 
                 @match now.month() {
-                   //12|1|2 => {
-                   //    link rel="stylesheet" href={"/static/css/snow.css?bustCache=" (*CACHEBUSTER)};
-                  // }
+                    // TODO Test this out
+                    12|1|2 => {
+                       link rel="stylesheet" href={"/static/css/snow.css?bustCache=" (*CACHEBUSTER)};
+                    }
                    _ => {},
                 }
 

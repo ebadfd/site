@@ -27,7 +27,7 @@ impl Ord for Post {
 
 impl PartialOrd for Post {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.date.cmp(&other.date))
+        Some(self.cmp(other))
     }
 }
 

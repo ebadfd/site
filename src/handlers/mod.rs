@@ -63,11 +63,7 @@ fn month_to_name(m: u32) -> &'static str {
 }
 
 fn is_htmx_request(headers: HeaderMap) -> bool {
-    if let Some(_hx_request) = headers.get("Hx-Request") {
-        true
-    } else {
-        false
-    }
+    matches!(headers.get("Hx-Request"), Some(_hx_request))
 }
 
 lazy_static! {

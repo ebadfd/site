@@ -12,7 +12,7 @@ enum State {
 #[derive(Debug, thiserror::Error)]
 enum Error {
     #[error("EOF while parsing frontmatter")]
-    EOF,
+    EoF,
     #[error("Error parsing yaml: {0:?}")]
     Yaml(#[from] serde_yaml::Error),
 }
@@ -27,7 +27,7 @@ pub fn parse(input: &str) -> Result<(Data, usize)> {
     'parse: loop {
         let (idx, ch) = match chars.next() {
             Some(x) => x,
-            None => return Err(Error::EOF)?,
+            None => return Err(Error::EoF)?,
         };
         match &mut state {
             State::SearchForStart => match ch {
