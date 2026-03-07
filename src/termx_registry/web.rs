@@ -67,7 +67,7 @@ impl CommandRegistry for WebCommandRegistry {
         let cat_cmd: CommandFunction = |args, fs| {
             let mut result = String::new();
 
-            if args.len() < 1 {
+            if args.is_empty() {
                 result.push_str("Usage: cat <filename>\n");
 
                 return CommandFunctionResult {
@@ -90,16 +90,16 @@ impl CommandRegistry for WebCommandRegistry {
             }
 
             result.push_str("File not found\n");
-            return CommandFunctionResult {
+            CommandFunctionResult {
                 result,
                 is_success: false,
-            };
+            }
         };
 
         let open_cmd: CommandFunction = |args, fs| {
             let mut result = String::new();
 
-            if args.len() < 1 {
+            if args.is_empty() {
                 result.push_str("Usage: open <filename>\n");
 
                 return CommandFunctionResult {
@@ -121,10 +121,10 @@ impl CommandRegistry for WebCommandRegistry {
             }
 
             result.push_str("File not found\n");
-            return CommandFunctionResult {
+            CommandFunctionResult {
                 result,
                 is_success: false,
-            };
+            }
         };
 
         registry.register_command(CommandDefinition {
@@ -207,11 +207,11 @@ impl CommandRegistry for WebCommandRegistry {
     }
 
     fn get_hostname() -> String {
-        return "blog".to_string();
+        "blog".to_string()
     }
 
     fn get_user_name() -> String {
-        return "z9fr".to_string();
+        "z9fr".to_string()
     }
 
     fn help(&self) -> String {

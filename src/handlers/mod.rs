@@ -71,12 +71,8 @@ fn is_htmx_request(headers: HeaderMap) -> bool {
 }
 
 lazy_static! {
-    static ref TURNSTILE_SITE_KEY: String = String::from(
-        std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible")
-    );
-    static ref TURNSTILE_SITE_SECRET: String = String::from(
-        std::env::var("TURNSTILE_SITE_SECRET").expect("$TURNSTILE_SITE_SECRET is not avaible")
-    );
+    static ref TURNSTILE_SITE_KEY: String = std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
+    static ref TURNSTILE_SITE_SECRET: String = std::env::var("TURNSTILE_SITE_SECRET").expect("$TURNSTILE_SITE_SECRET is not avaible");
     pub static ref HIT_COUNTER: IntCounterVec =
         register_int_counter_vec!(opts!("hits", "Number of hits to various pages"), &["page"])
             .unwrap();
@@ -151,7 +147,7 @@ pub async fn email_address(Form(params): Form<CFTurnstileParams>) -> Markup {
 
     let validated = client
         .siteverify(SiteVerifyRequest {
-            response: params.cf_turnstile_response.into(),
+            response: params.cf_turnstile_response,
             ..Default::default()
         })
         .await;

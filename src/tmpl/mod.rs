@@ -13,9 +13,7 @@ pub mod blog;
 
 lazy_static! {
     static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
-    static ref TURNSTILE_SITE_KEY: String = String::from(
-        std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible")
-    );
+    static ref TURNSTILE_SITE_KEY: String = std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
 }
 
 pub fn error(why: impl Render) -> Markup {
@@ -168,11 +166,11 @@ pub fn index(
         }
     };
 
-    return if is_partial {
+    if is_partial {
         markup
     } else {
         base(None, None, Some(og_tags), markup)
-    };
+    }
 }
 
 pub fn base(
@@ -318,11 +316,11 @@ pub fn support(is_partial: bool) -> Markup {
         }
     };
 
-    return if is_partial {
+    if is_partial {
         markup
     } else {
         base(Some("Support"), None, None, markup)
-    };
+    }
 }
 
 pub fn email_address(validate: bool) -> Markup {
@@ -332,9 +330,9 @@ pub fn email_address(validate: bool) -> Markup {
         );
     }
 
-    return html!(
+    html!(
         p {"CAPTCHA verification failed. please try again"}
-    );
+    )
 }
 
 pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
@@ -385,11 +383,11 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
         }
     };
 
-    return if is_partial {
+    if is_partial {
         markup
     } else {
         base(Some("Contact Information"), None, None, markup)
-    };
+    }
 }
 
 pub fn privacy_policy(is_partial: bool) -> Markup {
@@ -451,11 +449,11 @@ pub fn privacy_policy(is_partial: bool) -> Markup {
         }
     };
 
-    return if is_partial {
+    if is_partial {
         markup
     } else {
         base(Some("Privacy Policy"), None, None, markup)
-    };
+    }
 }
 
 pub fn stack(is_partial: bool) -> Markup {
@@ -492,11 +490,11 @@ pub fn stack(is_partial: bool) -> Markup {
         div #"wcb" ."carbonbadge wcb-d" {};
     };
 
-    return if is_partial {
+    if is_partial {
         markup
     } else {
         base(Some("Uses"), None, None, markup)
-    };
+    }
 }
 
 pub fn not_found(path: impl Render) -> Markup {

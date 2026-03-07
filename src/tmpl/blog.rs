@@ -83,11 +83,11 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: boo
             }
         }
     };
-    return if is_partial {
+    if is_partial {
         markup
     } else {
         base(Some(title), None, None, markup)
-    };
+    }
 }
 
 pub fn post(
@@ -131,7 +131,7 @@ pub fn post(
             }
         }
     };
-    return if is_partial {
+    if is_partial {
         markup
     } else {
         base(
@@ -140,5 +140,5 @@ pub fn post(
             Some(post_metadata(post, author, domain)),
             markup,
         )
-    };
+    }
 }

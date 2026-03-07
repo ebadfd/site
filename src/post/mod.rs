@@ -41,27 +41,27 @@ impl Post {
     }
 
     pub fn image_url(&self, domain: &str) -> String {
-        return self
+        self
             .front_matter
             .image
             .clone()
-            .unwrap_or_else(|| format!("https://{}/static/img/avatar.jpeg", domain));
+            .unwrap_or_else(|| format!("https://{}/static/img/avatar.jpeg", domain))
     }
 }
 
-impl Into<schemaorg::Article> for &Post {
-    fn into(self) -> schemaorg::Article {
+impl From<&Post> for schemaorg::Article {
+    fn from(val: &Post) -> Self {
         schemaorg::Article {
             context: "https://schema.org".to_string(),
             r#type: "Article".to_string(),
-            headline: self.front_matter.title.clone(),
-            image: self
+            headline: val.front_matter.title.clone(),
+            image: val
                 .front_matter
                 .clone()
                 .image
-                .unwrap_or_else(|| format!("https://ebadfd.tech/static/image/avatar.jpeg")),
-            url: format!("https://ebadfd.tech/{}", self.link),
-            date_published: self.date.format("%Y-%m-%d").to_string(),
+                .unwrap_or_else(|| "https://ebadfd.tech/static/image/avatar.jpeg".to_string()),
+            url: format!("https://ebadfd.tech/{}", val.link),
+            date_published: val.date.format("%Y-%m-%d").to_string(),
         }
     }
 }
