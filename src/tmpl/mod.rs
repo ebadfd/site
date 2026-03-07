@@ -10,7 +10,6 @@ use crate::{
 use lazy_static::lazy_static;
 
 pub mod blog;
-mod logo;
 
 lazy_static! {
     static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
@@ -107,7 +106,13 @@ pub fn full_screen_player(video_url: String) -> Markup {
     )
 }
 
-pub fn index(author: &Author, posts: &Vec<Post>, products: &Vec<Post>, domain: &str, is_partial: bool) -> Markup {
+pub fn index(
+    author: &Author,
+    posts: &Vec<Post>,
+    products: &Vec<Post>,
+    domain: &str,
+    is_partial: bool,
+) -> Markup {
     let today = Utc::now().date_naive();
     let og_tags = html! {
         link rel="canonical" href={"https://"(domain)"/"};
@@ -216,7 +221,7 @@ pub fn base(
                 link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
                 link rel="stylesheet" href={"/static/css/progress-bar.css?bustCache=" (*CACHEBUSTER)};
 
-                // flickity 
+                // flickity
                 link rel="stylesheet" href={"https://unpkg.com/flickity@2/dist/flickity.min.css"};
                 script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js" async defer {};
 
@@ -281,7 +286,7 @@ pub fn base(
                                 " - "
                                 a href="/products" hx-push-url="/products" { "FreeWare" }
                                 " - "
-                                a href="/privacy-policy" hx-push-url="/privacy-policy" { "Privacy Policy" } 
+                                a href="/privacy-policy" hx-push-url="/privacy-policy" { "Privacy Policy" }
 
                             }
                         }
