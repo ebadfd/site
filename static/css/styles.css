@@ -444,6 +444,13 @@ footer nav a:hover {
 }
 
 /* Tables */
+article table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  white-space: nowrap;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
