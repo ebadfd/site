@@ -13,7 +13,7 @@ tags:
 
 In early March 2026, a phishing APK targeting Sri Lankan citizens surfaced. It posed as the official SriLankan Airlines app, distributed through a convincing fake landing page. Underneath, it was a fully-featured Android banking RAT — live camera streaming, SMS interception, screen recording, bank credential overlays, and full remote device control. At the time of our analysis, the C2 server was live with active victim surveillance and hundreds of gigabytes of exfiltrated data.
 
-This research was conducted by the team at [Loomzy](https://loomzy.io). This post walks through the full teardown — from the phishing page, through Ghidra-based binary analysis, to writing a working C2 client.
+This research was conducted by the team at [Loomzy](https://loomzy.io/security). This post walks through the full teardown — from the phishing page, through Ghidra-based binary analysis, to writing a working C2 client.
 
 ---
 
