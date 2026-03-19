@@ -479,3 +479,241 @@ input:focus {
   outline-offset: 2px;
 }
 
+/* Export as PDF button */
+.btn-export-pdf {
+  display: inline-block;
+  font-size: 0.75em;
+  padding: 0.1em 0.4em;
+  margin-left: 0.5em;
+  vertical-align: middle;
+  cursor: pointer;
+  color: inherit;
+  border: none;
+  background: transparent;
+  transition: color 0.2s ease;
+}
+
+.btn-export-pdf:hover {
+  color: var(--cyan);
+}
+
+.btn-export-pdf i {
+  margin-right: 0.2em;
+}
+
+/* Print styles for PDF export */
+@media print {
+  /* Reset to light theme for readable PDFs */
+  :root {
+    --bg: #ffffff;
+    --bg1: #f5f5f5;
+    --bg2: #e0e0e0;
+    --comment: #666666;
+    --fg-dark: #444444;
+    --fg: #222222;
+    --fg1: #111111;
+    --fg2: #000000;
+    --red: #c04040;
+    --orange: #b07020;
+    --yellow: #808020;
+    --green: #207040;
+    --cyan: #106060;
+    --blue: #205080;
+    --purple: #604080;
+    --brown: #804030;
+    --border: #cccccc;
+  }
+
+  html {
+    font-size: 12pt;
+    color: #222;
+    background: #fff;
+  }
+
+  body {
+    background: #fff !important;
+    color: #222 !important;
+  }
+
+  /* Hide non-content elements */
+  .progress,
+  .termx-open,
+  #termx,
+  header,
+  footer,
+  .btn-export-pdf,
+  .cf-turnstile,
+  .flickity-button,
+  .flickity-page-dots {
+    display: none !important;
+  }
+
+  /* Container full width */
+  .container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Article styling */
+  article {
+    margin: 0;
+    padding: 0;
+  }
+
+  article h1 {
+    font-size: 22pt;
+    color: #000;
+    margin-bottom: 0.3em;
+    page-break-after: avoid;
+  }
+
+  article small {
+    color: #555;
+    border-bottom-color: #ccc;
+  }
+
+  article img {
+    max-width: 100%;
+    max-height: none;
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    color: #000;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+
+  p, li, td, th {
+    color: #222;
+    orphans: 3;
+    widows: 3;
+  }
+
+  a {
+    color: #205080;
+    text-decoration: underline;
+    border-bottom: none;
+  }
+
+  /* Show link URLs in print */
+  article a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+    word-break: break-all;
+  }
+
+  /* Don't show URL for image links or anchor links */
+  article a[href^="#"]::after,
+  article a:has(img)::after {
+    content: none;
+  }
+
+  /* Code blocks */
+  pre, .code-highlight {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    page-break-inside: avoid;
+    font-size: 9pt;
+    overflow-x: visible;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  code:not([class]) {
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ddd;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: collapse;
+    page-break-inside: avoid;
+  }
+
+  th {
+    background: #f0f0f0;
+    color: #000;
+  }
+
+  th, td {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+  }
+
+  /* Images in carousels - show all */
+  .main-carousel .carousel-cell {
+    display: block !important;
+    width: 100% !important;
+    position: static !important;
+    transform: none !important;
+  }
+
+  .carousel-cell img {
+    opacity: 1 !important;
+    border: 1px solid #ccc;
+    margin-bottom: 1em;
+  }
+
+  /* YouTube embeds - show placeholder */
+  .yt-video-container {
+    border: 1px solid #ccc;
+    padding: 2em;
+    text-align: center;
+    height: auto;
+    padding-bottom: 0;
+  }
+
+  .yt-video-container iframe {
+    display: none;
+  }
+
+  .yt-video-container::after {
+    content: "[Video embed - visit the web version to watch]";
+    color: #666;
+    font-style: italic;
+  }
+
+  /* Page breaks */
+  hr {
+    page-break-after: avoid;
+    border-top: 1px solid #ccc;
+  }
+
+  /* Alert boxes */
+  .alert {
+    border: 1px solid #ccc !important;
+    background: #f9f9f9 !important;
+    color: #222 !important;
+  }
+
+  /* Details/summary */
+  details {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+    page-break-inside: avoid;
+  }
+
+  /* Tags at bottom */
+  article + hr + p code:not([class]) {
+    background: #eee;
+    color: #444;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 2cm;
+    size: A4;
+  }
+
+  /* First page - no top margin for title */
+  @page :first {
+    margin-top: 1.5cm;
+  }
+}
+
