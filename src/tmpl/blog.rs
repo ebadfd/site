@@ -107,6 +107,11 @@ pub fn post(
 
              small {
                  (post.read_time_estimate_minutes) " minute read,  Published: " (post.detri_withmonth())
+                 " "
+                 button."btn-export-pdf" onclick="window.print()" title="Save as PDF" {
+                     i."fa-solid"."fa-file-pdf" {}
+                     " PDF"
+                 }
              }
 
              div {
