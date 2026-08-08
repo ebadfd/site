@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Arch Linux — v86</title>
+  <!--
+    Sandbox-isolated v86 emulator page, loaded in an iframe by the parent site.
+    No CSP meta: the sandboxed document has an opaque origin, so CSP 'self'
+    matches nothing. The sandbox attribute on the iframe is the isolation
+    boundary, and this page only loads URLs it constructs itself.
+
+    Display: the guest is driven through its *serial* console (ttyS0, which
+    inittab gives an autologin root shell) rendered with xterm.js, not through
+    the VGA screen. The Arch profile boots with `vga=0x344 video=vesafb`, i.e.
+    a 1024x768 graphical framebuffer console; fitting that canvas into a panel
+    smaller than 1024x768 means downscaling a bitmap, which is why the text was
+    blurry. xterm.js renders real glyphs at whatever size we ask for, so it is
+    crisp at any panel size, selectable, and copy-pasteable.
+  -->
+  <link rel="stylesheet" href="build/xterm.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #0d0f0f;
+      overflow: hidden;
+    }
+
+    /* xterm mount point. The 6px gutter keeps glyphs off the panel border. */
+    #terminal {
+      position: absolute;
+      inset: 0;
+      padding: 6px 0 0 8px;
+      box-sizing: border-box;
+    }
+
+    .xterm .xterm-viewport {
+      background-color: transparent !important;
+      /* Firefox */
+      scrollbar-width: thin;
+      scrollbar-color: #5a6a5a transparent;
+    }
+
+    .xterm .xterm-viewport::-webkit-scrollbar { width: 8px; }
+    .xterm .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
+    .xterm .xterm-viewport::-webkit-scrollbar-thumb { background: #5a6a5a; }
+
+    /*
+      The VGA screen adapter still needs a container (it asserts on one) and we
+      keep it around so a graphical mode isn't a hard error, but it is never
+      shown: the serial console is the interface. Its render loop is paused
+      after boot, see pauseScreenAdapter().
+    */
+    #screen_container {
+      position: absolute;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #screen {
+      white-space: pre;
+      font-family: monospace;
+      font-size: 15px;
+      line-height: normal;
+    }
+
+    /* --- Overlays --- */
+
+    #boot_overlay, #error_overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: Hack, "Liberation Mono", "DejaVu Sans Mono", monospace;
+      font-size: 13px;
+      color: #8a9a8a;
+      background: #0d0f0f;
+      z-index: 10;
+      padding: 1em;
+      box-sizing: border-box;
+    }
+
+    #error_overlay {
+      display: none;
+      color: #c07070;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    #tap_hint {
+      display: none;
+      position: absolute;
+      right: 8px;
+      bottom: 6px;
+      font-family: Hack, "Liberation Mono", monospace;
+      font-size: 11px;
+      color: #5a6a5a;
+      z-index: 5;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    @media (pointer: coarse) {
+      #tap_hint { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+
+  <div id="screen_container">
+    <div id="screen"></div>
+    <canvas id="vga"></canvas>
+  </div>
+
+  <div id="boot_overlay">booting arch linux…</div>
+  <div id="error_overlay"></div>
+  <div id="tap_hint">tap to type</div>
+
+  <script src="build/libv86.js"></script>
+  <script src="build/xterm.js"></script>
+  <script src="build/xterm-addon-fit.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var terminalEl = document.getElementById("terminal");
+      var screenContainer = document.getElementById("screen_container");
+      var bootOverlay = document.getElementById("boot_overlay");
+      var errorOverlay = document.getElementById("error_overlay");
+
+      var emulator = null;
+      var term = null;
+      var fitAddon = null;
+      var fitPending = false;
+      var lastGuestSize = null;
+      var sttyTimer = null;
+
+      // Base16 Moss, matching the parent site's palette.
+      var THEME = {
+        background: "#0d0f0f",
+        foreground: "#b0c0b0",
+        cursor: "#b0c0b0",
+        cursorAccent: "#0d0f0f",
+        selectionBackground: "#1e2625",
+        black: "#0d0f0f",
+        red: "#c07070",
+        green: "#7fb080",
+        yellow: "#b5c06a",
+        blue: "#70a0b0",
+        magenta: "#a08aad",
+        cyan: "#6aacac",
+        white: "#b0c0b0",
+        brightBlack: "#5a6a5a",
+        brightRed: "#d08080",
+        brightGreen: "#8fc090",
+        brightYellow: "#c5d07a",
+        brightBlue: "#80b0c0",
+        brightMagenta: "#b09abd",
+        brightCyan: "#7abcbc",
+        brightWhite: "#daeada"
+      };
+
+      var FONT_STACK =
+        'Hack, "Liberation Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace';
+
+      // ── postMessage helpers ──────────────────────────────────────────
+
+      function postToParent(msg) {
+        // The frame is sandboxed without allow-same-origin, so its origin is
+        // opaque ("null"). We cannot pin a target origin, but the messages
+        // carry nothing sensitive.
+        parent.postMessage(msg, "*");
+      }
+
+      window.addEventListener("message", function (event) {
+        // Only accept messages from the parent window.
+        if (event.source !== window.parent) return;
+        var data = event.data;
+        if (!data || typeof data.type !== "string") return;
+
+        switch (data.type) {
+          case "v86:focus":
+            focusTerminal();
+            requestFit();
+            break;
+          case "v86:pause":
+            if (emulator && emulator.is_running()) emulator.stop();
+            break;
+          case "v86:resume":
+            if (emulator && !emulator.is_running()) emulator.run();
+            break;
+          case "v86:reset":
+            if (emulator) emulator.restart();
+            break;
+        }
+      });
+
+      function focusTerminal() {
+        try { if (term) term.focus(); } catch (e) {}
+      }
+
+      terminalEl.addEventListener("click", focusTerminal);
+
+      // ── Boot ──────────────────────────────────────────────────────────
+
+      async function boot() {
+        var bootConfig;
+        try {
+          var resp = await fetch("/termx/boot.json");
+          if (!resp.ok) {
+            throw new Error("boot.json returned HTTP " + resp.status);
+          }
+          bootConfig = await resp.json();
+        } catch (err) {
+          showError(
+            "Could not fetch boot configuration (" +
+              (err.message || err) +
+              ").\n\nThe terminal has aborted instead of silently hanging."
+          );
+          postToParent({ type: "v86:error", message: "boot.json fetch failed: " + (err.message || err) });
+          return;
+        }
+
+        var base = bootConfig.assetBase || "";
+
+        emulator = new V86({
+          wasm_path: "build/v86.wasm",
+          memory_size: 512 * 1024 * 1024,
+          vga_memory_size: 8 * 1024 * 1024,
+          bios: { url: "bios/seabios.bin" },
+          vga_bios: { url: "bios/vgabios.bin" },
+          initial_state: { url: base + "arch_state-v3.bin.zst" },
+          filesystem: { baseurl: base + "arch/" },
+          screen_container: screenContainer,
+          disable_speaker: true,
+          // Input and output both go over the serial console, so the PS/2
+          // keyboard and mouse adapters would only steal window events (and
+          // type invisibly into tty1). xterm.js owns the keyboard instead.
+          disable_keyboard: true,
+          disable_mouse: true,
+          // The Arch state snapshot was saved without a network device. v86
+          // defaults to {type:"ne2k"} which creates an NE2000 card; restoring
+          // a snapshot that lacks net state into a VM that has one crashes
+          // (Lc.prototype.set_state receives null). Setting a type that
+          // matches neither "ne2k" nor "virtio" prevents device creation.
+          net_device: { type: "none" },
+          autostart: true,
+        });
+
+        emulator.add_listener("download-progress", function (e) {
+          var pct;
+          if (e.lengthComputable && e.total > 0) {
+            pct = Math.round((e.loaded / e.total) * 100);
+          } else if (e.file_count > 0) {
+            pct = Math.round(((e.file_index + 1) / e.file_count) * 100);
+          } else {
+            pct = 0;
+          }
+          bootOverlay.textContent = "downloading guest image… " + pct + "%";
+        });
+
+        emulator.add_listener("download-error", function (e) {
+          var status = e.request ? e.request.status : "unknown";
+          var msg =
+            "Failed to download " +
+            (e.file_name || "a guest file") +
+            " (HTTP " + status + ").\n\n" +
+            "The terminal has aborted instead of silently hanging.";
+          showError(msg);
+          postToParent({ type: "v86:error", message: msg });
+        });
+
+        // The screen adapter's requestAnimationFrame loop restarts whenever the
+        // CPU starts, so re-pause it on every start, not just after boot.
+        emulator.add_listener("emulator-started", pauseScreenAdapter);
+
+        // ── emulator-loaded: fires AFTER restore_state + run ──────────
+        // Files written on emulator-ready get wiped by the state snapshot
+        // restore, so injection must happen here instead.
+        emulator.add_listener("emulator-loaded", async function () {
+          pauseScreenAdapter();
+          attachSerialTerminal();
+          bootOverlay.style.display = "none";
+
+          await injectBlogPosts(bootConfig.files);
+
+          // Wake the shell, give it a terminal type with colour support and
+          // the right window size, then clear the setup noise. The restored
+          // snapshot does not replay the output that preceded it, so without
+          // this the terminal would sit blank until the first keypress.
+          send("\n");
+          send("export TERM=xterm-256color\n");
+          syncGuestSize(true);
+          send("clear\n");
+
+          postToParent({ type: "v86:ready" });
+          focusTerminal();
+        });
+
+        window.addEventListener("resize", requestFit);
+
+        // Hack is loaded from a CDN; xterm measures cell size from the font, so
+        // re-fit once the real face is in.
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(requestFit);
+        }
+      }
+
+      function send(text) {
+        try { emulator.serial0_send(text); } catch (e) {}
+      }
+
+      function pauseScreenAdapter() {
+        // The VGA screen is never displayed, so its per-frame render loop is
+        // pure waste. Private-ish but stable: the bus does the same thing on
+        // emulator-stopped.
+        try { emulator.screen_adapter.pause(); } catch (e) {}
+      }
+
+      // ── Serial console ────────────────────────────────────────────────
+
+      function attachSerialTerminal() {
+        // Creates `new Terminal({logLevel:"off", convertEol:"true"})`, opens it
+        // in the element, and wires serial0 in both directions.
+        emulator.set_serial_container_xtermjs(terminalEl);
+        term = emulator.serial_adapter.term;
+
+        term.options.fontFamily = FONT_STACK;
+        term.options.fontSize = pickFontSize();
+        term.options.theme = THEME;
+        term.options.cursorBlink = true;
+        term.options.scrollback = 5000;
+
+        fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+
+        fit();
+      }
+
+      // ── Fit ───────────────────────────────────────────────────────────
+
+      function pickFontSize() {
+        var w = document.documentElement.clientWidth;
+        if (w < 420) return 10;
+        if (w < 700) return 12;
+        return 14;
+      }
+
+      function requestFit() {
+        if (fitPending) return;
+        fitPending = true;
+        requestAnimationFrame(fit);
+      }
+
+      function fit() {
+        fitPending = false;
+        if (!term || !fitAddon) return;
+
+        var size = pickFontSize();
+        if (term.options.fontSize !== size) term.options.fontSize = size;
+
+        try {
+          fitAddon.fit();
+        } catch (e) {
+          return;
+        }
+
+        // A serial line carries no SIGWINCH, so the only way to tell the guest
+        // its new window size is to type it. Debounced, and skipped when the
+        // size is unchanged, so a drag-resize doesn't spam the shell.
+        clearTimeout(sttyTimer);
+        sttyTimer = setTimeout(function () { syncGuestSize(false); }, 500);
+      }
+
+      function syncGuestSize(force) {
+        if (!emulator || !term) return;
+        var key = term.cols + "x" + term.rows;
+        if (!force && key === lastGuestSize) return;
+        lastGuestSize = key;
+        send("stty cols " + term.cols + " rows " + term.rows + "\n");
+      }
+
+      // ── Blog post injection ───────────────────────────────────────────
+
+      async function injectBlogPosts(files) {
+        if (!files || files.length === 0) return;
+        if (!emulator || !emulator.fs9p) {
+          console.error("Blog injection skipped: fs9p not available");
+          return;
+        }
+
+        try {
+          var fs = emulator.fs9p;
+
+          // Ensure /root/blog exists. create_file requires the parent
+          // directory to already exist (it resolves SearchPath(path).parentid
+          // and rejects on -1).
+          var blogEntry = fs.SearchPath("/root/blog");
+          if (blogEntry.id === -1) {
+            var rootEntry = fs.SearchPath("/root");
+            if (rootEntry.id === -1) {
+              console.error("Blog injection skipped: /root does not exist");
+              return;
+            }
+            fs.CreateDirectory("blog", rootEntry.id);
+          }
+
+          var encoder = new TextEncoder();
+          for (var i = 0; i < files.length; i++) {
+            var f = files[i];
+            try {
+              await emulator.create_file(
+                "/root/blog/" + f.name,
+                encoder.encode(f.content)
+              );
+            } catch (e) {
+              // Non-fatal: a file may already exist from the snapshot, or
+              // the 9p cache may be stale. Log and continue.
+              console.error("Failed to inject " + f.name + ":", e);
+            }
+          }
+        } catch (e) {
+          console.error("Blog injection failed:", e);
+        }
+      }
+
+      // ── Error display ─────────────────────────────────────────────────
+
+      function showError(msg) {
+        errorOverlay.textContent = msg;
+        errorOverlay.style.display = "flex";
+        bootOverlay.style.display = "none";
+      }
+
+      // ── Close chords ──────────────────────────────────────────────────
+      // Double-Esc within ~500 ms, or Ctrl+` to match the parent shortcut.
+      // A single Esc must still reach the guest (vim), so we do NOT
+      // preventDefault for it; we just observe and time the gap.
+
+      var lastEsc = 0;
+      window.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          var now = Date.now();
+          if (now - lastEsc < 500) {
+            postToParent({ type: "v86:escape" });
+            lastEsc = 0;
+          } else {
+            lastEsc = now;
+          }
+          return;
+        }
+
+        if ((e.ctrlKey || e.metaKey) && e.key === "`") {
+          e.preventDefault();
+          postToParent({ type: "v86:escape" });
+        }
+      });
+
+      // Start
+      boot();
+    })();
+  </script>
+</body>
+</html>

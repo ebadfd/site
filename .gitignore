@@ -6,3 +6,10 @@
 .direnv
 /Cargo.lock
 .env
+
+# v86 guest images. These are large (the Arch 9p chunk mirror is several GB) and
+# are served from a CDN in production, see V86_ASSET_BASE in the README.
+/static/v86/images/arch/
+/static/v86/images/fs.json
+/static/v86/images/*.bin.zst
+/static/v86/images/failed-chunks.txt

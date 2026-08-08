@@ -1,19 +1,17 @@
-use chrono::prelude::*;
-use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
-use termx::{default_help_short, registries::CommandRegistry};
-
 use crate::{
     app::{Author, Link},
     post::Post,
-    termx_registry::web::WebCommandRegistry,
 };
+use chrono::prelude::*;
 use lazy_static::lazy_static;
+use maud::{html, Markup, PreEscaped, Render, DOCTYPE};
 
 pub mod blog;
 
 lazy_static! {
     static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
-    static ref TURNSTILE_SITE_KEY: String = std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
+    static ref TURNSTILE_SITE_KEY: String =
+        std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
 }
 
 pub fn error(why: impl Render) -> Markup {
@@ -227,7 +225,9 @@ pub fn base(
                 script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
                 script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" async defer {};
                 script src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
-                script async src="/static/script.js" defer {}
+                // Modules are deferred by definition, so this runs after the htmx tag above
+                // has executed — which matters, it calls htmx.on() at import time.
+                script type="module" src={"/static/js/main.js?bustCache=" (*CACHEBUSTER)} {}
 
                 script src="https://kit.fontawesome.com/eabf947950.js" crossorigin="anonymous" {};
 
@@ -246,13 +246,13 @@ pub fn base(
                 }
             }
 
-            div.progress style="height: 2px;"{
-                div.indeterminate style="background-color: #6aacac;"{}
-            }
-
-            input name="bustCache" value={(*CACHEBUSTER)} type="hidden" {}
-
             body.snow.hack.dark-grey hx-ext="preload" hx-indicator=".progress" {
+                div.progress style="height: 2px;"{
+                    div.indeterminate style="background-color: #6aacac;"{}
+                }
+
+                input name="bustCache" value={(*CACHEBUSTER)} type="hidden" {}
+
                 .container {
                     br;
 
@@ -292,11 +292,13 @@ pub fn base(
                     }
                 }
 
-                button."termx-open btn btn-default btn-ghost" hx-get="/termx" hx-trigger="click" hx-swap="innerHTML" hx-target="#termx" {
-                    i."fa-solid"."fa-terminal" {};
+                // The emulator is fetched once and then kept alive for the life of the page;
+                // script.js intercepts later clicks and just un-hides the panel.
+                button."termx-open btn btn-default btn-ghost" hx-get="/termx" hx-trigger="click once" hx-swap="innerHTML" hx-target="#termx" aria-label="Open Arch Linux terminal" title="Open Arch Linux terminal (Ctrl + `)" {
+                    "tty"
                 }
 
-                div #"termx"."card" style="display: none" {}
+                div #"termx"."card" hidden role="dialog" aria-label="Arch Linux terminal" {}
             }
         }
     }
@@ -516,34 +518,21 @@ pub fn not_found(path: impl Render) -> Markup {
     )
 }
 
-pub fn termx_default() -> Markup {
-    let default_help = default_help_short();
+pub fn termx_v86() -> Markup {
+    let src = format!("/static/v86/term.html?bustCache={}", *CACHEBUSTER);
+
     html!(
-            header."card-header" {
-                span."resize-notch" #"resizeHandle" {}
-                div."grid -stretch" {
-                    p."cloud-shell-title cell" { "cloud shell" }
-
-                    div."cell" {
-                        div."grid -right" {
-                            i."fa-solid"."fa-x" {};
-                        }
-                    }
-                }
-            }
-            div."card-content" {
-                div #"termx-results" {
-                    span."code" { (default_help)}
-                }
-
-                div style="display: flex;" {
-                    span."user"{ (format!("{}@{}", WebCommandRegistry::get_user_name(), WebCommandRegistry::get_hostname()))} {}
-                    span."path"{"$"}
-
-                    input id="terminal-input" autofocus hx-post="/termx" hx-trigger="keyup[keyCode==13]"
-                    name="cmd" hx-swap="beforeend scroll:bottom" hx-target="#termx-results"
-                    hx-on-htmx-after-request="this.value = ''" {}
-                }
-            }
+        header."termx-bar" {
+            span."resize-notch" #"resizeHandle" title="Drag to resize" {}
+            span."termx-title" { "arch linux — v86" }
+            button #"termx-close" type="button" aria-label="Close terminal" title="Close (Esc Esc)" { "[x]" }
+        }
+        div."card-content v86-content" {
+            iframe #"v86-frame"
+                title="Sandboxed local Arch Linux v86 emulator"
+                src=(src)
+                sandbox="allow-scripts allow-pointer-lock"
+                referrerpolicy="no-referrer" {}
+        }
     )
 }

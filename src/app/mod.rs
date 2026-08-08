@@ -1,12 +1,10 @@
-use chrono::prelude::*;
 use color_eyre::eyre::Result;
 use std::{fs, path::PathBuf, sync::Arc};
-use termx::registries::{CommandRegistry, FS};
 
 pub mod config;
 pub use config::*;
 
-use crate::{post::Post, termx_registry::web::WebCommandRegistry};
+use crate::post::Post;
 
 pub struct State {
     pub cfg: Arc<Config>,
@@ -14,7 +12,6 @@ pub struct State {
     pub products: Vec<Post>,
     pub everything: Vec<Post>,
     pub sitemap: Vec<u8>,
-    pub fs: Vec<FS>,
 }
 
 pub async fn init(cfg: PathBuf) -> Result<State> {
@@ -24,11 +21,10 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
 
     // Load blog posts
     let blog = crate::post::load("blog", &cfg.domain).await?;
-    
+
     // Load products (similar to blog)
     let products = crate::post::load("products", &cfg.domain).await?;
 
-    let mut fs = vec![];
     let mut everything: Vec<Post> = vec![];
 
     {
@@ -41,12 +37,9 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     everything.sort();
     everything.reverse();
 
-    let today = Utc::now().date_naive();
-    let everything: Vec<Post> = everything
-        .into_iter()
-        .filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce())
-        .take(5)
-        .collect();
+    // Unpublished (future dated) posts are already gone, `post::load` drops them.
+    // This is only about how many recent items the feeds carry.
+    let everything: Vec<Post> = everything.into_iter().take(5).collect();
 
     // Build sitemap
     let mut sm: Vec<u8> = vec![];
@@ -62,31 +55,11 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
         urlwriter.url(url)?;
     }
 
-    let user = WebCommandRegistry::get_user_name();
-
-    // FS entries for blog
     for post in &blog {
-        fs.push(FS {
-            name: post.link.clone(),
-            created_at: post.detri(),
-            owner: user.clone(),
-            group: user.clone(),
-            summary: post.body_html.clone(),
-            title: post.summery.title.clone(),
-        });
         urlwriter.url(format!("https://{}/{}", cfg.domain, post.link))?;
     }
 
-    // FS entries for products
     for product in &products {
-        fs.push(FS {
-            name: product.link.clone(),
-            created_at: product.detri(),
-            owner: user.clone(),
-            group: user.clone(),
-            summary: product.body_html.clone(),
-            title: product.summery.title.clone(),
-        });
         urlwriter.url(format!("https://{}/{}", cfg.domain, product.link))?;
     }
 
@@ -98,6 +71,5 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
         products,
         everything,
         sitemap: sm,
-        fs,
     })
 }

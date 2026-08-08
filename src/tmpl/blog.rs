@@ -1,4 +1,3 @@
-use chrono::prelude::*;
 use lazy_static::lazy_static;
 use maud::{html, Markup, PreEscaped};
 
@@ -48,8 +47,6 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
 }
 
 pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: bool) -> Markup {
-    let today = Utc::now().date_naive();
-
     fn post_url(post: &Post) -> String {
         if let Some(redirect_to) = &post.front_matter.redirect_to {
             redirect_to.clone()
@@ -73,7 +70,7 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: boo
             }
             p {
                 ul hx-boost="true" hx-swap="innerHTML" hx-target=".snowframe" hx-include="[name='bustCache']"{
-                    @for post in posts.iter().filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
+                    @for post in posts {
                         li {
                             (post.detri())
                             " - "

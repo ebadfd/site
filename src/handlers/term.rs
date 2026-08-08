@@ -1,75 +1,54 @@
-use super::{Result, TermxCmd, HIT_COUNTER};
-use crate::{app::State, termx_registry::web::WebCommandRegistry};
-use axum::{body, extract::Extension, response::Response, Form};
-use maud::{html, Markup};
+use super::{HIT_COUNTER, V86_ASSET_BASE};
+use crate::app::State;
+use axum::{extract::Extension, Json};
+use maud::Markup;
+use serde::Serialize;
 use std::sync::Arc;
-use termx::{evaluator::WebEvaluatorResult, registries::CommandRegistry};
 use tracing::instrument;
 
-#[instrument(skip(state))]
-pub async fn termx_results(
-    Extension(state): Extension<Arc<State>>,
-    Form(params): Form<TermxCmd>,
-) -> Result<Response> {
-    HIT_COUNTER.with_label_values(&["cmd"]).inc();
-    let state = state.clone();
-    let _cfg = state.cfg.clone();
-
-    let registry = WebCommandRegistry::new(state);
-    let mut display_content = String::new();
-
-    let mut do_redirect = false;
-    let mut redirect_path = String::new();
-
-    if params.cmd == "help" {
-        let help = registry.help();
-        display_content.push_str(&help)
-    } else {
-        let results = termx::run(params.cmd.clone(), registry);
-
-        results.iter().for_each(|f| match f {
-            WebEvaluatorResult::Display(x) => {
-                display_content.push_str(x);
-            }
-            WebEvaluatorResult::Error(x) => {
-                display_content.push_str(x);
-            }
-            WebEvaluatorResult::Navigate(x) => {
-                do_redirect = true;
-                redirect_path.push_str(x);
-                display_content.push_str("Redirecting...");
-            }
-        });
-    };
-
-    let mark_up = html!(
-      div."exec" {
-          span."user"{ (format!("{}@{}", WebCommandRegistry::get_user_name(), WebCommandRegistry::get_hostname()))} {}
-          span."path"{"$"}
-          span."command" { (params.cmd)}
-          div."result" { span {(display_content)}}
-      }
-    );
-
-    if do_redirect {
-        let body = body::boxed(body::Full::from(mark_up.0));
-        return Ok(Response::builder()
-            .status(200)
-            .header("HX-Redirect", redirect_path)
-            .body(body)
-            .expect("Error"));
-    }
-
-    let body = body::boxed(body::Full::from(mark_up.0));
-    return Ok(Response::builder()
-        .status(200)
-        .header("X-Hacker", "True")
-        .body(body)
-        .expect("Error"));
+/// Everything `static/v86/term.html` needs to boot, fetched by the frame on load.
+///
+/// It arrives over the wire rather than as query parameters on the iframe `src` so that a
+/// visitor hitting `/static/v86/term.html` directly cannot point the emulator at images of
+/// their choosing.
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BootConfig {
+    /// Base URL for the guest images, see `$V86_ASSET_BASE`.
+    pub asset_base: String,
+    /// Blog posts, written into the guest as `/root/blog/<name>`.
+    pub files: Vec<BootFile>,
 }
 
-#[instrument(skip())]
+#[derive(Debug, Serialize)]
+pub struct BootFile {
+    pub name: String,
+    pub content: String,
+}
+
+#[instrument]
 pub async fn termx() -> Markup {
-    HIT_COUNTER.with_label_values(&["cmd"]).inc();
-    crate::tmpl::termx_default()
+    HIT_COUNTER.with_label_values(&["v86"]).inc();
+    crate::tmpl::termx_v86()
+}
+
+#[instrument(skip(state))]
+pub async fn termx_boot(Extension(state): Extension<Arc<State>>) -> Json<BootConfig> {
+    let files = state
+        .blog
+        .iter()
+        .map(|post| BootFile {
+            // `link` is "blog/<slug>"; the guest wants "<slug>.md".
+            name: format!(
+                "{}.md",
+                post.link.rsplit('/').next().unwrap_or(post.link.as_str())
+            ),
+            content: post.body_md.clone(),
+        })
+        .collect();
+
+    Json(BootConfig {
+        asset_base: V86_ASSET_BASE.clone(),
+        files,
+    })
 }

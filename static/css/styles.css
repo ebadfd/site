@@ -262,113 +262,149 @@ footer nav a:hover {
   color: var(--cyan);
 }
 
-/* Terminal button */
+/* Terminal button - deliberately plain/boxy */
 .termx-open {
+  all: unset;
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: var(--bg1) !important;
-  border: 1px solid var(--bg2) !important;
-  color: var(--cyan) !important;
-  opacity: 0.7;
-  transition: all 0.2s ease;
+  bottom: 18px;
+  right: 18px;
+  z-index: 999;
+  background-color: var(--black) !important;
+  border: 1px solid var(--comment) !important;
+  color: var(--fg-dark) !important;
+  cursor: pointer;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace, serif;
+  line-height: 1;
+  opacity: 0.9;
+  padding: 0.45em 0.65em;
+  text-transform: lowercase;
 }
 
-.termx-open:hover {
+.termx-open:hover,
+.termx-open:focus {
   opacity: 1;
+  color: var(--cyan) !important;
   border-color: var(--cyan) !important;
+  background-color: var(--black) !important;
+}
+
+.termx-open.is-hidden {
+  display: none;
 }
 
 #termx {
   position: fixed;
+  right: 0;
   bottom: 0;
   left: 0;
-  width: 100%;
-  max-width: 100%;
   z-index: 1000;
-  height: 350px;
+  height: clamp(320px, 60vh, 85vh);
   background: var(--black);
-  overflow-y: auto;
+  border-top: 1px solid var(--comment);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The author-level `display: flex` above outranks the UA stylesheet's rule for
+   [hidden], so closing the panel needs this to be spelled out. */
+#termx[hidden] {
+  display: none;
+}
+
+.termx-bar {
+  flex: 0 0 auto;
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  background: var(--bg1);
+  border-bottom: 1px solid var(--bg2);
+  user-select: none;
 }
 
 .resize-notch {
-  width: 60px;
-  height: 4px;
+  width: 70px;
+  height: 3px;
   background-color: var(--comment);
   position: absolute;
-  top: 0;
+  top: 5px;
   left: 50%;
   transform: translateX(-50%);
   cursor: ns-resize;
-  border-radius: 4px;
-  margin: 8px;
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
+  opacity: 0.55;
 }
 
 .resize-notch:hover {
+  background-color: var(--cyan);
   opacity: 1;
 }
 
-.cloud-shell-title {
-  margin: 0 !important;
-  text-align: left;
+.is-resizing-terminal {
+  user-select: none;
 }
 
-#termx .card-header {
-  padding-left: 30px;
-  padding-right: 30px;
-  position: fixed;
-  width: 100%;
-  background: var(--black);
+.termx-title {
+  flex: 1 1 auto;
+  text-align: center;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace, serif;
+  font-size: 0.8em;
+  color: var(--fg-dark);
+  pointer-events: none;
+}
+
+#termx-close {
+  all: unset;
+  cursor: pointer;
+  color: var(--fg-dark);
+  background: var(--bg1);
+  border: 1px solid var(--comment);
+  border-radius: 2px;
+  line-height: 1;
+  padding: 0.15em 0.4em;
+  margin-right: 6px;
+  font-size: 0.75em;
+}
+
+#termx-close:hover,
+#termx-close:focus {
+  color: var(--red);
+  border-color: var(--red);
+  background: var(--bg1);
 }
 
 #termx .card-content {
-  padding-left: 30px;
-  padding-right: 30px;
-  margin-top: 40px;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
 }
 
-#termx-results {
-  white-space: pre-wrap;
-  margin-top: 10px;
+.v86-content {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
 }
 
-#termx .user {
-  color: var(--green);
-  font-weight: bold;
+#v86-frame {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border: 0;
+  display: block;
 }
 
-#termx .path {
-  margin-right: 5px;
-  margin-left: 5px;
-  color: var(--blue);
-}
+@media (max-width: 760px) {
+  .termx-open {
+    bottom: 14px;
+    right: 14px;
+  }
 
-#terminal-input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  color: var(--white); /* Text color */
-  font-family: inherit;
-  font-size: inherit;
-  margin-right: 5px;
-}
-
-.exec {
-  flex-wrap: wrap;
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.exec .cmd {
-  white-space: pre-wrap;
-  flex-basis: 100%;
-}
-
-.exec .result {
-  flex-basis: 100%;
+  #termx {
+    height: 65vh;
+  }
 }
 
 

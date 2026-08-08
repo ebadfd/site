@@ -3,3 +3,9 @@ Dockerfile
 .dockerignore
 .git
 .gitignore
+
+# v86 guest images are served from a CDN, keep them out of the build context.
+static/v86/images/arch
+static/v86/images/fs.json
+static/v86/images/*.bin.zst
+static/v86/images/failed-chunks.txt

@@ -14,6 +14,9 @@ pub struct Post {
     pub front_matter: frontmatter::Data,
     pub link: String,
     pub body_html: String,
+    /// The markdown source, frontmatter stripped. Served to the v86 terminal, which writes it
+    /// into the guest filesystem as `/root/blog/<slug>.md`.
+    pub body_md: String,
     pub date: DateTime<FixedOffset>,
     pub read_time_estimate_minutes: u64,
     pub summery: PostSummery,
@@ -121,6 +124,7 @@ async fn read_post(dir: &str, fname: PathBuf, domain: &str) -> Result<Post> {
         front_matter,
         link,
         body_html,
+        body_md: body.to_string(),
         summery,
         date,
         read_time_estimate_minutes,
@@ -141,6 +145,22 @@ pub async fn load(dir: &str, domain: &str) -> Result<Vec<Post>> {
     if result.is_empty() {
         return Err(eyre!("no posts avaible"));
     }
+
+    // A post's frontmatter date is its publication date, so anything dated in the
+    // future is unpublished. Dropping it here is the single choke point: it keeps
+    // future posts out of the index, the feeds, the sitemap, direct URLs and the
+    // v86 terminal's filesystem in one go.
+    //
+    // Note this is evaluated once, at startup — a post dated tomorrow goes live on
+    // the next restart, not at midnight.
+    let now = Utc::now();
+    result.retain(|post| {
+        let published = post.date.with_timezone(&Utc) <= now;
+        if !published {
+            info!("Skipping unpublished post {} ({})", post.link, post.detri());
+        }
+        published
+    });
 
     result.sort();
     result.reverse();

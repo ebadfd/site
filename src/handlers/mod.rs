@@ -17,18 +17,13 @@ use tracing::instrument;
 
 pub mod blog;
 pub mod feed;
-pub mod term;
 pub mod products;
+pub mod term;
 
 #[derive(Debug, serde::Deserialize)]
 pub struct CFTurnstileParams {
     #[serde(rename = "cf-turnstile-response")]
     pub cf_turnstile_response: String,
-}
-
-#[derive(Debug, serde::Deserialize)]
-pub struct TermxCmd {
-    pub cmd: String,
 }
 
 fn weekday_to_name(w: Weekday) -> &'static str {
@@ -67,8 +62,22 @@ fn is_htmx_request(headers: HeaderMap) -> bool {
 }
 
 lazy_static! {
-    static ref TURNSTILE_SITE_KEY: String = std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
-    static ref TURNSTILE_SITE_SECRET: String = std::env::var("TURNSTILE_SITE_SECRET").expect("$TURNSTILE_SITE_SECRET is not avaible");
+    /// Where the v86 guest images live: the Arch state snapshot and the `arch/` 9p chunks.
+    /// Defaults to the copy served out of `static/`, which is what a dev checkout has after
+    /// running `scripts/vendor-v86-full.py`. In production this points at a CDN, since the
+    /// chunk mirror is several GB and is deliberately not in the repo or the image.
+    pub static ref V86_ASSET_BASE: String = {
+        let base = std::env::var("V86_ASSET_BASE").unwrap_or_else(|_| "/static/v86/images/".into());
+        if base.ends_with('/') {
+            base
+        } else {
+            format!("{}/", base)
+        }
+    };
+    static ref TURNSTILE_SITE_KEY: String =
+        std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
+    static ref TURNSTILE_SITE_SECRET: String =
+        std::env::var("TURNSTILE_SITE_SECRET").expect("$TURNSTILE_SITE_SECRET is not avaible");
     pub static ref HIT_COUNTER: IntCounterVec =
         register_int_counter_vec!(opts!("hits", "Number of hits to various pages"), &["page"])
             .unwrap();
