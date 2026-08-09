@@ -625,6 +625,14 @@ input:focus {
   outline-offset: 2px;
 }
 
+/* Programmatic focus targets — the skip link's destination and the heading
+   focused after an htmx swap. They are not in the tab order, so a ring around
+   the whole region would be noise rather than a focus indicator. */
+main:focus,
+main [tabindex="-1"]:focus {
+  outline: none;
+}
+
 /* ── Screen-reader-only / visually hidden (Phase 1, 4) ─────────
    !important is deliberate, and is what Bootstrap and HTML5 Boilerplate do:
    this is a utility that must win outright. Without it hackcss's `.hack h1`

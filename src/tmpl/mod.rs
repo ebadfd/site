@@ -355,7 +355,9 @@ pub fn base(
                         }
                     }
 
-                    main #"content" {
+                    // tabindex="-1" so following the skip link actually moves
+                    // focus here, not just the scroll position.
+                    main #"content" tabindex="-1" {
                         .snowframe {
                             (content)
                         }
