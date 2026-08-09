@@ -33,7 +33,7 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
         meta property="og:description" content={(post.front_matter.about)};
         meta property="og:image" content={(post.image_url(domain))};
         meta property="og:image:alt" content={(post.front_matter.title)};
-        meta property="og:site_name" content="ebadfd explorations";
+        meta property="og:site_name" content=(super::SITE_TITLE);
         meta property="og:url" content={(format!("https://{}/{}", domain, post.link))};
         meta property="og:locale" content="en_US";
 

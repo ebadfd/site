@@ -14,6 +14,19 @@ lazy_static! {
         std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
 }
 
+/// Name of the site, as it appears in the tab title and in social cards.
+pub const SITE_TITLE: &str = "ebadfd explorations";
+
+/// Canonical origin. `base()` has no access to the loaded config, and the feed
+/// and canonical links here were already hardcoding this host in four places.
+pub const SITE_URL: &str = "https://ebadfd.tech";
+
+/// Search-result snippet for the homepage. Kept under ~160 characters, which is
+/// roughly where Google truncates.
+pub const DESCRIPTION: &str =
+    "Security research, malware teardowns and programming notes by ebadfd — \
+     a security researcher and hobbyist programmer.";
+
 /// Controls which third-party resources `base()` loads on a given page.
 #[derive(Default)]
 pub struct PageFeatures {
@@ -27,9 +40,9 @@ pub fn oob_title(title: Option<&str>) -> Markup {
     html! {
         title hx-swap-oob="true" {
             @if let Some(t) = title {
-                (t) " - ebadfd explorations"
+                (t) " - " (SITE_TITLE)
             } @else {
-                "ebadfd explorations"
+                (SITE_TITLE)
             }
         }
     }
@@ -162,18 +175,49 @@ pub fn index(
     is_partial: bool,
 ) -> Markup {
     let today = Utc::now().date_naive();
+    let home = format!("https://{domain}/");
+    let image = format!("https://{domain}/static/img/avatar.jpeg");
+
+    // `description` is what Google prints under the result for the root URL, and
+    // it used to be the author's job title — two words, no context. og:site_name
+    // was the job title too, where it should be the name of the site.
     let og_tags = html! {
-        link rel="canonical" href={"https://"(domain)"/"};
+        link rel="canonical" href=(home);
 
         meta name="twitter:card" content="summary";
         meta name="twitter:site" content=(author.twitter);
-        meta name="twitter:title" content=(author.name);
-        meta name="twitter:description" content=(author.job_title);
+        meta name="twitter:title" content=(SITE_TITLE);
+        meta name="twitter:description" content=(DESCRIPTION);
+        meta name="twitter:image" content=(image);
+
         meta property="og:type" content="website";
-        meta property="og:title" content=(author.name);
-        meta property="og:site_name" content=(author.job_title);
-        meta name="description" content=(author.job_title);
+        meta property="og:title" content=(SITE_TITLE);
+        meta property="og:description" content=(DESCRIPTION);
+        meta property="og:site_name" content=(SITE_TITLE);
+        meta property="og:url" content=(home);
+        meta property="og:image" content=(image);
+        meta property="og:locale" content="en_US";
+
+        meta name="description" content=(DESCRIPTION);
         meta name="author" content=(author.name);
+
+        // Ties the domain to a person so search engines can associate the site
+        // with the profiles in `sameAs`.
+        script type="application/ld+json" {
+            (PreEscaped(serde_json::json!({
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": SITE_TITLE,
+                "url": home,
+                "description": DESCRIPTION,
+                "author": {
+                    "@type": "Person",
+                    "name": author.name,
+                    "url": home,
+                    "sameAs": author.same_as,
+                },
+            }).to_string()))
+        }
     };
 
     let markup = html! {
@@ -249,12 +293,19 @@ pub fn base(
                 title {
                     @if let Some(title) = title {
                         (title)
-                        " - ebadfd explorations"
+                        " - " (SITE_TITLE)
                     } @else {
-                        "ebadfd explorations"
+                        (SITE_TITLE)
                     }
                 }
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
+
+                // Pages that build their own metadata (the homepage and posts)
+                // set their canonical there; this covers the section pages,
+                // which had none at all.
+                @if og_tags.is_none() {
+                    link rel="canonical" href={(SITE_URL) (current_path)};
+                }
 
                 // Preconnect to third-party origins so DNS + TLS happen early.
                 link rel="preconnect" href="https://unpkg.com" crossorigin {};
@@ -271,8 +322,8 @@ pub fn base(
                 meta name="application-name" content="ebadfd";
 
                 link rel="manifest" href="/static/manifest.json";
-                link rel="alternate" title="ebadfd explorations" type="application/rss+xml" href={"https://ebadfd.tech/blog.rss"};
-                link rel="alternate" title="ebadfd explorations" type="application/json" href={"https://ebadfd.tech/blog.json"};
+                link rel="alternate" title=(SITE_TITLE) type="application/rss+xml" href={(SITE_URL) "/blog.rss"};
+                link rel="alternate" title=(SITE_TITLE) type="application/json" href={(SITE_URL) "/blog.json"};
 
                 link rel="icon" type="image/png" href="/static/favicon/favicon-96x96.png" sizes="96x96";
                 link rel="icon" type="image/svg+xml" href="/static/favicon/favicon.svg";
