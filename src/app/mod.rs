@@ -38,8 +38,9 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     everything.reverse();
 
     // Unpublished (future dated) posts are already gone, `post::load` drops them.
-    // This is only about how many recent items the feeds carry.
-    let everything: Vec<Post> = everything.into_iter().take(5).collect();
+    // This is only about how many recent items the feeds carry. At 5 a reader
+    // polling weekly could miss posts entirely.
+    let everything: Vec<Post> = everything.into_iter().take(20).collect();
 
     // Build sitemap
     let mut sm: Vec<u8> = vec![];

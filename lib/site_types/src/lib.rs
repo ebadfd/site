@@ -6,6 +6,10 @@ pub struct Frontmatter {
     pub about: String,
     #[serde(skip_serializing)]
     pub title: String,
+    /// Overrides `title` in `<title>` only. For posts whose display title is
+    /// long by design and would be truncated in a search result.
+    #[serde(skip_serializing, default)]
+    pub seo_title: Option<String>,
     #[serde(skip_serializing)]
     pub date: String,
     #[serde(skip_serializing)]

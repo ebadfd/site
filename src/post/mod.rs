@@ -43,6 +43,21 @@ impl Post {
         self.date.format("%B %e, %Y").to_string()
     }
 
+    /// Section this post lives under — `blog` or `products`. `link` is built as
+    /// `<dir>/<slug>` in `read_post`.
+    pub fn section(&self) -> &str {
+        self.link.split('/').next().unwrap_or("blog")
+    }
+
+    /// What goes in `<title>`: the frontmatter override if there is one, else
+    /// the display title.
+    pub fn seo_title(&self) -> &str {
+        self.front_matter
+            .seo_title
+            .as_deref()
+            .unwrap_or(&self.front_matter.title)
+    }
+
     pub fn image_url(&self, domain: &str) -> String {
         self
             .front_matter
@@ -87,6 +102,57 @@ impl schemaorg::Article {
                 .as_ref()
                 .filter(|t| !t.is_empty())
                 .map(|t| t.join(", ")),
+        }
+    }
+}
+
+impl schemaorg::SoftwareApplication {
+    pub fn new(post: &Post, author: &crate::app::Author, domain: &str) -> Self {
+        schemaorg::SoftwareApplication {
+            context: "https://schema.org".to_string(),
+            r#type: "SoftwareApplication".to_string(),
+            name: post.front_matter.title.clone(),
+            description: post.front_matter.about.clone(),
+            url: format!("https://{}/{}", domain, post.link),
+            image: post.image_url(domain),
+            application_category: "BrowserApplication".to_string(),
+            author: schemaorg::Person {
+                r#type: "Person".to_string(),
+                name: author.name.clone(),
+                same_as: author.same_as.clone(),
+            },
+            date_published: post.date.to_rfc3339(),
+        }
+    }
+}
+
+impl schemaorg::Breadcrumbs {
+    /// Home → section index → this post.
+    pub fn for_post(post: &Post, domain: &str) -> Self {
+        let section = post.section();
+        let crumb = |position, name: &str, path: &str| schemaorg::Crumb {
+            r#type: "ListItem".to_string(),
+            position,
+            name: name.to_string(),
+            item: format!("https://{domain}{path}"),
+        };
+
+        schemaorg::Breadcrumbs {
+            context: "https://schema.org".to_string(),
+            r#type: "BreadcrumbList".to_string(),
+            items: vec![
+                crumb(1, "Home", "/"),
+                crumb(
+                    2,
+                    if section == "products" {
+                        "Products"
+                    } else {
+                        "Blog"
+                    },
+                    &format!("/{section}"),
+                ),
+                crumb(3, &post.front_matter.title, &format!("/{}", post.link)),
+            ],
         }
     }
 }

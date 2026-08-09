@@ -24,8 +24,8 @@ pub const SITE_URL: &str = "https://ebadfd.tech";
 /// Search-result snippet for the homepage. Kept under ~160 characters, which is
 /// roughly where Google truncates.
 pub const DESCRIPTION: &str =
-    "Security research, malware teardowns and programming notes by ebadfd — \
-     a security researcher and hobbyist programmer.";
+    "Malware teardowns, phishing research and reverse engineering notes from \
+     ebadfd — plus programming, cars, and whatever else holds my attention.";
 
 /// Controls which third-party resources `base()` loads on a given page.
 #[derive(Default)]
@@ -35,16 +35,37 @@ pub struct PageFeatures {
     pub fontawesome: bool,
 }
 
-/// Out-of-band `<title>` swap so htmx partials update the browser tab title.
-pub fn oob_title(title: Option<&str>) -> Markup {
-    html! {
-        title hx-swap-oob="true" {
-            @if let Some(t) = title {
-                (t) " - " (SITE_TITLE)
-            } @else {
-                (SITE_TITLE)
-            }
+/// How a page's `<title>` is built.
+///
+/// Google truncates around 60 characters, and the site-name suffix costs 22 of
+/// them. Section pages can afford it; post titles are long enough on their own
+/// that adding it pushed several over the limit.
+#[derive(Clone, Copy)]
+pub enum PageTitle<'a> {
+    /// The site name alone — the homepage.
+    Site,
+    /// `<title>` is `{0} - {SITE_TITLE}`.
+    Suffixed(&'a str),
+    /// `<title>` is `{0}` verbatim.
+    Bare(&'a str),
+}
+
+impl PageTitle<'_> {
+    fn render(&self) -> String {
+        match self {
+            PageTitle::Site => SITE_TITLE.to_string(),
+            PageTitle::Suffixed(t) => format!("{t} - {SITE_TITLE}"),
+            PageTitle::Bare(t) => (*t).to_string(),
         }
+    }
+}
+
+/// Out-of-band `<title>` swap so htmx partials update the browser tab title.
+/// Must build the title the same way `base()` does, or a boosted navigation
+/// would set a different title than a full load of the same URL.
+pub fn oob_title(title: PageTitle) -> Markup {
+    html! {
+        title hx-swap-oob="true" { (title.render()) }
     }
 }
 
@@ -74,7 +95,7 @@ fn nav_link(label: &str, href: &str, current_path: &str) -> Markup {
 
 pub fn error(why: impl Render) -> Markup {
     base(
-        Some("Error"),
+        PageTitle::Suffixed("Error"),
         None,
         None,
         "/",
@@ -99,7 +120,7 @@ pub fn error(why: impl Render) -> Markup {
 
 pub fn full_screen_player(video_url: String) -> Markup {
     base(
-        Some("Dash"),
+        PageTitle::Suffixed("Dash"),
         None,
         None,
         "/rr",
@@ -263,10 +284,10 @@ pub fn index(
     };
 
     if is_partial {
-        html! { (oob_title(None)) (markup) }
+        html! { (oob_title(PageTitle::Site)) (markup) }
     } else {
         base(
-            None,
+            PageTitle::Site,
             None,
             Some(og_tags),
             "/",
@@ -277,7 +298,7 @@ pub fn index(
 }
 
 pub fn base(
-    title: Option<&str>,
+    title: PageTitle,
     styles: Option<&str>,
     og_tags: Option<Markup>,
     current_path: &str,
@@ -290,14 +311,7 @@ pub fn base(
         (DOCTYPE)
         html lang="en" {
             head {
-                title {
-                    @if let Some(title) = title {
-                        (title)
-                        " - " (SITE_TITLE)
-                    } @else {
-                        (SITE_TITLE)
-                    }
-                }
+                title { (title.render()) }
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
 
                 // Pages that build their own metadata (the homepage and posts)
@@ -465,10 +479,10 @@ pub fn support(is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        html! { (oob_title(Some("Support"))) (markup) }
+        html! { (oob_title(PageTitle::Suffixed("Support"))) (markup) }
     } else {
         base(
-            Some("Support"),
+            PageTitle::Suffixed("Support"),
             None,
             None,
             "/support",
@@ -539,10 +553,10 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        html! { (oob_title(Some("Contact Information"))) (markup) }
+        html! { (oob_title(PageTitle::Suffixed("Contact Information"))) (markup) }
     } else {
         base(
-            Some("Contact Information"),
+            PageTitle::Suffixed("Contact Information"),
             None,
             None,
             "/contact",
@@ -615,10 +629,10 @@ pub fn privacy_policy(is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        html! { (oob_title(Some("Privacy Policy"))) (markup) }
+        html! { (oob_title(PageTitle::Suffixed("Privacy Policy"))) (markup) }
     } else {
         base(
-            Some("Privacy Policy"),
+            PageTitle::Suffixed("Privacy Policy"),
             None,
             None,
             "/privacy-policy",
@@ -663,10 +677,10 @@ pub fn stack(is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        html! { (oob_title(Some("Uses"))) (markup) }
+        html! { (oob_title(PageTitle::Suffixed("Uses"))) (markup) }
     } else {
         base(
-            Some("Uses"),
+            PageTitle::Suffixed("Uses"),
             None,
             None,
             "/stack",
@@ -678,7 +692,7 @@ pub fn stack(is_partial: bool) -> Markup {
 
 pub fn not_found(path: impl Render) -> Markup {
     base(
-        Some("Not found"),
+        PageTitle::Suffixed("Not found"),
         None,
         None,
         "/",

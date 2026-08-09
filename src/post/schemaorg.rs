@@ -44,3 +44,46 @@ pub struct Person {
     #[serde(rename = "sameAs", skip_serializing_if = "Vec::is_empty")]
     pub same_as: Vec<String>,
 }
+
+/// schema.org `SoftwareApplication`, for pages under `/products`.
+///
+/// No `offers` or `aggregateRating`: Google wants both for the software
+/// rich result, but neither can be filled in honestly from what a post's
+/// frontmatter carries, and inventing a rating is exactly the kind of thing
+/// that gets structured data ignored.
+#[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
+pub struct SoftwareApplication {
+    #[serde(rename = "@context")]
+    pub context: String,
+    #[serde(rename = "@type")]
+    pub r#type: String,
+    pub name: String,
+    pub description: String,
+    pub url: String,
+    pub image: String,
+    #[serde(rename = "applicationCategory")]
+    pub application_category: String,
+    pub author: Person,
+    #[serde(rename = "datePublished")]
+    pub date_published: String,
+}
+
+/// schema.org `BreadcrumbList` — Home → section → page.
+#[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
+pub struct Breadcrumbs {
+    #[serde(rename = "@context")]
+    pub context: String,
+    #[serde(rename = "@type")]
+    pub r#type: String,
+    #[serde(rename = "itemListElement")]
+    pub items: Vec<Crumb>,
+}
+
+#[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
+pub struct Crumb {
+    #[serde(rename = "@type")]
+    pub r#type: String,
+    pub position: u8,
+    pub name: String,
+    pub item: String,
+}

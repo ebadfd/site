@@ -5,7 +5,7 @@ use std::io::{self, Write};
 use syntect::easy::HighlightLines;
 use syntect::highlighting::{Color, ThemeSet};
 use syntect::html::{append_highlighted_html_for_styled_line, IncludeBackground};
-use syntect::parsing::{SyntaxReference, SyntaxSet};
+use syntect::parsing::{Scope, SyntaxReference, SyntaxSet};
 use syntect::util::LinesWithEndings;
 use syntect::Error;
 
@@ -25,15 +25,32 @@ impl SyntectAdapter {
         // Override the comment colour to clear WCAG AA 4.5:1 contrast.
         // base16-mocha.dark ships #7e705a (3.98:1 against the site's #0d0f0f
         // background). #9a8a6a is a warmer, lighter value at ~5.5:1.
+        //
+        // Selection is by asking each theme item's selector whether it matches a
+        // real comment scope stack, which is the question we actually mean.
+        // Matching on the selector's `Debug` output instead would depend on a
+        // formatting impl that carries no stability guarantee, and would also
+        // catch unrelated scopes that merely contain the word.
+        const COMMENT_FG: Color = Color {
+            r: 0x9a,
+            g: 0x8a,
+            b: 0x6a,
+            a: 0xff,
+        };
+
+        let comment_stacks: Vec<Vec<Scope>> = ["comment", "comment.line", "comment.block"]
+            .iter()
+            .filter_map(|s| Scope::new(s).ok())
+            .map(|s| vec![s])
+            .collect();
+
         if let Some(t) = theme_set.themes.get_mut(theme) {
             for item in t.scopes.iter_mut() {
-                if format!("{:?}", item.scope).contains("comment") {
-                    item.style.foreground = Some(Color {
-                        r: 0x9a,
-                        g: 0x8a,
-                        b: 0x6a,
-                        a: 0xff,
-                    });
+                let matches_comment = comment_stacks
+                    .iter()
+                    .any(|stack| item.scope.does_match(stack).is_some());
+                if matches_comment {
+                    item.style.foreground = Some(COMMENT_FG);
                 }
             }
         }
