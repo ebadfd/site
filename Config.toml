@@ -2,9 +2,9 @@ siteTitle = "ebadfd explorations"
 domain = "ebadfd.tech"
 
 [defaultAuthor]
-name = "z9fr"
-handle = "z9fr"
-jobTitle = "Software Engineer"
+name = "ebadfd"
+handle = "ebadfd"
+jobTitle = "Tech Lead"
 inSystem = true
 sameAs = ["https://x.com/3badfd", "https://github.com/ebadfd"]
 twitter = "3badfd"

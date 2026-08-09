@@ -17,7 +17,7 @@
   <generator uri="@env!("CARGO_PKG_REPOSITORY")" version="@env!("CARGO_PKG_VERSION")">@env!("CARGO_PKG_NAME")</generator>
   @for post in posts {
     <entry>
-      <id>https://z9fr.xyz/@post.link</id>
+      <id>https://ebadfd.tech/@post.link</id>
       <title>@post.front_matter.title</title>
       <published>@post.date.to_rfc3339()</published>
       <updated>@post.date.to_rfc3339()</updated>

@@ -356,8 +356,8 @@ This included repairing dents, refining edges, and preparing the surfaces for pa
 The goal was to achieve a bonnet that matched the quality and alignment of the rest of the car.
 
 <carousel data-cell="
-  https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250630_170104.jpg, 
-https://cdn.z9fr.xyz/ae86-restore/fixing-hood/20250702_170500.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250630_170104.jpg,
+  https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250702_170500.jpg,
   https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250703_170858.jpg,
   https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250714_170943.jpg,
   https://cdn.ebadfd.tech/ae86-restore/fixing-hood/20250714_170950.jpg "></carousel>
