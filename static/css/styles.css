@@ -43,10 +43,11 @@
   --accent: var(--cyan);
 }
 
-/* Percentage, not px, so the browser's own font-size setting still applies.
-   100% = whatever the user has chosen (16px by default). */
+/* Percentage, not px, so the browser's own font-size setting still applies —
+   a hard `14px` here silently overrode it. 93.75% lands on 15px at the default
+   16px, a hair above the original 14px without reading as zoomed in. */
 html {
-  font-size: 100%;
+  font-size: 93.75%;
   color: var(--foreground);
   background-color: var(--background);
 }
@@ -67,22 +68,16 @@ html {
   color: var(--white);
 }
 
+/* hackcss sets every heading to 1rem on purpose: hierarchy is carried by the
+   `## ` prefixes and weight, the way it reads in markdown source, not by size.
+   h2/h3 are deliberately left at that default — an earlier pass gave them a
+   conventional type scale, which fought the whole aesthetic. h1 keeps a modest
+   bump so an article title still announces itself. */
 .hack h1 {
-  font-size: 2rem;
-  letter-spacing: -0.02em;
+  font-size: 1.5rem;
   font-style: normal;
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace, serif;
-}
-
-.hack h2 {
-  font-size: 1.5rem;
-  letter-spacing: -0.01em;
-}
-
-.hack h3 {
-  font-size: 1.25rem;
-  letter-spacing: -0.005em;
 }
 
 a {
