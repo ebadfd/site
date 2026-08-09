@@ -27,6 +27,13 @@ pub const DESCRIPTION: &str =
     "Malware teardowns, phishing research and reverse engineering notes from \
      ebadfd — plus programming, cars, and whatever else holds my attention.";
 
+/// Prompt mark for the terminal button: a `>` chevron and a cursor underscore.
+///
+/// Inline rather than a FontAwesome glyph — the button is on every page, and
+/// the kit is only loaded on pages that actually use icons. `currentColor` and
+/// `1em` mean it inherits the button's hover colour and size for free.
+const PROMPT_ICON: &str = r##"<svg viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 4L6 7.5L2.5 11"/><path d="M8.5 11.5h5"/></svg>"##;
+
 /// Controls which third-party resources `base()` loads on a given page.
 #[derive(Default)]
 pub struct PageFeatures {
@@ -453,8 +460,11 @@ pub fn base(
 
                 // The emulator is fetched once and then kept alive for the life of the page;
                 // script.js intercepts later clicks and just un-hides the panel.
-                button."termx-open btn btn-default btn-ghost" hx-get="/termx" hx-trigger="click once" hx-swap="innerHTML" hx-target="#termx" aria-label="Open Arch Linux terminal" title="Open Arch Linux terminal (Ctrl + `)" {
-                    "tty"
+                // The accessible name keeps "tty" in it so Voice Control can act
+                // on the word that is actually printed on the button.
+                button."termx-open btn btn-default btn-ghost" hx-get="/termx" hx-trigger="click once" hx-swap="innerHTML" hx-target="#termx" aria-label="tty: open Arch Linux terminal" title="Open Arch Linux terminal (Ctrl + `)" {
+                    (PreEscaped(PROMPT_ICON))
+                    span."termx-open-label" { "tty" }
                 }
 
                 div #"termx"."card" hidden role="dialog" aria-label="Arch Linux terminal" {}

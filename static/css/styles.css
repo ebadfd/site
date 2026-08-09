@@ -302,8 +302,18 @@ footer nav a[aria-current] {
   opacity: 0.9;
   padding: 0.45em 0.65em;
   text-transform: lowercase;
-  /* Declared after `all: unset`, which would otherwise wipe it. */
+  /* Declared after `all: unset`, which would otherwise wipe them. */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
   transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* The chevron sits slightly high against a lowercase label; nudge it onto the
+   same optical baseline as the text. */
+.termx-open svg {
+  display: block;
+  transform: translateY(0.5px);
 }
 
 .termx-open:hover,
