@@ -133,6 +133,8 @@ pub async fn run_server() -> Result<()> {
         // feeds
         .route("/blog.rss", get(handlers::feed::rss))
         .route("/blog.atom", get(handlers::feed::atom))
+        .route("/blog.json", get(handlers::feed::json))
+        .route("/sitemap.xml", get(handlers::feed::sitemap))
         // static files
         .route(
             "/robots.txt",

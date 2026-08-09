@@ -45,22 +45,27 @@ pub async fn init(cfg: PathBuf) -> Result<State> {
     let mut sm: Vec<u8> = vec![];
     let smw = sitemap::writer::SiteMapWriter::new(&mut sm);
     let mut urlwriter = smw.start_urlset()?;
+    // Only routes that actually exist: `/resume` used to be listed here but its
+    // handler is `todo!()` and it is not registered in the router, so the
+    // sitemap was advertising a 404 to crawlers.
     for url in [
-        format!("https://{}/resume", cfg.domain),
-        format!("https://{}/contact", cfg.domain),
+        format!("https://{}/", cfg.domain),
         format!("https://{}/blog", cfg.domain),
         format!("https://{}/products", cfg.domain),
-        format!("https://{}/", cfg.domain),
+        format!("https://{}/contact", cfg.domain),
+        format!("https://{}/stack", cfg.domain),
+        format!("https://{}/privacy-policy", cfg.domain),
     ] {
         urlwriter.url(url)?;
     }
 
-    for post in &blog {
-        urlwriter.url(format!("https://{}/{}", cfg.domain, post.link))?;
-    }
-
-    for product in &products {
-        urlwriter.url(format!("https://{}/{}", cfg.domain, product.link))?;
+    // `lastmod` lets crawlers skip unchanged posts on a recrawl.
+    for post in blog.iter().chain(products.iter()) {
+        urlwriter.url(
+            sitemap::structs::UrlEntry::builder()
+                .loc(format!("https://{}/{}", cfg.domain, post.link))
+                .lastmod(post.date),
+        )?;
     }
 
     urlwriter.end()?;

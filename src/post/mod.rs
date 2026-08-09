@@ -52,19 +52,41 @@ impl Post {
     }
 }
 
-impl From<&Post> for schemaorg::Article {
-    fn from(val: &Post) -> Self {
+impl schemaorg::Article {
+    /// Build the JSON-LD for a post. Takes the author and domain rather than
+    /// implementing `From<&Post>`, because both were previously hardcoded to
+    /// `ebadfd.tech` and drifted from the configured domain.
+    pub fn new(post: &Post, author: &crate::app::Author, domain: &str) -> Self {
+        let url = format!("https://{}/{}", domain, post.link);
+        let person = schemaorg::Person {
+            r#type: "Person".to_string(),
+            name: author.name.clone(),
+            same_as: author.same_as.clone(),
+        };
+
         schemaorg::Article {
             context: "https://schema.org".to_string(),
             r#type: "Article".to_string(),
-            headline: val.front_matter.title.clone(),
-            image: val
+            main_entity_of_page: schemaorg::MainEntity {
+                r#type: "WebPage".to_string(),
+                id: url.clone(),
+            },
+            headline: post.front_matter.title.clone(),
+            description: post.front_matter.about.clone(),
+            image: post.image_url(domain),
+            url,
+            author: person.clone(),
+            publisher: person,
+            date_published: post.date.to_rfc3339(),
+            // No edit history is tracked, so the publication date is the most
+            // accurate value available.
+            date_modified: post.date.to_rfc3339(),
+            keywords: post
                 .front_matter
-                .clone()
-                .image
-                .unwrap_or_else(|| "https://ebadfd.tech/static/image/avatar.jpeg".to_string()),
-            url: format!("https://ebadfd.tech/{}", val.link),
-            date_published: val.date.format("%Y-%m-%d").to_string(),
+                .tags
+                .as_ref()
+                .filter(|t| !t.is_empty())
+                .map(|t| t.join(", ")),
         }
     }
 }

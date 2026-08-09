@@ -1,3 +1,7 @@
 User-Agent: *
 Disallow: /metrics
 Disallow: /health
+Disallow: /termx
+Disallow: /rr
+
+Sitemap: https://ebadfd.tech/sitemap.xml

@@ -13,7 +13,7 @@ lazy_static! {
 }
 
 fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
-    let art: Article = post.into();
+    let art = Article::new(post, author, domain);
     let json = PreEscaped(serde_json::to_string(&art).unwrap());
 
     html! {
@@ -25,12 +25,25 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
         meta property="twitter:domain" content={(domain)};
         meta property="twitter:url" content={(format!("https://{}/{}", domain, post.link))};
 
-        meta property="og:type" content="website";
+        // `article`, not `website` — this is what tells crawlers and social
+        // cards that the page is a dated piece of writing rather than a landing
+        // page, and it is what unlocks the article:* properties below.
+        meta property="og:type" content="article";
         meta property="og:title" content={(post.front_matter.title)};
         meta property="og:description" content={(post.front_matter.about)};
         meta property="og:image" content={(post.image_url(domain))};
+        meta property="og:image:alt" content={(post.front_matter.title)};
         meta property="og:site_name" content="ebadfd explorations";
         meta property="og:url" content={(format!("https://{}/{}", domain, post.link))};
+        meta property="og:locale" content="en_US";
+
+        meta property="article:published_time" content={(post.date.to_rfc3339())};
+        meta property="article:author" content={(author.name)};
+        @if let Some(tags) = &post.front_matter.tags {
+            @for tag in tags {
+                meta property="article:tag" content=(tag);
+            }
+        }
 
         meta name="description" content={(post.front_matter.about)};
         meta name="author" content={(author.name)};
