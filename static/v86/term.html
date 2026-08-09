@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arch Linux — v86</title>
   <!--
     Sandbox-isolated v86 emulator page, loaded in an iframe by the parent site.
@@ -103,7 +103,7 @@
       bottom: 6px;
       font-family: Hack, "Liberation Mono", monospace;
       font-size: 11px;
-      color: #5a6a5a;
+      color: #8a9a8a;
       z-index: 5;
       pointer-events: none;
       user-select: none;
@@ -338,7 +338,7 @@
         term.options.fontFamily = FONT_STACK;
         term.options.fontSize = pickFontSize();
         term.options.theme = THEME;
-        term.options.cursorBlink = true;
+        term.options.cursorBlink = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         term.options.scrollback = 5000;
 
         fitAddon = new FitAddon.FitAddon();

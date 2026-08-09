@@ -43,8 +43,10 @@
   --accent: var(--cyan);
 }
 
+/* Percentage, not px, so the browser's own font-size setting still applies.
+   100% = whatever the user has chosen (16px by default). */
 html {
-  font-size: 14px;
+  font-size: 100%;
   color: var(--foreground);
   background-color: var(--background);
 }
@@ -66,18 +68,29 @@ html {
 }
 
 .hack h1 {
-  font-size: 1.5rem;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
   font-style: normal;
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace, serif;
+}
+
+.hack h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.hack h3 {
+  font-size: 1.25rem;
+  letter-spacing: -0.005em;
 }
 
 a {
   cursor: pointer;
   color: var(--cyan);
   text-decoration: none;
-  border-bottom: 1px solid var(--bg2);
-  transition: all 0.2s ease;
+  border-bottom: 1px solid var(--fg-dark);
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 a:hover {
@@ -107,13 +120,22 @@ hr {
   margin: 2em 0;
 }
 
-/* Article metadata */
-article small {
-  display: block;
-  color: var(--comment);
+/* Article metadata: read time + date on one line with the PDF button. The rule
+   lives on the wrapper, not on `small`, so the button stays inside the block
+   instead of being pushed below its bottom border. */
+.post-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25em 0.5em;
+  color: var(--fg-dark);
   margin-bottom: 1.5em;
   padding-bottom: 1em;
   border-bottom: 1px solid var(--bg2);
+}
+
+.post-meta small {
+  color: inherit;
 }
 
 /* Tags */
@@ -178,6 +200,11 @@ article code:not([class]) {
 
 .container {
   max-width: 50rem;
+}
+
+/* Constrain article measure for comfortable reading (45-75ch) */
+article {
+  max-width: 70ch;
 }
 
 .yt-video-container {
@@ -258,7 +285,8 @@ footer nav a {
   border-bottom: none;
 }
 
-footer nav a:hover {
+footer nav a:hover,
+footer nav a[aria-current] {
   color: var(--cyan);
 }
 
@@ -279,18 +307,16 @@ footer nav a:hover {
   opacity: 0.9;
   padding: 0.45em 0.65em;
   text-transform: lowercase;
+  /* Declared after `all: unset`, which would otherwise wipe it. */
+  transition: color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 
 .termx-open:hover,
-.termx-open:focus {
+.termx-open:focus-visible {
   opacity: 1;
   color: var(--cyan) !important;
   border-color: var(--cyan) !important;
   background-color: var(--black) !important;
-}
-
-.termx-open.is-hidden {
-  display: none;
 }
 
 #termx {
@@ -334,6 +360,17 @@ footer nav a:hover {
   transform: translateX(-50%);
   cursor: ns-resize;
   opacity: 0.55;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Expand the resize notch hit area to 24px without changing painted size */
+.resize-notch::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 24px;
 }
 
 .resize-notch:hover {
@@ -355,21 +392,38 @@ footer nav a:hover {
   pointer-events: none;
 }
 
+.termx-hint {
+  flex: 0 0 auto;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace, serif;
+  font-size: 0.65em;
+  color: var(--comment);
+  margin-right: 0.5em;
+  pointer-events: none;
+  user-select: none;
+}
+
 #termx-close {
-  all: unset;
+  appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
   color: var(--fg-dark);
   background: var(--bg1);
   border: 1px solid var(--comment);
   border-radius: 2px;
   line-height: 1;
-  padding: 0.15em 0.4em;
+  padding: 0.3em 0.5em;
   margin-right: 6px;
   font-size: 0.75em;
+  font-family: inherit;
+  min-height: 24px;
+  min-width: 24px;
+  box-sizing: border-box;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 #termx-close:hover,
-#termx-close:focus {
+#termx-close:focus-visible {
   color: var(--red);
   border-color: var(--red);
   background: var(--bg1);
@@ -452,7 +506,7 @@ footer nav a:hover {
 .flickity-button {
   background: var(--bg1) !important;
   color: var(--fg) !important;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .flickity-button:hover {
@@ -504,6 +558,10 @@ th {
   border-bottom: 2px solid var(--comment);
 }
 
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
 tr:hover {
   background-color: var(--bg1);
 }
@@ -514,9 +572,9 @@ p {
   margin-bottom: 1em;
 }
 
-/* Focus states for accessibility */
-a:focus,
-button:focus,
+/* Focus states for accessibility — :focus-visible avoids rings on mouse click */
+a:focus-visible,
+button:focus-visible,
 input:focus {
   outline: 2px solid var(--cyan);
   outline-offset: 2px;
@@ -525,8 +583,8 @@ input:focus {
 /* Export as PDF button */
 .btn-export-pdf {
   display: inline-block;
-  font-size: 0.75em;
-  padding: 0.1em 0.4em;
+  font-size: 0.85em;
+  padding: 0.3em 0.5em;
   margin-left: 0.5em;
   vertical-align: middle;
   cursor: pointer;
@@ -534,6 +592,8 @@ input:focus {
   border: none;
   background: transparent;
   transition: color 0.2s ease;
+  min-height: 24px;
+  box-sizing: border-box;
 }
 
 .btn-export-pdf:hover {
@@ -542,6 +602,116 @@ input:focus {
 
 .btn-export-pdf i {
   margin-right: 0.2em;
+}
+
+/* ── Skip link (Phase 1: B2) ─────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 10000;
+  padding: 0.5em 1em;
+  background: var(--bg1);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  border-radius: 0 0 4px 0;
+  font-size: 0.9em;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* ── Screen-reader-only / visually hidden (Phase 1, 4) ─────────
+   !important is deliberate, and is what Bootstrap and HTML5 Boilerplate do:
+   this is a utility that must win outright. Without it hackcss's `.hack h1`
+   (0,1,1) outranks the bare class (0,1,0) and re-applies
+   `position: relative; display: table-cell`, putting the hidden heading back
+   in flow as an 86px-tall empty block. */
+.sr-only,
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ── Logo link (Phase 1: C1 — moved from inline all: unset) ──── */
+.logo-link {
+  all: unset;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.logo-link:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ── Header navigation (Phase 6: H1) ───────────────────────────
+   Column, not row: the logo is sized as a percentage of the container, so as a
+   row flex item it claimed most of the line and forced the links to wrap
+   mid-list. Stacking keeps the logo full-bleed and the links on one tidy row. */
+/* Breathing room between the masthead and the first line of content. The margin
+   lives on the class, not on `header` — hackcss resets `.hack header` at a
+   higher specificity than a bare element selector can beat. */
+.header-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 2rem;
+}
+
+.primary-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+}
+
+.primary-nav a {
+  font-size: 0.85em;
+  color: var(--fg-dark);
+  border-bottom: 1px solid transparent;
+}
+
+.primary-nav a:hover {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+/* Matches both aria-current="page" (this exact page) and ="true" (a page inside
+   this section, e.g. Blog while reading a post). */
+.primary-nav a[aria-current] {
+  color: var(--cyan);
+  border-bottom-color: var(--bg2);
+}
+
+/* ── Reduced motion (Phase 6: E1) ──────────────────────────────
+   Reduce Motion means *less vestibular motion*, not "no feedback". Colour and
+   opacity changes aid comprehension and stay; what goes is the looping cursor
+   blink and the sliding skip link. Killing the hover colour transitions here
+   was an over-correction — it removed the site's hover feel for anyone with
+   the OS setting on. */
+@media (prefers-reduced-motion: reduce) {
+  .logo::after {
+    animation: none;
+    -webkit-animation: none;
+  }
+
+  /* Slide → instant reveal; the link still appears, it just doesn't travel. */
+  .skip-link {
+    transition: none;
+  }
 }
 
 /* Print styles for PDF export */
@@ -591,11 +761,16 @@ input:focus {
     display: none !important;
   }
 
-  /* Container full width */
+  /* Container full width; padding is set with the @page rule at the end of
+     this block, which is where the page-margin trade-off is explained. */
   .container {
     max-width: 100%;
     margin: 0;
-    padding: 0;
+  }
+
+  /* Article measure full width for print */
+  article {
+    max-width: 100%;
   }
 
   /* Article styling */
@@ -749,14 +924,23 @@ input:focus {
   }
 
   /* Page margins */
+  /* Zero page margin is what suppresses the browser's own print header and
+     footer (document title, URL, page number, timestamp) — those are drawn
+     into the page margin box, so with no margin there is nowhere to draw them.
+     The reader's spacing is restored as padding on the container instead.
+
+     Note: horizontal container padding applies on every page, but vertical
+     padding only lands at the very start and very end of the flow, so pages
+     2..n-1 run closer to the top and bottom edge than they did at 2cm. That is
+     the trade-off for losing the header. Some browsers also expose a
+     "Print headers and footers" checkbox that overrides this either way. */
   @page {
-    margin: 2cm;
+    margin: 0;
     size: A4;
   }
 
-  /* First page - no top margin for title */
-  @page :first {
-    margin-top: 1.5cm;
+  .container {
+    padding: 1.6cm 1.8cm;
   }
 }
 

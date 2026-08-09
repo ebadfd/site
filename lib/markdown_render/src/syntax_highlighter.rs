@@ -20,12 +20,30 @@ pub struct SyntectAdapter {
 
 impl SyntectAdapter {
     pub fn new(theme: &str, pretag_class: &str, dissable_bg: bool) -> Self {
+        let mut theme_set = ThemeSet::load_defaults();
+
+        // Override the comment colour to clear WCAG AA 4.5:1 contrast.
+        // base16-mocha.dark ships #7e705a (3.98:1 against the site's #0d0f0f
+        // background). #9a8a6a is a warmer, lighter value at ~5.5:1.
+        if let Some(t) = theme_set.themes.get_mut(theme) {
+            for item in t.scopes.iter_mut() {
+                if format!("{:?}", item.scope).contains("comment") {
+                    item.style.foreground = Some(Color {
+                        r: 0x9a,
+                        g: 0x8a,
+                        b: 0x6a,
+                        a: 0xff,
+                    });
+                }
+            }
+        }
+
         SyntectAdapter {
             theme: theme.into(),
             pretag_class: pretag_class.into(),
             dissable_bg,
             syntax_set: SyntaxSet::load_defaults_newlines(),
-            theme_set: ThemeSet::load_defaults(),
+            theme_set,
         }
     }
 

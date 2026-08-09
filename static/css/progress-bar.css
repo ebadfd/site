@@ -100,3 +100,12 @@
     right: -8%;
   }
 }
+
+/* Respect Reduce Motion: stop the infinite progress bar loop */
+@media (prefers-reduced-motion: reduce) {
+  .progress .indeterminate:before,
+  .progress .indeterminate:after {
+    -webkit-animation: none;
+    animation: none;
+  }
+}

@@ -6,7 +6,7 @@ use crate::{
     post::{schemaorg::Article, Post},
 };
 
-use super::base;
+use super::{base, oob_title, PageFeatures};
 
 lazy_static! {
     static ref CACHEBUSTER: String = uuid::Uuid::new_v4().to_string().replace('-', "");
@@ -46,7 +46,7 @@ fn post_metadata(post: &Post, author: &Author, domain: &str) -> Markup {
     }
 }
 
-pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: bool) -> Markup {
+pub fn post_index(posts: &[Post], title: &str, show_extra: bool, current_path: &str, is_partial: bool) -> Markup {
     fn post_url(post: &Post) -> String {
         if let Some(redirect_to) = &post.front_matter.redirect_to {
             redirect_to.clone()
@@ -75,6 +75,12 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: boo
                             (post.detri())
                             " - "
                                 a href={(post_url(post))} hx-push-url={(post_url(post))} { (post.front_matter.title) }
+                            @if !post.front_matter.about.is_empty() {
+                                br;
+                                small { (post.front_matter.about) }
+                                " · "
+                                small { (post.read_time_estimate_minutes) " min read" }
+                            }
                         }
                     }
                 }
@@ -82,9 +88,9 @@ pub fn post_index(posts: &[Post], title: &str, show_extra: bool, is_partial: boo
         }
     };
     if is_partial {
-        markup
+        html! { (oob_title(Some(title))) (markup) }
     } else {
-        base(Some(title), None, None, markup)
+        base(Some(title), None, None, current_path, PageFeatures::default(), markup)
     }
 }
 
@@ -99,16 +105,19 @@ pub fn post(
          article {
             h1 {(post.front_matter.title)}
 
-            img src={(post.image_url(domain))} alt={(post.front_matter.title)} {}
+            @if post.front_matter.image.is_some() {
+                img src={(post.image_url(domain))} alt="" {}
+            }
 
              // (nag::prerelease(post))
 
-             small {
-                 (post.read_time_estimate_minutes) " minute read,  Published: " (post.detri_withmonth())
-                 " "
-                 button."btn-export-pdf" onclick="window.print()" title="Save as PDF" {
+             div."post-meta" {
+                 small {
+                     (post.read_time_estimate_minutes) " minute read,  Published: " (post.detri_withmonth())
+                 }
+                 button."btn-export-pdf" onclick="window.print()" title="Print or Save as PDF" {
                      i."fa-solid"."fa-file-pdf" {}
-                     " PDF"
+                     " Save as PDF"
                  }
              }
 
@@ -135,12 +144,17 @@ pub fn post(
         }
     };
     if is_partial {
-        markup
+        html! { (oob_title(Some(&post.front_matter.title))) (markup) }
     } else {
+        // The post's own path, not "/blog" — `nav_state` needs it to tell
+        // "you are on the blog index" from "you are inside the blog section".
+        // `post.link` is already section-prefixed, e.g. `blog/some-slug`.
         base(
             Some(&post.front_matter.title),
             None,
             Some(post_metadata(post, author, domain)),
+            &format!("/{}", post.link),
+            PageFeatures { flickity: true, fontawesome: true, ..Default::default() },
             markup,
         )
     }

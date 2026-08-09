@@ -21,7 +21,7 @@ lazy_static! {
 #[instrument(skip(state, headers))]
 pub async fn index(Extension(state): Extension<Arc<State>>, headers: HeaderMap) -> Result<Markup> {
     let state = state.clone();
-    let result = tmpl::blog::post_index(&state.blog, "Blog Posts", true, is_htmx_request(headers));
+    let result = tmpl::blog::post_index(&state.blog, "Blog Posts", true, "/blog", is_htmx_request(headers));
     Ok(result)
 }
 

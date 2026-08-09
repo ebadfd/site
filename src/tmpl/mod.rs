@@ -14,11 +14,58 @@ lazy_static! {
         std::env::var("TURNSTILE_SITE_KEY").expect("$TURNSTILE_SITE_KEY is not avaible");
 }
 
+/// Controls which third-party resources `base()` loads on a given page.
+#[derive(Default)]
+pub struct PageFeatures {
+    pub flickity: bool,
+    pub turnstile: bool,
+    pub fontawesome: bool,
+}
+
+/// Out-of-band `<title>` swap so htmx partials update the browser tab title.
+pub fn oob_title(title: Option<&str>) -> Markup {
+    html! {
+        title hx-swap-oob="true" {
+            @if let Some(t) = title {
+                (t) " - ebadfd explorations"
+            } @else {
+                "ebadfd explorations"
+            }
+        }
+    }
+}
+
+/// How a nav item relates to the page currently being viewed.
+///
+/// The distinction matters to screen readers: `page` means "this link points at
+/// the document you are on", `true` means "you are somewhere inside this
+/// section" — which is the honest answer for `Blog` while reading `/blog/foo`.
+/// Both get the same visual treatment.
+pub fn nav_state(href: &str, current_path: &str) -> Option<&'static str> {
+    if current_path == href {
+        Some("page")
+    } else if href != "/" && current_path.starts_with(&format!("{href}/")) {
+        Some("true")
+    } else {
+        None
+    }
+}
+
+/// Render a boosted nav link, marked with `aria-current` when it is the
+/// section or page being viewed.
+fn nav_link(label: &str, href: &str, current_path: &str) -> Markup {
+    html! {
+        a href=(href) hx-push-url=(href) aria-current=[nav_state(href, current_path)] { (label) }
+    }
+}
+
 pub fn error(why: impl Render) -> Markup {
     base(
         Some("Error"),
         None,
         None,
+        "/",
+        PageFeatures::default(),
         html! {
             h1 {"Error"}
 
@@ -42,6 +89,11 @@ pub fn full_screen_player(video_url: String) -> Markup {
         Some("Dash"),
         None,
         None,
+        "/rr",
+        PageFeatures {
+            fontawesome: true,
+            ..Default::default()
+        },
         html!(
             link rel="stylesheet" href={"/static/css/controlbar.css?bustCache=" (*CACHEBUSTER)};
 
@@ -126,6 +178,8 @@ pub fn index(
 
     let markup = html! {
         .content {
+            h1 .visually-hidden { (author.name) }
+
             p {"I'm a Security Researcher and Hobbyist Programmer"}
 
             p {"My main interests revolve around Computers, History, Philosophy, Anime, and Cars."}
@@ -142,7 +196,7 @@ pub fn index(
                     }
             }
 
-            h2 { "Freeware" }
+            h2 { "Products" }
 
             ul preload{
                 @for product in products.iter().take(5).filter(|p| today.num_days_from_ce() >= p.date.num_days_from_ce()) {
@@ -165,9 +219,16 @@ pub fn index(
     };
 
     if is_partial {
-        markup
+        html! { (oob_title(None)) (markup) }
     } else {
-        base(None, None, Some(og_tags), markup)
+        base(
+            None,
+            None,
+            Some(og_tags),
+            "/",
+            PageFeatures::default(),
+            markup,
+        )
     }
 }
 
@@ -175,6 +236,8 @@ pub fn base(
     title: Option<&str>,
     styles: Option<&str>,
     og_tags: Option<Markup>,
+    current_path: &str,
+    features: PageFeatures,
     content: Markup,
 ) -> Markup {
     let now = Utc::now();
@@ -193,6 +256,13 @@ pub fn base(
                 }
                 meta name="viewport" content="width=device-width, initial-scale=1.0";
 
+                // Preconnect to third-party origins so DNS + TLS happen early.
+                link rel="preconnect" href="https://unpkg.com" crossorigin {};
+                link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin {};
+                link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin {};
+                link rel="preconnect" href="https://js.sentry-cdn.com" crossorigin {};
+                link rel="preconnect" href="https://kit.fontawesome.com" crossorigin {};
+
                 @if let Some(og_tags) = og_tags {
                     (og_tags)
                 }
@@ -209,27 +279,36 @@ pub fn base(
                 link rel="shortcut icon" href="/static/favicon/favicon.ico";
                 link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png";
 
-                link rel="manifest" href="/static/favicon/site.webmanifest";
-
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/hack.css";
                 link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hack/0.8.1/dark-grey.css";
 
                 link rel="stylesheet" href={"/static/css/styles.css?bustCache=" (*CACHEBUSTER)};
                 link rel="stylesheet" href={"/static/css/progress-bar.css?bustCache=" (*CACHEBUSTER)};
 
-                // flickity
-                link rel="stylesheet" href={"https://unpkg.com/flickity@2/dist/flickity.min.css"};
-                script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js" async defer {};
+                // Flickity — only on pages with carousels.
+                @if features.flickity {
+                    link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css";
+                    script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js" async defer {};
+                }
 
                 script src="https://unpkg.com/htmx.org@1.9.10" integrity={"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"} crossorigin={"anonymous"} {}
-                script src="https://unpkg.com/htmx.org/dist/ext/preload.js" {};
-                script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" async defer {};
+                // Pinned + SRI-verified preload extension.
+                script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/preload.js" integrity="sha384-NoiTdF/KjxH4wa6OHMdM4F6e/LIPNMcFBgOIINTTaczWo0vX1mWTOzckySqlGQS/" crossorigin="anonymous" {}
+
+                // Turnstile — only on pages with forms.
+                @if features.turnstile {
+                    script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" async defer {};
+                }
+
                 script src="https://js.sentry-cdn.com/5f4957f42fb5c2d26f0ad04867411b64.min.js" async defer{};
                 // Modules are deferred by definition, so this runs after the htmx tag above
                 // has executed — which matters, it calls htmx.on() at import time.
                 script type="module" src={"/static/js/main.js?bustCache=" (*CACHEBUSTER)} {}
 
-                script src="https://kit.fontawesome.com/eabf947950.js" crossorigin="anonymous" {};
+                // FontAwesome — only on pages that use icons.
+                @if features.fontawesome {
+                    script src="https://kit.fontawesome.com/eabf947950.js" crossorigin="anonymous" {};
+                }
 
                 @match now.month() {
                     // TODO Test this out
@@ -247,6 +326,12 @@ pub fn base(
             }
 
             body.snow.hack.dark-grey hx-ext="preload" hx-indicator=".progress" {
+                // Skip link — first tab stop on every page.
+                a."skip-link" href="#content" { "Skip to content" }
+
+                // Live region for page change announcements (htmx afterSwap).
+                div #"page-announcer" aria-live="polite" aria-atomic="true" class="sr-only" {}
+
                 div.progress style="height: 2px;"{
                     div.indeterminate style="background-color: #6aacac;"{}
                 }
@@ -257,36 +342,43 @@ pub fn base(
                     br;
 
                     header {
-                        nav {
-                            div hx-boost="true" hx-include="[name='bustCache']" hx-swap="innerHTML" hx-target=".snowframe" {
-                                a hx-push-url="/" href="/" style="all: unset; display: inline-block; cursor: pointer;" {
-                                    img src={"/static/logo-main.svg?bustCache=" (*CACHEBUSTER)} style="max-width: 40%; height: auto;" {};
-                                }
+                        div."header-nav" hx-boost="true" hx-include="[name='bustCache']" hx-swap="innerHTML" hx-target=".snowframe" {
+                            a."logo-link" hx-push-url="/" href="/" {
+                                img src={"/static/logo-main.svg?bustCache=" (*CACHEBUSTER)} alt="ebadfd — home" style="max-width: 40%; height: auto;" {};
+                            }
+                            nav."primary-nav" aria-label="Primary" {
+                                (nav_link("Blog", "/blog", current_path))
+                                (nav_link("Products", "/products", current_path))
+                                (nav_link("Contact", "/contact", current_path))
+                                (nav_link("Uses", "/stack", current_path))
                             }
                         }
                     }
 
-                    .snowframe {
-                        (content)
+                    main #"content" {
+                        .snowframe {
+                            (content)
+                        }
                     }
 
 
                     hr;
                     footer {
                         div hx-boost="true" hx-include="[name='bustCache']" hx-swap="innerHTML" hx-target=".snowframe" {
-                            nav {
-                                a href="/" hx-push-url="/" { "Home" }
+                            // Labelled so it is distinguishable from the primary
+                            // nav when jumping between landmarks.
+                            nav aria-label="Footer" {
+                                (nav_link("Home", "/", current_path))
                                 " - "
-                                a href="/blog" hx-push-url="/blog" { "Blog" }
+                                (nav_link("Blog", "/blog", current_path))
                                 " - "
-                                a  href="/contact" hx-push-url="/contact" { "Contact" }
+                                (nav_link("Products", "/products", current_path))
                                 " - "
-                                a href="/stack" hx-push-url="/stack" { "Uses" }
+                                (nav_link("Contact", "/contact", current_path))
                                 " - "
-                                a href="/products" hx-push-url="/products" { "FreeWare" }
+                                (nav_link("Uses", "/stack", current_path))
                                 " - "
-                                a href="/privacy-policy" hx-push-url="/privacy-policy" { "Privacy Policy" }
-
+                                (nav_link("Privacy Policy", "/privacy-policy", current_path))
                             }
                         }
                     }
@@ -320,9 +412,16 @@ pub fn support(is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        markup
+        html! { (oob_title(Some("Support"))) (markup) }
     } else {
-        base(Some("Support"), None, None, markup)
+        base(
+            Some("Support"),
+            None,
+            None,
+            "/support",
+            PageFeatures::default(),
+            markup,
+        )
     }
 }
 
@@ -387,9 +486,19 @@ pub fn contact(links: &Vec<Link>, is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        markup
+        html! { (oob_title(Some("Contact Information"))) (markup) }
     } else {
-        base(Some("Contact Information"), None, None, markup)
+        base(
+            Some("Contact Information"),
+            None,
+            None,
+            "/contact",
+            PageFeatures {
+                turnstile: true,
+                ..Default::default()
+            },
+            markup,
+        )
     }
 }
 
@@ -453,9 +562,16 @@ pub fn privacy_policy(is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        markup
+        html! { (oob_title(Some("Privacy Policy"))) (markup) }
     } else {
-        base(Some("Privacy Policy"), None, None, markup)
+        base(
+            Some("Privacy Policy"),
+            None,
+            None,
+            "/privacy-policy",
+            PageFeatures::default(),
+            markup,
+        )
     }
 }
 
@@ -494,9 +610,16 @@ pub fn stack(is_partial: bool) -> Markup {
     };
 
     if is_partial {
-        markup
+        html! { (oob_title(Some("Uses"))) (markup) }
     } else {
-        base(Some("Uses"), None, None, markup)
+        base(
+            Some("Uses"),
+            None,
+            None,
+            "/stack",
+            PageFeatures::default(),
+            markup,
+        )
     }
 }
 
@@ -505,6 +628,8 @@ pub fn not_found(path: impl Render) -> Markup {
         Some("Not found"),
         None,
         None,
+        "/",
+        PageFeatures::default(),
         html! {
             h1 {"Not found"}
             p {
@@ -525,6 +650,7 @@ pub fn termx_v86() -> Markup {
         header."termx-bar" {
             span."resize-notch" #"resizeHandle" title="Drag to resize" {}
             span."termx-title" { "arch linux — v86" }
+            span."termx-hint" { "Esc Esc or Ctrl+` to close" }
             button #"termx-close" type="button" aria-label="Close terminal" title="Close (Esc Esc)" { "[x]" }
         }
         div."card-content v86-content" {
