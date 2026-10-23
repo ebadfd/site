@@ -166,6 +166,8 @@ libxml, lifecycle end to end:
 
 `zend_fcall_info_cache` carries `function_handler` (the `zend_function*` to call), `object`, and scope fields, each released field by field inside `zend_fcc_dtor()`. `object` is released first, so a bailout mid-dtor leaves a cache that still passes `ZEND_FCC_INITIALIZED()` on `function_handler` while pointing into the old request heap. The next `DOMDocument`/`SimpleXML` parse that consults the entity loader (`substituteEntities` / `LIBXML_NOENT`) reaches `zend_call_known_fcc()` at `:788`, an indirect call through that stale handler.
 
+Why these were missed: the fix's reset list was scoped by the commit's own description, "globals that may be accessed during startup". Startup-time globals were in scope for the bug being fixed; request-teardown globals like this table were outside that scope, so they stayed RSHUTDOWN-only.
+
 Claim 2: real.
 
 ---
@@ -255,6 +257,8 @@ Claim 4: real.
 | 6 | `php_output_deactivate()` | try-wrapped |
 | - | `zend_deactivate()` (`EG(active) = 0`, executor teardown, remaining objects destroyed) | not wrapped |
 | - | `shutdown_memory_manager()` (request heap discarded) | - |
+
+Two tick lists exist and they are not the same: `php_deactivate_ticks()` drains the engine-level `declare(ticks)` list, while the strandable one is the userland `register_tick_function` list owned by the basic module's RSHUTDOWN.
 
 The plant lands in step 5's per-module catch: a bailout inside `zm_deactivate_basic` skips `basic_functions.c:475-476` (`efree` + `= NULL`), so the `BG` pointer stays non-NULL pointing into a heap that gets discarded right after. Request N+1's RSHUTDOWN hits `if (BG(user_tick_functions))`, still true, and calls `zend_llist_destroy()` on the reused chunk: `l->dtor(current->data)` per element.
 
@@ -348,6 +352,38 @@ In order:
 Request 2 exits, its own RSHUTDOWN calls the forged `dtor`, `system("id>/x")` runs, `/x` reads `uid=0(root)`. The claimed follow-ups: the same chain on `wordpress:php8.4-apache` producing `uid=33(www-data)`, a `disable_functions=system,exec,shell_exec,passthru,pcntl_exec,popen,proc_open` bypass (the forged `l->dtor` is a C-level indirect call, outside PHP's function table), the libxml fcc variant needing only two `/proc/self/mem` writes with no struct forgery and no libc offsets, and `spl_autoload_functions` as an additional strandable global.
 
 The chain works as described.
+
+---
+
+## Why the Original Was Critical and This One Isn't
+
+### What made the originals exploitable
+
+The pre-fix bug was not "a bailout happened somewhere". It was a `longjmp` fired by the allocator *during request execution*, and that changes everything:
+
+- **Trigger surface.** Any allocation, anywhere: string concatenation, array growth, hash inserts, zval copies, in the VM or any extension. An attacker shaping request data (headers, body, params, upload size, serialized depth) drives memory pressure while their own data is live in the request heap.
+- **Corruption model.** A `longjmp` mid-operation abandons structures half-built: a `HashTable` mid-rehash, a zval mid-initialization, refcounts mid-decrement. Shutdown and cleanup code then walks that torn state, producing UAF and type-confusion primitives on memory the attacker already populated. That is the CWE-416 path, and why RCE followed.
+- **The allocator contract.** `emalloc` has no failure return: it hands back a pointer or kills the request, and no caller checks for NULL. A mid-operation bailout abandons the enclosing operation at an arbitrary C line and nothing above it on the stack is ever notified. The torn structures are indistinguishable from valid ones until something walks them.
+- **Weaponization.** No `/proc/self/mem` needed on the original bugs: the grooming material is ordinary request data. Spraying controlled byte patterns through request parameters reoccupies the chunks a torn structure will be mistaken for, and the cleanup walk produces a call through attacker-supplied bytes.
+- **Reachability.** Pure request data. No file upload, no code execution required, valid on any PHP application in front of an attacker. That is why it went into KEV with public weaponization almost immediately.
+- **What the fix closed.** The delayed `UnwindExit` restores the core invariant: the engine reaches a consistent point (a call boundary) before unwinding, instead of abandoning mid-write. The corruption window moved from "every allocation in every request" to "allocator faults inside teardown".
+
+### Why the residue is a gimmick
+
+The stranding itself is real, but a stale pointer is inert on its own. Everything in the demonstrated chain exists to make that pointer dangerous *for the attacker*, and every step presumes a capability the chain is supposed to prove:
+
+- Request 1 needs attacker PHP to engineer the bailout deterministically (a destructor throwing inside module RSHUTDOWN). Benign code does not do this on purpose.
+- Request 2 needs attacker PHP again, this time for `/proc/self/mem` surgery to write controlled bytes where `dtor` lands.
+- Remove either stage and the residue is a crash or a dangling pointer nobody can fill.
+
+The one thing the chain does that a plain `system()` call cannot: `l->dtor` is a C-level indirect call through forged memory. `disable_functions` is enforced at call dispatch, inside the VM's function-table path; a raw `call` through a forged struct field sits underneath that layer entirely, so a disabled `system()` fires anyway. That is the gimmick: a hardening-knob bypass, neat as a demo of how indirect calls evade language-level blocklists, useless as escalation because `disable_functions` is opt-in configuration in the same uid, not a privilege boundary. An attacker with code execution who hits a disabled `system()` has a dozen equally valid paths (`LD_PRELOAD`, FFI, `mail()`, `imap_mail()`-class tricks); a 56-byte forged llist is the scenic route.
+
+Two practical walls the claims also skip:
+
+- **Worker affinity.** The residue lives in one worker's `BG()` storage. On FPM and mod_php the pool hands requests out to whichever child is free, so request 2 must land on the same process that served request 1. Nothing in the chain controls that. The demo uses the built-in server partly because a single worker serves everything.
+- **What `/proc/self/mem` actually is.** Not an escape and not PHP-specific: the kernel lets a process read and write its own address space by design, and `fopen("/proc/self/mem", "r+b")` is the same primitive `FFI::addr` exposes through a nicer API. Reaching it means the attacker already executed their own code on the host.
+
+The data-only version would matter. It does not exist yet: the OOM-in-RSHUTDOWN window is reachable in principle, but detonation still requires controlled bytes at `dtor`, and nothing shown repopulates that chunk without attacker PHP.
 
 ---
 
