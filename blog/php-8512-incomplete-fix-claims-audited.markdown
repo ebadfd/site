@@ -55,6 +55,19 @@ $ git log -3 --format="%h | %ad | %s" --date=short
 
 ---
 
+## How a Bailout Works
+
+`zend_try`/`zend_catch` is the engine's `setjmp`/`longjmp` pair. `EG(bailout)` holds a `JMP_BUF*` pointing at the innermost installed jump buffer; `zend_try` swaps in a fresh one and records the previous, `zend_bailout()` `longjmp`s into the innermost `zend_try`, unwinding every C frame in between, and `zend_end_try()` restores the previous buffer.
+
+Two consequences drive everything below:
+
+- A bailout is not an exception. `EG(exception)` unwinds through userland frames and PHP `catch` blocks. A bailout skips all C-level cleanup between the throw site and the catch site: frees, NULL assignments, refcount decrements simply do not run.
+- Where the `zend_catch` sits decides how much gets skipped. A catch wrapping a single module callback loses only that module's remaining RSHUTDOWN work; a catch higher up loses more.
+
+The October fix targeted the throw sites (OOM no longer longjmps during execution). It did not touch the catch sites.
+
+---
+
 ## Claim 1: RSHUTDOWN Bailouts Are Swallowed
 
 `Zend/zend_API.c`, `zend_deactivate_modules()`:
@@ -151,7 +164,7 @@ libxml, lifecycle end to end:
 1048:		zend_fcc_dtor(&LIBXML(entity_loader_callback));
 ```
 
-`zend_fcc_dtor()` frees `fcc.function_handler` and `fcc.object` field by field, so a bailout mid-`zend_fcc_dtor` strands a half-destroyed fcall_info_cache, not just a pointer. The next parse with `substituteEntities`/`LIBXML_NOENT` calls through it.
+`zend_fcall_info_cache` carries `function_handler` (the `zend_function*` to call), `object`, and scope fields, each released field by field inside `zend_fcc_dtor()`. `object` is released first, so a bailout mid-dtor leaves a cache that still passes `ZEND_FCC_INITIALIZED()` on `function_handler` while pointing into the old request heap. The next `DOMDocument`/`SimpleXML` parse that consults the entity loader (`substituteEntities` / `LIBXML_NOENT`) reaches `zend_call_known_fcc()` at `:788`, an indirect call through that stale handler.
 
 Claim 2: real.
 
@@ -183,7 +196,9 @@ Claim 2: real.
 	}
 ```
 
-The fix converted the *execution-time* OOM path to `UnwindExit`. With no frame to unwind through, the fallback still hard-bailouts, and the comment says so plainly. Since `zend_deactivate_modules()` NULLs `EG(current_execute_data)` before the first module runs, every RSHUTDOWN callback operates in the `!execute_data` regime. An OOM raised by an allocation inside any module's teardown still `longjmp`s, lands in the per-module `zend_catch`, and skips the remainder of that module's cleanup.
+How the delayed mechanism works: on allocation failure the allocator sets `AG(mm_heap)->overflow` and records the fault site instead of jumping immediately. The next call boundary checks `ZEND_HAS_OOM()` (`zend_execute_API.c`, right beside the `!EG(active)` guard in Claim 4) and runs `zend_handle_delayed_oom()`, shown above.
+
+With a live `execute_data` it throws `UnwindExit` and the engine unwinds through the frame stack. With `execute_data == NULL` there is nothing to unwind through, so it raises `E_ERROR` and hard-bailouts. `zend_deactivate_modules()` NULLs `EG(current_execute_data)` before the first module runs, so every RSHUTDOWN callback operates in the `!execute_data` regime. An OOM raised by an allocation inside any module's teardown still `longjmp`s, lands in the per-module `zend_catch`, and skips the remainder of that module's cleanup.
 
 Claim 3: real.
 
@@ -210,7 +225,7 @@ and in `zend_call_known_function()`:
 	}
 ```
 
-`EG(active)` goes 1 at `:206` during activate and 0 at `:280` during executor deactivation. Any function dispatch that lands after that point gets `FAILURE`, which `zend_call_known_function()` converts into `E_CORE_ERROR` (noreturn). The claimed window is late object destruction: objects released after `zend_shutdown_executor_values()` dispatch `__destruct` into an inactive executor and take the worker down. 
+`EG(active)` goes 1 at `:206` during activate and 0 at `:280` inside `zend_deactivate()`. The chain the claim relies on: `zend_deactivate()` clears `EG(active)`, then the object-store sweep releases whatever objects remain. Any `__destruct` dispatched in that window travels `zend_call_known_function()` -> `zend_call_function()` -> `!EG(active)` -> `FAILURE` -> `E_CORE_ERROR` -> process exit. `zend_deactivate()` sits outside any `zend_try`, so nothing catches the fatal: the worker dies mid-teardown.
 
 Claim 4: real.
 
@@ -218,13 +233,30 @@ Claim 4: real.
 
 ## Why the Residue Crosses Requests
 
-The mechanism:
+### Who owns what
 
-- `BG()`, `PS()`, `PG()` are process-lifetime structs on FPM, mod_php, LSAPI, and the built-in server. They survive requests.
-- The `zend_llist` that `BG(user_tick_functions)` points at is `emalloc`'d: request-heap memory.
-- `php_request_shutdown` order, from `main/main.c`: (1) `register_shutdown_function` callbacks, (2) `zend_call_destructors()`, (3) `php_output_end_all()`, `php_deactivate_ticks()`, (4) `zend_unset_timeout()`, (5) `zend_deactivate_modules()`, (6) `php_output_deactivate()`, then `shutdown_memory_manager()` tears the request heap down.
-- If step 5's `zend_try` swallows a bailout before `basic_functions.c:473-476` runs, the `BG` pointer keeps pointing at a chunk that no longer exists.
-- Request N+1 on the same worker reuses that chunk. Its RSHUTDOWN hits `if (BG(user_tick_functions))`, non-NULL, and calls `zend_llist_destroy()` on attacker-influenceable memory: `l->dtor(current->data)` per element.
+- `BG()`, `PS()`, `PG()` are extension-globals structs allocated at module init: process lifetime. On FPM, mod_php, LSAPI and the built-in server they outlive every request the worker serves.
+- The `zend_llist` that `BG(user_tick_functions)` points at is `emalloc`'d: ZendMM request-heap memory, freed as part of the arena.
+- `shutdown_memory_manager()` at the end of the request discards the entire request heap at once. Nothing records which process-global pointers pointed into it.
+- Request N+1's heap reuses the same arena, so the stale `BG` pointer aliases whatever lands there early in the next request. That is why the dangling pointer lands on reused memory deterministically instead of going wild.
+
+### The shutdown order
+
+`php_request_shutdown()` (`main/main.c`):
+
+| Step | Runs | Bailout behavior |
+|---|---|---|
+| 1 | `php_call_shutdown_functions()` (`register_shutdown_function` callbacks) | try-wrapped |
+| 2 | `zend_call_destructors()` (`__destruct` sweep) | try-wrapped |
+| 3 | `php_output_end_all()` (ob callbacks) | try-wrapped |
+| - | `php_deactivate_ticks()` | - |
+| 4 | `zend_unset_timeout()` | try-wrapped |
+| 5 | `zend_deactivate_modules()` | try-wrapped, per module |
+| 6 | `php_output_deactivate()` | try-wrapped |
+| - | `zend_deactivate()` (`EG(active) = 0`, executor teardown, remaining objects destroyed) | not wrapped |
+| - | `shutdown_memory_manager()` (request heap discarded) | - |
+
+The plant lands in step 5's per-module catch: a bailout inside `zm_deactivate_basic` skips `basic_functions.c:475-476` (`efree` + `= NULL`), so the `BG` pointer stays non-NULL pointing into a heap that gets discarded right after. Request N+1's RSHUTDOWN hits `if (BG(user_tick_functions))`, still true, and calls `zend_llist_destroy()` on the reused chunk: `l->dtor(current->data)` per element.
 
 `zend_llist` layout, 56 bytes on LP64:
 
@@ -246,7 +278,9 @@ typedef struct _zend_llist {
 
 ## The Claimed Exploit Chain
 
-Two requests. `r1.php` plants:
+Two requests on the same worker.
+
+### r1.php, the plant
 
 ```php
 <?php
@@ -258,7 +292,15 @@ ob_start(function ($b) { register_tick_function('strlen', new Bomb()); return $b
 echo "planted\n";
 ```
 
-`r2.php` detonates on the same worker:
+Walkthrough:
+
+1. `register_tick_function('strlen', 0)` lazily allocates `BG(user_tick_functions)`: an `emalloc`'d `zend_llist` header plus an element holding the callable.
+2. `ob_start()` defers its callback to shutdown step 3 (`php_output_end_all`), which runs after the step-2 `__destruct` sweep.
+3. Inside that callback, `register_tick_function('strlen', new Bomb())` appends an element whose arg zval owns the `Bomb` object. Because the object is created after the destructor sweep, its only remaining reference is inside the tick llist element.
+4. Step 5: `zm_deactivate_basic` calls `zend_llist_destroy()`. Destroying the element releases the `Bomb` zval, refcount hits zero, `__destruct` throws `Error`. With `EG(current_execute_data)` NULL the throw escalates to `E_ERROR` and `zend_bailout()`.
+5. The bailout `longjmp`s out of `zend_llist_destroy()` mid-iteration into the module-level `zend_catch`. `basic_functions.c:475-476` never runs. `BG(user_tick_functions)` remains non-NULL, pointing at a request heap that `shutdown_memory_manager()` then frees.
+
+### r2.php, the detonation
 
 ```php
 <?php
@@ -283,6 +325,25 @@ $SYS = $LIBC + 0x53090;   // system() in this glibc (2.41)
 $fake = pack("P5", $LL + 24, 0, 1, 0, $SYS) . "id>/x\0\0\0" . pack("P", 0);
 fseek($mem, $LL); fwrite($mem, $fake); fflush($mem);
 ```
+
+In order:
+
+1. `/proc/self/maps` gives the binary base and libc base for its own process: no ASLR leak needed, the target is itself.
+2. `/proc/self/mem` opened `r+b` gives arbitrary read/write on its own address space.
+3. Reads the stale llist pointer out of `basic_globals` (image base + `0x1ccee00`, field `+0x1d0`; both offsets specific to the official `php:8.5-cli` NTS build).
+4. Writes a fake `zend_llist` over the stale chunk, with the element forged inside the same 56 bytes:
+
+| Offset | Field | Written value | Second use |
+|---|---|---|---|
+| +0 | `head` | `$LL+24` | points at the forged element |
+| +8 | `tail` | `0` | |
+| +16 | `count` | `1` | one element to iterate |
+| +24 | `size` | `0` | = `elem->next` = NULL, ends the loop |
+| +32 | `dtor` | `$SYS` | = `system()` |
+| +40 | element data | `"id>/x"` | = `elem->data` at `elem+16` |
+| +48 | `traverse_ptr` | `0` | |
+
+`zend_llist_destroy()` follows `head` to `$LL+24`, reads `elem->data` at +40, and calls `l->dtor(elem->data)`: `system("id>/x")`. The `size` field at +24 doubles as the element's `next` pointer (0, so the loop stops after one call), which is what lets a single `pack()` forge the struct and the element at once.
 
 Request 2 exits, its own RSHUTDOWN calls the forged `dtor`, `system("id>/x")` runs, `/x` reads `uid=0(root)`. The claimed follow-ups: the same chain on `wordpress:php8.4-apache` producing `uid=33(www-data)`, a `disable_functions=system,exec,shell_exec,passthru,pcntl_exec,popen,proc_open` bypass (the forged `l->dtor` is a C-level indirect call, outside PHP's function table), the libxml fcc variant needing only two `/proc/self/mem` writes with no struct forgery and no libc offsets, and `spl_autoload_functions` as an additional strandable global.
 
@@ -343,15 +404,6 @@ php-src's public policy excludes issues that "require invocation of specific cod
 Patch to 8.5.12 or 8.4.27 regardless. The original CVEs are KEV-listed with public weaponization and a data-only trigger. A `system()` call that requires dropping PHP files on the target is not an impact statement.
 
 ---
-
-## Timeline
-
-| Date | Event |
-|---|---|
-| Oct 18 2026 | Commit `31c0ea7d7ff` "Avoid state corruption via bailout" lands |
-| Oct 19 2026 | `136e049ac10` version bump, PHP 8.5.12 (audit checkout) |
-| Oct 22 2026 | PHP 8.5.12 / 8.4.27 released; NEWS credits CVE-2026-109618/109619 |
-| Oct 23 2026 | This audit |
 
 ## References
 
